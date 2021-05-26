@@ -1,5 +1,5 @@
 {
-  "name": "rif-id-manager",
+  "name": "multisig-sample-app",
   "version": "0.1.0",
   "private": true,
   "scripts": {

@@ -4,21 +4,10 @@ $white-color: #ffffff;
 
 .App {
   text-align: center;
-
-  .App-logo {
-    height: 40vmin;
-    pointer-events: none;
-  }
-  
-  @media (prefers-reduced-motion: no-preference) {
-    .App-logo {
-      animation: App-logo-spin infinite 20s linear;
-    }
-  }
   
   .App-header {
     background-color: $black-color;
-    min-height: 100vh;
+    padding: 20px 0;
     display: flex;
     flex-direction: column;
     align-items: center;
