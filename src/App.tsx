@@ -6,6 +6,7 @@ import './App.scss'
 import Web3Provider from './components/Web3Provider'
 import CreateSafe from './components/CreateSafe'
 import ConnectToSafe from './components/ConnectToSafe'
+import ConnectedBar from './components/ConnectedBar'
 
 const rLogin = new RLogin({
   cacheProvider: false,
@@ -19,8 +20,18 @@ function App () {
   const [rLoginResponse, setRLoginResponse] = useState<{ provider: any, disconnect: any } | null>(null)
   const [safe, setSafe] = useState<EthersSafe | null>(null)
 
+  // provider variables
+  const [address, setAddress] = useState<string | null>(null)
+  const [chainId, setChainId] = useState<number | null>(null)
+
   // UI variables
   const [isCreate, setIsCreate] = useState<boolean>(false)
+
+  const web3ProviderResponse = (response: any, address: string, chainId: number) => {
+    setRLoginResponse(response)
+    setAddress(address)
+    setChainId(chainId)
+  }
 
   const handleError = (error: Error) => setError(error.message)
 
@@ -36,12 +47,14 @@ function App () {
         RIF Multisig Sample App
       </div>
 
-      <Web3Provider
-        rLogin={rLogin}
-        setRLoginResponse={(provider: any) => setRLoginResponse(provider)}
-        handleLogout={handleLogout}
-        handleError={handleError}
-      />
+      {!rLoginResponse ? (
+        <Web3Provider
+          rLogin={rLogin}
+          setRLoginResponse={web3ProviderResponse}
+          handleError={handleError}
+        />
+      ) : <ConnectedBar handleLogout={handleLogout} address={address} chainId={chainId} />
+      }
 
       {error && (
         <section className="error">
