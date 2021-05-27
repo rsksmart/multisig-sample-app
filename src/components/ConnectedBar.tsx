@@ -1,4 +1,5 @@
 import React from 'react'
+import ValueWithButtons from './shared/ValueWithButtons'
 
 interface Interface {
   address: string | null
@@ -11,9 +12,9 @@ const ConnectedBar: React.FC<Interface> = ({ address, chainId, handleLogout }) =
     <div className="connectedBar">
       <ul className="inline">
         <li><strong>Wallet connected</strong></li>
-        <li><strong>address:</strong> {address}</li>
+        <li>{address && <ValueWithButtons value={address} />}</li>
         <li><em>{chainId === 31 ? 'RSK Testnet' : 'RSK Mainnet'}</em></li>
-        <li><button onClick={handleLogout}>Disconnect</button></li>
+        <li><button className="disconnect" onClick={handleLogout}>Disconnect</button></li>
       </ul>
     </div>
   )

@@ -2,17 +2,20 @@ import React, { useState, useEffect } from 'react'
 import EthersSafe from 'jesse-safe-core-sdk'
 import CopyValueButton from './shared/CopyValueButton'
 import ViewExplorerButton from './shared/ViewExplorerButton'
+import ValueWithButtons from './shared/ValueWithButtons'
 
 interface Interface {
   safe: EthersSafe
 }
 
 const SafeInteraction: React.FC<Interface> = ({ safe }) => {
-  const [balance, setBalance] = useState<number>(0)
   const [safeAddress, setSafeAddress] = useState<string>('')
+  const [balance, setBalance] = useState<number>(0)
+  const [owners, setOwners] = useState<string[]>([])
 
   useEffect(() => {
     safe.getBalance().then((balance: any) => setBalance(balance))
+    safe.getOwners().then((owners: string[]) => setOwners(owners))
   }, [])
 
   useEffect(() => {
@@ -22,12 +25,23 @@ const SafeInteraction: React.FC<Interface> = ({ safe }) => {
   return (
     <section className="selectedSafe">
       <h2>Connected to safe</h2>
-      <p><strong>Safe Address: </strong>
-        {safeAddress}
-        <CopyValueButton value={safeAddress} />
-        <ViewExplorerButton address={safeAddress} />
-      </p>
-      <p><strong>Safe Balance: </strong>{(balance / 1000000000000000000).toString()}</p>
+
+      <table>
+        <tr>
+          <th>Safe Address</th>
+          <td><ValueWithButtons value={safeAddress} /></td>
+        </tr>
+        <tr>
+          <th>Balance</th>
+          <td>{(balance / 1000000000000000000).toString()}</td>
+        </tr>
+        <tr>
+          <th>Owners</th>
+          <td>
+            {owners.map((owner: string) => <ValueWithButtons key={owner} value={owner} />)}
+          </td>
+        </tr>
+      </table>
     </section>
   )
 }

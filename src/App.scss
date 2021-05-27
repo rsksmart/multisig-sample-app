@@ -48,7 +48,7 @@ $white-color: #ffffff;
   }
 
   button.icon, button:hover.icon {
-    background-color: #ffffff;
+    background-color: rgba(0,0,0,0)
   }
 
   .icon-color {
@@ -80,6 +80,15 @@ $white-color: #ffffff;
       li {
         display: inline-block;
         margin-right: 20px;
+
+        button, .button {
+          padding: 10px;
+        }
+
+        button.disconnect {
+          border: 1px solid #ccc;
+          font-size: 14px;
+        }
       }
     }
   }
@@ -98,6 +107,22 @@ $white-color: #ffffff;
       right: 10px;
       background-color: #f8d7da;
       color: #842029;
+    }
+  }
+
+  table {
+    width: 100%;
+    text-align: left;
+    tr {
+      
+      td, th {
+        border-bottom: 1px solid $gray-color;
+        padding: 3px;
+      }
+
+      th {
+        width: 25%;
+      }
     }
   }
 }
