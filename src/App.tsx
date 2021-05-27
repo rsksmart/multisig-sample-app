@@ -33,12 +33,21 @@ function App () {
     setChainId(chainId)
   }
 
+  const handleSetSafe = (safe: EthersSafe) => {
+    setSafe(safe)
+    clearError()
+  }
+
   const handleError = (error: Error) => setError(error.message)
+  const clearError = () => setError(null)
 
   const handleLogout = () => {
     rLoginResponse?.disconnect()
     setRLoginResponse(null)
     setSafe(null)
+    setError(null)
+    setAddress(null)
+    setChainId(null)
   }
 
   return (
@@ -59,7 +68,7 @@ function App () {
       {error && (
         <section className="error">
           <p>{error}</p>
-          <button onClick={() => setError(null)}>x</button>
+          <button onClick={clearError}>x</button>
         </section>
       )}
 
@@ -72,14 +81,14 @@ function App () {
           {isCreate ? (
             <CreateSafe
               web3Provider={rLoginResponse.provider}
-              setSafe={(safe: EthersSafe) => setSafe(safe)}
+              setSafe={handleSetSafe}
               handleError={handleError}
               connectAddress={address}
             />
           ) : (
             <ConnectToSafe
               web3Provider={rLoginResponse.provider}
-              setSafe={(safe: EthersSafe) => setSafe(safe)}
+              setSafe={handleSetSafe}
               handleError={handleError}
             />
           )}
