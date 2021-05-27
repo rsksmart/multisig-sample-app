@@ -47,6 +47,14 @@ $white-color: #ffffff;
     cursor: not-allowed;
   }
 
+  button.icon, button:hover.icon {
+    background-color: #ffffff;
+  }
+
+  .icon-color {
+    fill: rgb(178, 181, 178);
+  }
+
   input {
     min-width: 250px;
     padding: 10px;
