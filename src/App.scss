@@ -1,5 +1,6 @@
 $black-color: #282c34;
 $blue-color: #61dafb;
+$gray-color: #e1e1e1;
 $white-color: #ffffff;
 
 .App {
@@ -8,10 +9,7 @@ $white-color: #ffffff;
   .App-header {
     background-color: $black-color;
     padding: 20px 0;
-    display: flex;
-    flex-direction: column;
     align-items: center;
-    justify-content: center;
     font-size: calc(10px + 2vmin);
     color: $white-color;
   }
@@ -21,7 +19,6 @@ $white-color: #ffffff;
   }
   
   section {
-    border-bottom: 1px solid #f1f1f1;
     padding: 20px 0;
     margin: 0 auto;
     max-width: 750px;
@@ -58,5 +55,37 @@ $white-color: #ffffff;
   select {
     padding: 10px;
     margin: 0 10px;
+  }
+
+  .connectedBar {
+    background-color: $gray-color;
+    margin: 0;
+    padding: 0;
+
+    ul.inline {
+      margin: 0;
+      padding: 0;
+      li {
+        display: inline-block;
+        margin-right: 20px;
+      }
+    }
+  }
+
+  section.error {
+    color: #842029;
+    background-color: #f8d7da;
+    border-color: #f5c2c7;
+    position: relative;
+    padding: 5px 20px;
+    margin-top: 25px;
+
+    button, button:hover {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background-color: #f8d7da;
+      color: #842029;
+    }
   }
 }

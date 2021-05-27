@@ -13,7 +13,7 @@ const rLogin = new RLogin({
 })
 
 function App () {
-  const [error, setError] = useState<null | string>(null)
+  const [error, setError] = useState<null | string>('')
 
   // Web3Provider and Safe variables
   const [rLoginResponse, setRLoginResponse] = useState<{ provider: any, disconnect: any } | null>(null)
@@ -32,16 +32,9 @@ function App () {
 
   return (
     <div className="App">
-      <header className="App-header">
+      <div className="App-header">
         RIF Multisig Sample App
-      </header>
-
-      {error && (
-        <section className="error">
-          <p>{error}</p>
-          <p><button onClick={() => setError(null)}>Close error</button></p>
-        </section>
-      )}
+      </div>
 
       <Web3Provider
         rLogin={rLogin}
@@ -49,6 +42,13 @@ function App () {
         handleLogout={handleLogout}
         handleError={handleError}
       />
+
+      {error && (
+        <section className="error">
+          <p>{error}</p>
+          <button onClick={() => setError(null)}>x</button>
+        </section>
+      )}
 
       {rLoginResponse && !safe && (
         <section className="connect">

@@ -44,12 +44,14 @@ const Web3Provider: React.FC<Interface> = ({ rLogin, setRLoginResponse, handleLo
       )}
 
       {account && chainId && (
-        <section className="currentWallet">
-          <h2>Connected</h2>
-          <p><strong>address:</strong> {account}</p>
-          <p><strong>chainId:</strong> {chainId}</p>
-          <button onClick={logout}>Disconnect</button>
-        </section>
+        <div className="connectedBar">
+          <ul className="inline">
+            <li><strong>Wallet connected</strong></li>
+            <li><strong>address:</strong> {account}</li>
+            <li><em>{chainId === 31 ? 'RSK Testnet' : 'RSK Mainnet'}</em></li>
+            <li><button onClick={logout}>Disconnect</button></li>
+          </ul>
+        </div>
       )}
     </div>
   )
