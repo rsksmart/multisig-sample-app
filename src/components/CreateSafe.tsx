@@ -5,11 +5,11 @@ import EthersSafe, { EthersSafeFactory } from '@rsksmart/safe-core-sdk'
 interface Interface {
   web3Provider: any
   setSafe: (safe: EthersSafe) => void
+  handleError: (error: Error) => void
 }
 
-const CreateSafe: React.FC<Interface> = ({ web3Provider, setSafe }) => {
+const CreateSafe: React.FC<Interface> = ({ web3Provider, setSafe, handleError }) => {
   const [addresses, setAddresses] = useState<string[]>([''])
-  const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState<boolean>(false)
 
   const changeAddressValue = (evt: any) => {
@@ -40,7 +40,7 @@ const CreateSafe: React.FC<Interface> = ({ web3Provider, setSafe }) => {
 
     safeFactory.createSafe({ owners: addresses, threshold: 2 })
       .then((response: EthersSafe) => setSafe(response))
-      .catch((err: Error) => setError(`Create Safe error: ${err.message}`))
+      .catch(handleError)
   }
 
   return (
@@ -58,7 +58,7 @@ const CreateSafe: React.FC<Interface> = ({ web3Provider, setSafe }) => {
           </li>
         ))}
       </ul>
-      {error && <div className="error">{error}</div>}
+
       <button disabled={isLoading} onClick={() => setAddresses([...addresses, ''])}>Add address</button>
       <button disabled={isLoading} onClick={createSafe}>Create Safe!</button>
     </div>

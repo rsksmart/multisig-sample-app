@@ -20,7 +20,33 @@ $white-color: #ffffff;
     color: $blue-color;
   }
   
+  section {
+    border-bottom: 1px solid #f1f1f1;
+    padding: 20px 0;
+  }
+
   ul {
     list-style-type: none;
-  } 
+  }
+
+  button {
+    padding: 10px 20px;
+    margin: 5px;
+    border: none;
+    cursor: pointer;
+  }
+
+  button:hover {
+    background-color: #ccc;
+  }
+
+  input {
+    min-width: 250px;
+    padding: 10px;
+
+  }
+
+  input:focus{
+    outline: none;
+  }
 }
