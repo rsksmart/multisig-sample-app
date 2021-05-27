@@ -73,7 +73,9 @@ function App () {
             <CreateSafe
               web3Provider={rLoginResponse.provider}
               setSafe={(safe: EthersSafe) => setSafe(safe)}
-              handleError={handleError} />
+              handleError={handleError}
+              connectAddress={address}
+            />
           ) : (
             <ConnectToSafe
               web3Provider={rLoginResponse.provider}

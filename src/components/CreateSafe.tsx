@@ -5,12 +5,13 @@ import { isAddress } from '@ethersproject/address'
 
 interface Interface {
   web3Provider: any
+  connectAddress: string | null
   setSafe: (safe: EthersSafe) => void
   handleError: (error: Error) => void
 }
 
-const CreateSafe: React.FC<Interface> = ({ web3Provider, setSafe, handleError }) => {
-  const [addresses, setAddresses] = useState<string[]>([''])
+const CreateSafe: React.FC<Interface> = ({ web3Provider, connectAddress, setSafe, handleError }) => {
+  const [addresses, setAddresses] = useState<string[]>([connectAddress ? connectAddress.toLowerCase() : ''])
   const [threshold, setThreshold] = useState<number>(1)
   const [isLoading, setIsLoading] = useState<boolean>(false)
 
