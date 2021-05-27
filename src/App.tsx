@@ -96,7 +96,7 @@ function App () {
         </section>
       )}
 
-      {safe && <SafeInteraction safe={safe} />}
+      {safe && <SafeInteraction web3Provider={rLoginResponse?.provider} safe={safe} />}
     </div>
   )
 }
