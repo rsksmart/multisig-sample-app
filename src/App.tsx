@@ -36,6 +36,13 @@ function App () {
         RIF Multisig Sample App
       </header>
 
+      {error && (
+        <section className="error">
+          <p>{error}</p>
+          <p><button onClick={() => setError(null)}>Close error</button></p>
+        </section>
+      )}
+
       <Web3Provider
         rLogin={rLogin}
         setRLoginResponse={(provider: any) => setRLoginResponse(provider)}
@@ -70,8 +77,6 @@ function App () {
           <p><strong>Safe Address: </strong>{safe.getAddress()}</p>
         </section>
       )}
-
-      {error && <section className="error">{error}</section>}
     </div>
   )
 }

@@ -23,6 +23,8 @@ $white-color: #ffffff;
   section {
     border-bottom: 1px solid #f1f1f1;
     padding: 20px 0;
+    margin: 0 auto;
+    max-width: 750px;
   }
 
   ul {
@@ -36,17 +38,25 @@ $white-color: #ffffff;
     cursor: pointer;
   }
 
-  button:hover {
+  button:hover:not([disabled]) {
     background-color: #ccc;
+  }
+
+  button[disabled] {
+    cursor: not-allowed;
   }
 
   input {
     min-width: 250px;
     padding: 10px;
-
   }
 
   input:focus{
     outline: none;
+  }
+  
+  select {
+    padding: 10px;
+    margin: 0 10px;
   }
 }

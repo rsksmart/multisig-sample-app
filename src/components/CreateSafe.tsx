@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { ethers } from 'ethers'
 import EthersSafe, { EthersSafeFactory } from '@rsksmart/safe-core-sdk'
+import { isAddress } from '@ethersproject/address'
 
 interface Interface {
   web3Provider: any
@@ -10,11 +11,12 @@ interface Interface {
 
 const CreateSafe: React.FC<Interface> = ({ web3Provider, setSafe, handleError }) => {
   const [addresses, setAddresses] = useState<string[]>([''])
+  const [threshold, setThreshold] = useState<number>(1)
   const [isLoading, setIsLoading] = useState<boolean>(false)
 
   const changeAddressValue = (evt: any) => {
     const changeIndex = parseInt(evt.target.id.replace('address', ''))
-    const updateList = addresses.map((item: string, index: number) => index === changeIndex ? evt.target.value : item)
+    const updateList = addresses.map((item: string, index: number) => index === changeIndex ? evt.target.value.toLowerCase() : item)
     setAddresses(updateList)
   }
 
@@ -25,6 +27,19 @@ const CreateSafe: React.FC<Interface> = ({ web3Provider, setSafe, handleError })
 
   const createSafe = () => {
     setIsLoading(true)
+
+    const errorList: number[] = []
+    addresses.forEach((address: string, index: number) => {
+      if (!isAddress(address)) {
+        errorList.push(index + 1)
+      }
+    })
+
+    if (errorList.length !== 0) {
+      setIsLoading(false)
+      handleError(new Error(`Incorrect Addresses for: ${errorList.toString()}`))
+      return false
+    }
 
     const provider = new ethers.providers.Web3Provider(web3Provider)
     const signer = provider.getSigner()
@@ -38,14 +53,25 @@ const CreateSafe: React.FC<Interface> = ({ web3Provider, setSafe, handleError })
       safeSingletonAddress
     )
 
-    safeFactory.createSafe({ owners: addresses, threshold: 2 })
+    safeFactory.createSafe({ owners: addresses, threshold })
       .then((response: EthersSafe) => setSafe(response))
       .catch(handleError)
+      .finally(() => setIsLoading(false))
+  }
+
+  const loopOptions = (length: number) => {
+    const items = []
+    for (let index = 0; index < length; index++) {
+      items.push(<option key={index} value={index + 1}>{index + 1}</option>)
+    }
+    return items
   }
 
   return (
     <div>
-      <h3>Create a safe</h3>
+      <h3>Create a new safe</h3>
+
+      <p>A safe can have any number of owners associated with it. Your connected address has been added as the first account. Click the <em>Add address</em> button to add additional addresses, and the <em>delete button</em> to remove addresses.</p>
       <ul>
         {addresses.map((address: string, index: number) => (
           <li key={index}>
@@ -58,9 +84,16 @@ const CreateSafe: React.FC<Interface> = ({ web3Provider, setSafe, handleError })
           </li>
         ))}
       </ul>
-
       <button disabled={isLoading} onClick={() => setAddresses([...addresses, ''])}>Add address</button>
-      <button disabled={isLoading} onClick={createSafe}>Create Safe!</button>
+
+      <p>Transactions require the confirmation of at least
+        <select value={threshold.toString()} onChange={evt => setThreshold(parseInt(evt.target.value))}>
+          {loopOptions(addresses.length)}
+        </select>
+        signatures.
+      </p>
+      <button disabled={isLoading || addresses.length === 0} onClick={createSafe}>Create Safe!</button>
+      {isLoading && <div>Creating safe, please wait...</div>}
     </div>
   )
 }
