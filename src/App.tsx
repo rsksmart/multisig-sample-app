@@ -7,6 +7,7 @@ import Web3Provider from './components/Web3Provider'
 import CreateSafe from './components/CreateSafe'
 import ConnectToSafe from './components/ConnectToSafe'
 import ConnectedBar from './components/ConnectedBar'
+import SafeInteraction from './components/SafeInteraction'
 
 const rLogin = new RLogin({
   cacheProvider: false,
@@ -74,7 +75,7 @@ function App () {
 
       {rLoginResponse && !safe && (
         <section className="connect">
-          <h2>Step 2: Create a safe, or connect to an existing one</h2>
+          <h2>Create a safe, or connect to an existing one</h2>
           <button onClick={() => setIsCreate(!isCreate)}>
             {isCreate ? 'Connect to existing safe' : 'Create new safe'}
           </button>
@@ -95,12 +96,7 @@ function App () {
         </section>
       )}
 
-      {safe && (
-        <section className="selectedSafe">
-          <h2>Step 3: Safe Connected</h2>
-          <p><strong>Safe Address: </strong>{safe.getAddress()}</p>
-        </section>
-      )}
+      {safe && <SafeInteraction safe={safe} />}
     </div>
   )
 }

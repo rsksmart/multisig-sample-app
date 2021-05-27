@@ -22,7 +22,7 @@ const Web3Provider: React.FC<Interface> = ({ rLogin, setRLoginResponse, handleEr
 
   return (
     <section className="login">
-      <h2>Step 1: Login with your wallet</h2>
+      <h2>Login with your wallet</h2>
       <RLoginButton onClick={handleLogin}>Connect with rLogin!</RLoginButton>
     </section>
   )
