@@ -28,14 +28,18 @@ $white-color: #ffffff;
     list-style-type: none;
   }
 
-  button {
+  button, a.button {
     padding: 10px 20px;
     margin: 5px;
     border: none;
     cursor: pointer;
+    color: $black-color;
+    text-decoration: none;
+    background-color: $gray-color;
+    font-size: 12px;
   }
 
-  button:hover:not([disabled]) {
+  button:hover:not([disabled]), .button:hover {
     background-color: #ccc;
   }
 
