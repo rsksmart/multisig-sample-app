@@ -20,12 +20,7 @@ $white-color: #ffffff;
     color: $blue-color;
   }
   
-  @keyframes App-logo-spin {
-    from {
-      transform: rotate(0deg);
-    }
-    to {
-      transform: rotate(360deg);
-    }
-  }  
+  ul {
+    list-style-type: none;
+  } 
 }
