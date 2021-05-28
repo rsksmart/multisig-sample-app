@@ -1,22 +1,19 @@
 import React from 'react'
-import ValueWithButtons from './shared/ValueWithButtons'
+import rifSafeLogo from '../images/rif-safe-header.svg'
 
 interface Interface {
-  address: string | null
   chainId: number | null
   handleLogout: () => void
 }
 
-const ConnectedBar: React.FC<Interface> = ({ address, chainId, handleLogout }) => {
+const ConnectedBar: React.FC<Interface> = ({ chainId, handleLogout }) => {
   return (
-    <div className="connectedBar">
+    <section className="header">
       <ul className="inline">
-        <li><strong>Wallet connected</strong></li>
-        <li>{address && <ValueWithButtons value={address} />}</li>
-        <li><em>{chainId === 31 ? 'RSK Testnet' : 'RSK Mainnet'}</em></li>
-        <li><button className="disconnect" onClick={handleLogout}>Disconnect</button></li>
+        <li><img src={rifSafeLogo} alt="RIF Safe" /></li>
+        <li className="chainId"><span>{chainId === 31 ? 'RSK Testnet' : 'RSK Mainnet'}</span></li>
       </ul>
-    </div>
+    </section>
   )
 }
 

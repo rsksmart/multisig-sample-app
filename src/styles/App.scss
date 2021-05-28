@@ -1,0 +1,45 @@
+$black: #282c34;
+$blue: #008ff7;
+$turquoise: #47C4E1;
+$white: #ffffff;
+$gray: #919191;
+$mediumGray: #CCCACD;
+$lightGray: #E1E1E1;
+$red: #F28282;
+$deepRed: #952c2c;
+$orange: #ee9240;
+
+body {
+  background-color: #faf9f9; 
+}
+
+.App { 
+  height: 100vh;
+  min-height: 100%;
+
+  section {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px 0;
+  }
+
+  ul {
+    list-style-type: none;
+  }
+
+  .icon-color {
+    fill: rgb(178, 181, 178);
+  }
+
+  // components
+  @import './typography';
+  @import './forms';
+  @import './errors';
+  @import './panel.scss';
+}
+
+// pages
+@import './signin';
+@import './header';
+@import './connectSafe.scss';
+

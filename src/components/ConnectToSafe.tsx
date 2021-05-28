@@ -6,9 +6,10 @@ interface Interface {
   web3Provider: any
   setSafe: (safe: EthersSafe) => void
   handleError: (error: Error) => void
+  switchView: () => void
 }
 
-const ConnectToSafe: React.FC<Interface> = ({ web3Provider, setSafe, handleError }) => {
+const ConnectToSafe: React.FC<Interface> = ({ web3Provider, setSafe, handleError, switchView }) => {
   const [safeAddress, setSafeAddress] = useState<string>('0xFa5C0Ff042F54158613D755d5a61c1A00dD1ccE1')
 
   const connectToSafe = () =>
@@ -21,8 +22,12 @@ const ConnectToSafe: React.FC<Interface> = ({ web3Provider, setSafe, handleError
       .catch(handleError)
 
   return (
-    <div>
-      <h3>Connect to an existing safe</h3>
+    <div className="panel connectSafe">
+      <h3>
+        Connect to an existing safe
+        <button onClick={switchView}>Create Safe</button>
+      </h3>
+      <label>Safe address</label>
       <input type="text" value={safeAddress} onChange={evt => setSafeAddress(evt.target.value)} />
       <button onClick={connectToSafe}>Connect</button>
     </div>

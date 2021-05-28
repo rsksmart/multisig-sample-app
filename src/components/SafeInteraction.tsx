@@ -55,32 +55,24 @@ const SafeInteraction: React.FC<Interface> = ({ web3Provider, safe }) => {
   return (
     <section className="selectedSafe">
       <h2>Connected to safe</h2>
-      <table>
-        <tr>
-          <th>Safe Address</th>
-          <td><ValueWithButtons value={safeAddress} /></td>
-        </tr>
-        <tr>
-          <th>Balance</th>
-          <td>{(balance / 1000000000000000000).toString()}</td>
-        </tr>
-        <tr>
-          <th>Owners</th>
-          <td>
-            {owners.map((owner: string) => <ValueWithButtons key={owner} value={owner} />)}
-          </td>
-        </tr>
-        <tr>
-          <th>Threshold</th>
-          <td>{threshold}</td>
-        </tr>
-      </table>
+      <section className="panel">
+        <h3>Safe Information</h3>
+        <dl>
+          <dt>Safe Address</dt>
+          <dd><ValueWithButtons value={safeAddress} /></dd>
+          <dt>Balance</dt>
+          <dd className="text">{(balance / 1000000000000000000).toString()}</dd>
+          <dt>Owners</dt>
+          {owners.map((owner: string) => <dd key={owner}><ValueWithButtons value={owner} /></dd>)}
+          <dt>Threshold</dt>
+          <dd className="text">{threshold}</dd>
+        </dl>
+      </section>
 
-      <h3>Transactions</h3>
-      <fieldset>
-        <legend>New Transaction</legend>
+      <section className="panel">
+        <h3>Transactions</h3>
         <button onClick={createTransaction}>Create Transaction</button>
-      </fieldset>
+      </section>
     </section>
   )
 }
