@@ -34,3 +34,9 @@ button[disabled] {
 button.icon, button:hover.icon {
   background-color: rgba(0,0,0,0)
 }
+
+label {
+  font-size: 85%;
+  color: $gray;
+  display: block;
+}

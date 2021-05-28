@@ -17,21 +17,20 @@ const ChooseSafe: React.FC<Interface> = ({ web3Provider, handleSetSafe, handleEr
   return (
     <section className="connect">
       <h2>Create a safe, or connect to an existing one</h2>
-      <button onClick={() => setIsCreate(!isCreate)}>
-        {isCreate ? 'Connect to existing safe' : 'Create new safe'}
-      </button>
       {isCreate ? (
         <CreateSafe
           web3Provider={web3Provider}
           setSafe={handleSetSafe}
           handleError={handleError}
           connectAddress={address}
+          switchView={() => setIsCreate(!isCreate)}
         />
       ) : (
         <ConnectToSafe
           web3Provider={web3Provider}
           setSafe={handleSetSafe}
           handleError={handleError}
+          switchView={() => setIsCreate(!isCreate)}
         />
       )}
     </section>

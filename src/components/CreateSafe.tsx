@@ -8,6 +8,7 @@ interface Interface {
   connectAddress: string | null
   setSafe: (safe: EthersSafe) => void
   handleError: (error: Error) => void
+  switchView: () => void
 }
 
 const CreateSafe: React.FC<Interface> = ({ web3Provider, connectAddress, setSafe, handleError }) => {
