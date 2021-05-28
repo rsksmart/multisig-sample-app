@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import EthersSafe from '@rsksmart/safe-core-sdk'
 import ValueWithButtons from './shared/ValueWithButtons'
 import Navigation from './Navigation'
+import Transactions from './Transactions'
 
 interface Interface {
   web3Provider: any
