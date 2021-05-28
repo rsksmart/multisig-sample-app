@@ -21,7 +21,7 @@ const ConnectToSafe: React.FC<Interface> = ({ web3Provider, setSafe, handleError
       .catch(handleError)
 
   return (
-    <div>
+    <div className="panel">
       <h3>Connect to an existing safe</h3>
       <input type="text" value={safeAddress} onChange={evt => setSafeAddress(evt.target.value)} />
       <button onClick={connectToSafe}>Connect</button>

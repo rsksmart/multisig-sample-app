@@ -4,10 +4,9 @@ import EthersSafe from '@rsksmart/safe-core-sdk'
 
 import './styles/App.scss'
 import Web3Provider from './components/Web3Provider'
-import CreateSafe from './components/CreateSafe'
-import ConnectToSafe from './components/ConnectToSafe'
 import ConnectedBar from './components/ConnectedBar'
 import SafeInteraction from './components/SafeInteraction'
+import ChooseSafe from './components/ChooseSafe'
 
 const rLogin = new RLogin({
   cacheProvider: false,
@@ -24,9 +23,6 @@ function App () {
   // provider variables
   const [address, setAddress] = useState<string | null>(null)
   const [chainId, setChainId] = useState<number | null>(null)
-
-  // UI variables
-  const [isCreate, setIsCreate] = useState<boolean>(false)
 
   const web3ProviderResponse = (response: any, address: string, chainId: number) => {
     setRLoginResponse(response)
@@ -59,7 +55,7 @@ function App () {
           setRLoginResponse={web3ProviderResponse}
           handleError={handleError}
         />
-      ) : <ConnectedBar handleLogout={handleLogout} address={address} chainId={chainId} />
+      ) : <ConnectedBar handleLogout={handleLogout} chainId={chainId} />
       }
 
       {error && (
@@ -70,26 +66,12 @@ function App () {
       )}
 
       {rLoginResponse && !safe && (
-        <section className="connect">
-          <h2>Create a safe, or connect to an existing one</h2>
-          <button onClick={() => setIsCreate(!isCreate)}>
-            {isCreate ? 'Connect to existing safe' : 'Create new safe'}
-          </button>
-          {isCreate ? (
-            <CreateSafe
-              web3Provider={rLoginResponse.provider}
-              setSafe={handleSetSafe}
-              handleError={handleError}
-              connectAddress={address}
-            />
-          ) : (
-            <ConnectToSafe
-              web3Provider={rLoginResponse.provider}
-              setSafe={handleSetSafe}
-              handleError={handleError}
-            />
-          )}
-        </section>
+        <ChooseSafe
+          web3Provider={rLoginResponse.provider}
+          handleSetSafe={handleSetSafe}
+          handleError={handleError}
+          address={address}
+        />
       )}
 
       {safe && <SafeInteraction web3Provider={rLoginResponse?.provider} safe={safe} />}

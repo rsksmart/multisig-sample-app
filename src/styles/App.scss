@@ -28,22 +28,6 @@ $orange: #ee9240;
     fill: rgb(178, 181, 178);
   }
 
-  section.error {
-    color: $red;
-    background-color: $deepRed;
-    position: relative;
-    padding: 5px 20px;
-    margin-top: 25px;
-
-    button, button:hover {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      background-color: #f8d7da;
-      color: $red;
-    }
-  }
-
   table {
     width: 100%;
     text-align: left;
@@ -61,7 +45,8 @@ $orange: #ee9240;
   }
   // components
   @import './forms';
-
+  @import './errors';
+  @import './panel.scss';
 }
 
 // pages
