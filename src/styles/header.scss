@@ -1,0 +1,52 @@
+.header {
+  margin: 0;
+  padding: 0;
+
+  ul.inline {
+    margin: 0;
+    padding: 0;
+
+    li {
+      display: inline-block;
+      margin-right: 30px;
+
+      img {
+        width: 100px;
+      }
+
+      button, .button {
+        padding: 10px;
+      }
+
+      button.disconnect {
+        border: 1px solid #ccc;
+        font-size: 14px;
+      }
+    }
+
+    li.chainId {
+      float: right;
+      margin-top: 15px;
+      border: 1px solid $gray;
+      padding: 10px 20px 10px 30px;
+      border-radius: 15px;
+
+      span {
+        position: relative;
+      }
+
+      span::before {
+        position: absolute;
+        right: 98%;
+        top: 45%;
+        transform: translate(-5px, -50%);
+        content: "";
+        display: block;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: rgb(64, 213, 18);
+      }
+    }
+  }
+}
