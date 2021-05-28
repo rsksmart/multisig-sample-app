@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import RLogin from '@rsksmart/rlogin'
 import EthersSafe from '@rsksmart/safe-core-sdk'
 
-import './App.scss'
+import './styles/App.scss'
 import Web3Provider from './components/Web3Provider'
 import CreateSafe from './components/CreateSafe'
 import ConnectToSafe from './components/ConnectToSafe'
@@ -52,11 +52,7 @@ function App () {
   }
 
   return (
-    <div className="App">
-      <div className="App-header">
-        RIF Multisig Sample App
-      </div>
-
+    <div className={rLoginResponse ? 'App' : 'App signin'}>
       {!rLoginResponse ? (
         <Web3Provider
           rLogin={rLogin}

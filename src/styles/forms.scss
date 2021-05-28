@@ -1,0 +1,36 @@
+input {
+  min-width: 250px;
+  padding: 10px;
+}
+
+input:focus{
+  outline: none;
+}
+
+select {
+  padding: 10px;
+  margin: 0 10px;
+}
+
+button, a.button {
+  padding: 10px 20px;
+  margin: 5px;
+  border: none;
+  cursor: pointer;
+  color: $black;
+  text-decoration: none;
+  background-color: $gray;
+  font-size: 12px;
+}
+
+button:hover:not([disabled]), .button:hover {
+  background-color: $gray;
+}
+
+button[disabled] {
+  cursor: not-allowed;
+}
+
+button.icon, button:hover.icon {
+  background-color: rgba(0,0,0,0)
+}

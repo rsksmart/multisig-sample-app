@@ -1,0 +1,96 @@
+$black: #282c34;
+$blue: #008ff7;
+$turquoise: #47C4E1;
+$white: #ffffff;
+$gray: #919191;
+$mediumGray: #CCCACD;
+$lightGray: #E1E1E1;
+$red: #F28282;
+$deepRed: #952c2c;
+$orange: #ee9240;
+
+.App {
+  text-align: center;
+  
+  .App-link {
+    color: $blue;
+  }
+  
+  section {
+    padding: 20px 0;
+    margin: 0 auto;
+    max-width: 750px;
+  }
+
+  ul {
+    list-style-type: none;
+  }
+
+  .icon-color {
+    fill: rgb(178, 181, 178);
+  }
+ 
+
+  .connectedBar {
+    background-color: $gray;
+    margin: 0;
+    padding: 0;
+
+    ul.inline {
+      margin: 0;
+      padding: 0;
+      li {
+        display: inline-block;
+        margin-right: 20px;
+
+        button, .button {
+          padding: 10px;
+        }
+
+        button.disconnect {
+          border: 1px solid #ccc;
+          font-size: 14px;
+        }
+      }
+    }
+  }
+
+  section.error {
+    color: $red;
+    background-color: $deepRed;
+    position: relative;
+    padding: 5px 20px;
+    margin-top: 25px;
+
+    button, button:hover {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background-color: #f8d7da;
+      color: $red;
+    }
+  }
+
+  table {
+    width: 100%;
+    text-align: left;
+    tr {
+      
+      td, th {
+        border-bottom: 1px solid $gray;
+        padding: 3px;
+      }
+
+      th {
+        width: 25%;
+      }
+    }
+  }
+  // components
+  @import './forms';
+
+}
+
+// pages
+@import './signin';
+
