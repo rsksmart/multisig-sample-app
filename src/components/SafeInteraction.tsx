@@ -2,13 +2,15 @@ import React, { useState, useEffect } from 'react'
 import EthersSafe, { SafeTransaction } from '@rsksmart/safe-core-sdk'
 import ValueWithButtons from './shared/ValueWithButtons'
 import { ethers } from 'ethers'
+import Navigation from './Navigation'
 
 interface Interface {
   web3Provider: any
   safe: EthersSafe
+  handleLogout: () => void
 }
 
-const SafeInteraction: React.FC<Interface> = ({ web3Provider, safe }) => {
+const SafeInteraction: React.FC<Interface> = ({ web3Provider, safe, handleLogout }) => {
   const [safeAddress, setSafeAddress] = useState<string>('')
   const [balance, setBalance] = useState<number>(0)
   const [owners, setOwners] = useState<string[]>([])
@@ -54,7 +56,7 @@ const SafeInteraction: React.FC<Interface> = ({ web3Provider, safe }) => {
 
   return (
     <section className="selectedSafe">
-      <h2>Connected to safe</h2>
+      <Navigation handleLogout={handleLogout} />
       <section className="panel">
         <h3>Safe Information</h3>
         <dl>
