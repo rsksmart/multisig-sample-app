@@ -74,7 +74,13 @@ function App () {
         />
       )}
 
-      {safe && <SafeInteraction web3Provider={rLoginResponse?.provider} safe={safe} />}
+      {safe && (
+        <SafeInteraction
+          web3Provider={rLoginResponse?.provider}
+          safe={safe}
+          handleLogout={handleLogout}
+        />
+      )}
     </div>
   )
 }

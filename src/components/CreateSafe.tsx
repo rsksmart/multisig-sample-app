@@ -69,42 +69,43 @@ const CreateSafe: React.FC<Interface> = ({ web3Provider, connectAddress, switchV
     return items
   }
 
-  return (
-    <section className="panel createSafe">
-      <h3>
+  return isLoading
+    ? <div>Creating safe, please wait...</div>
+    : (
+      <section className="panel createSafe">
+        <h3>
         Create a new safe
-        <button onClick={switchView}>Connect to Safe</button>
-      </h3>
+          <button onClick={switchView}>Connect to Safe</button>
+        </h3>
 
-      <p>
+        <p>
         A safe can have any number of owners associated with it. Your connected address has been added as the first account.<br/>
         Click the <em>Add address</em> button to add additional addresses, and the <em>delete button</em> to remove addresses.
-      </p>
+        </p>
 
-      <ul>
-        {addresses.map((address: string, index: number) => (
-          <li key={index}>
-            <label>Address {index + 1}: </label>
-            <input type="text"
-              id={`address${index}`}
-              value={address}
-              onChange={changeAddressValue} />
-            <button disabled={isLoading} onClick={() => removeAddress(index)}>delete</button>
-          </li>
-        ))}
-      </ul>
-      <button disabled={isLoading} onClick={() => setAddresses([...addresses, ''])}>Add address</button>
+        <ul>
+          {addresses.map((address: string, index: number) => (
+            <li key={index}>
+              <label>Address {index + 1}: </label>
+              <input type="text"
+                id={`address${index}`}
+                value={address}
+                onChange={changeAddressValue} />
+              <button disabled={isLoading} onClick={() => removeAddress(index)}>delete</button>
+            </li>
+          ))}
+        </ul>
+        <button disabled={isLoading} onClick={() => setAddresses([...addresses, ''])}>Add address</button>
 
-      <p>Transactions require the confirmation of at least
-        <select value={threshold.toString()} onChange={evt => setThreshold(parseInt(evt.target.value))}>
-          {loopOptions(addresses.length)}
-        </select>
+        <p>Transactions require the confirmation of at least
+          <select value={threshold.toString()} onChange={evt => setThreshold(parseInt(evt.target.value))}>
+            {loopOptions(addresses.length)}
+          </select>
         signatures.
-      </p>
-      <button disabled={isLoading || addresses.length === 0} onClick={createSafe}>Create Safe!</button>
-      {isLoading && <div>Creating safe, please wait...</div>}
-    </section>
-  )
+        </p>
+        <button disabled={isLoading || addresses.length === 0} onClick={createSafe}>Create Safe!</button>
+      </section>
+    )
 }
 
 export default CreateSafe
