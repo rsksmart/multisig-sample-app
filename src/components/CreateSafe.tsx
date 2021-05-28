@@ -11,7 +11,7 @@ interface Interface {
   switchView: () => void
 }
 
-const CreateSafe: React.FC<Interface> = ({ web3Provider, connectAddress, setSafe, handleError }) => {
+const CreateSafe: React.FC<Interface> = ({ web3Provider, connectAddress, switchView, setSafe, handleError }) => {
   const [addresses, setAddresses] = useState<string[]>([connectAddress ? connectAddress.toLowerCase() : ''])
   const [threshold, setThreshold] = useState<number>(1)
   const [isLoading, setIsLoading] = useState<boolean>(false)
@@ -70,10 +70,17 @@ const CreateSafe: React.FC<Interface> = ({ web3Provider, connectAddress, setSafe
   }
 
   return (
-    <div>
-      <h3>Create a new safe</h3>
+    <section className="panel createSafe">
+      <h3>
+        Create a new safe
+        <button onClick={switchView}>Connect to Safe</button>
+      </h3>
 
-      <p>A safe can have any number of owners associated with it. Your connected address has been added as the first account. Click the <em>Add address</em> button to add additional addresses, and the <em>delete button</em> to remove addresses.</p>
+      <p>
+        A safe can have any number of owners associated with it. Your connected address has been added as the first account.<br/>
+        Click the <em>Add address</em> button to add additional addresses, and the <em>delete button</em> to remove addresses.
+      </p>
+
       <ul>
         {addresses.map((address: string, index: number) => (
           <li key={index}>
@@ -96,7 +103,7 @@ const CreateSafe: React.FC<Interface> = ({ web3Provider, connectAddress, setSafe
       </p>
       <button disabled={isLoading || addresses.length === 0} onClick={createSafe}>Create Safe!</button>
       {isLoading && <div>Creating safe, please wait...</div>}
-    </div>
+    </section>
   )
 }
 
