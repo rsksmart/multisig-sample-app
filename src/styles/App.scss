@@ -9,8 +9,11 @@ $red: #F28282;
 $deepRed: #952c2c;
 $orange: #ee9240;
 
-.App {
-  background-color: #faf9f9;  
+body {
+  background-color: #faf9f9; 
+}
+
+.App { 
   height: 100vh;
   min-height: 100%;
 
@@ -28,22 +31,8 @@ $orange: #ee9240;
     fill: rgb(178, 181, 178);
   }
 
-  table {
-    width: 100%;
-    text-align: left;
-    tr {
-      
-      td, th {
-        border-bottom: 1px solid $gray;
-        padding: 3px;
-      }
-
-      th {
-        width: 25%;
-      }
-    }
-  }
   // components
+  @import './typography';
   @import './forms';
   @import './errors';
   @import './panel.scss';
