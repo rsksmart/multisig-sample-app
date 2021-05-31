@@ -3,6 +3,8 @@ import { ethers } from 'ethers'
 import EthersSafe, { EthersSafeFactory } from '@rsksmart/safe-core-sdk'
 import { isAddress } from '@ethersproject/address'
 
+import { proxyFactoryAddress, safeSingletonAddress } from '../config/local.json'
+
 interface Interface {
   web3Provider: any
   connectAddress: string | null
@@ -46,13 +48,10 @@ const CreateSafe: React.FC<Interface> = ({ web3Provider, connectAddress, switchV
     const provider = new ethers.providers.Web3Provider(web3Provider)
     const signer = provider.getSigner()
 
-    const safeSingletonAddress = '0xffd41b816f2821e579b4da85c7352bf4f17e4fa5'
-    const proxyFactoryAddress = '0x5b836117aed4ca4dee8e2e464f97f7f59b426c5a'
-
     const safeFactory = new EthersSafeFactory(
       signer,
-      proxyFactoryAddress,
-      safeSingletonAddress
+      proxyFactoryAddress.toLowerCase(),
+      safeSingletonAddress.toLowerCase()
     )
 
     safeFactory.createSafe({ owners: addresses, threshold })

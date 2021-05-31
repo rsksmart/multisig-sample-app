@@ -10,7 +10,7 @@ interface Interface {
 }
 
 const ConnectToSafe: React.FC<Interface> = ({ web3Provider, setSafe, handleError, switchView }) => {
-  const [safeAddress, setSafeAddress] = useState<string>('0xFa5C0Ff042F54158613D755d5a61c1A00dD1ccE1')
+  const [safeAddress, setSafeAddress] = useState<string>('')
 
   const connectToSafe = () =>
     EthersSafe.create(

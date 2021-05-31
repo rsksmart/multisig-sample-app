@@ -10,7 +10,7 @@ interface Interface {
   handleLogout: () => void
 }
 
-const SafeInteraction: React.FC<Interface> = ({ safe, handleLogout }) => {
+const SafeInteraction: React.FC<Interface> = ({ safe, web3Provider, handleLogout }) => {
   const [safeAddress, setSafeAddress] = useState<string>('')
   const [balance, setBalance] = useState<number>(0)
   const [owners, setOwners] = useState<string[]>([])
@@ -51,6 +51,8 @@ const SafeInteraction: React.FC<Interface> = ({ safe, handleLogout }) => {
           </tbody>
         </table>
       </section>
+
+      <Transactions safeAddress={safeAddress} web3Provider={web3Provider} />
     </section>
   )
 }

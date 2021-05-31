@@ -10,7 +10,7 @@ import ChooseSafe from './components/ChooseSafe'
 
 const rLogin = new RLogin({
   cacheProvider: false,
-  supportedChains: [31]
+  supportedChains: [31, 1337]
 })
 
 function App () {
