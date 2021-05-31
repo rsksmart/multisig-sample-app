@@ -31,8 +31,13 @@ body {
     fill: rgb(178, 181, 178);
   }
 
+  h2 {
+    color: $black;
+    font-weight: 400 !important;
+  }
+
   // components
-  @import './typography';
+  @import './table';
   @import './forms';
   @import './errors';
   @import './panel.scss';
