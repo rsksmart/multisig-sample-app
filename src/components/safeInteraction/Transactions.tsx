@@ -44,7 +44,6 @@ const Transactions: React.FC<Interface> = ({ safeAddress, web3Provider }) => {
     getSigner().then((safe: EthersSafe) => {
       safe.approveTransactionHash(transaction.hash)
         .then((result: ContractTransaction) => {
-          console.log('result!', result)
           safe.getOwnersWhoApprovedTx(transaction.hash)
             .then((signers: string[]) => {
               const newTransaction = { ...transaction, signers }
