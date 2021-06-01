@@ -7,10 +7,15 @@ ul.navigation {
     display: inline-block;
     padding: 10px;
     font-size: 18px;
-  }
 
-  li.selected {
-    border-bottom: 2px solid $blue;
+    button, button:hover {
+      background: none;
+      font-size: 18px;
+    }
+
+    button.selected {
+      border-bottom: 2px solid $blue;
+    }
   }
 
   li.logout {

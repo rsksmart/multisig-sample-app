@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, MouseEvent } from 'react'
 import EthersSafe from '@rsksmart/safe-core-sdk'
 import Navigation from './Navigation'
 import Transactions from './Transactions'
@@ -11,11 +11,14 @@ interface Interface {
 }
 
 const SafeInteraction: React.FC<Interface> = ({ safe, web3Provider, handleLogout }) => {
+  const [selectedTab, setSelectedTab] = useState<string>('dashboard')
+  const changeActive = (evt: MouseEvent<HTMLButtonElement>) => setSelectedTab(evt.currentTarget.id)
+
   return (
     <section className="selectedSafe">
-      <Navigation handleLogout={handleLogout} />
-      <Dashboard safe={safe} />
-      <Transactions safeAddress={safe.getAddress()} web3Provider={web3Provider} />
+      <Navigation handleLogout={handleLogout} changeActive={changeActive} selected={selectedTab} />
+      {selectedTab === 'dashboard' && <Dashboard safe={safe} />}
+      {selectedTab === 'transactions' && <Transactions safeAddress={safe.getAddress()} web3Provider={web3Provider} />}
     </section>
   )
 }
