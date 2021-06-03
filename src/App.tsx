@@ -5,12 +5,12 @@ import EthersSafe from '@rsksmart/safe-core-sdk'
 import './styles/App.scss'
 import Web3Provider from './components/Web3Provider'
 import ConnectedBar from './components/ConnectedBar'
-import SafeInteraction from './components/SafeInteraction'
+import SafeInteraction from './components/safeInteraction'
 import ChooseSafe from './components/ChooseSafe'
 
 const rLogin = new RLogin({
   cacheProvider: false,
-  supportedChains: [31]
+  supportedChains: [31, 1337]
 })
 
 function App () {
