@@ -3,10 +3,9 @@ import rifSafeLogo from '../images/rif-safe-header.svg'
 
 interface Interface {
   chainId: number | null
-  handleLogout: () => void
 }
 
-const ConnectedBar: React.FC<Interface> = ({ chainId, handleLogout }) => {
+const ConnectedBar: React.FC<Interface> = ({ chainId }) => {
   return (
     <section className="header">
       <ul className="inline">
