@@ -55,7 +55,7 @@ function App () {
           setRLoginResponse={web3ProviderResponse}
           handleError={handleError}
         />
-      ) : <ConnectedBar handleLogout={handleLogout} chainId={chainId} />
+      ) : <ConnectedBar chainId={chainId} />
       }
 
       {error && (
