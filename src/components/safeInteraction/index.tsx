@@ -1,12 +1,12 @@
 import React, { useState, MouseEvent } from 'react'
-import EthersSafe from '@rsksmart/safe-core-sdk'
+import { Safe } from '@gnosis.pm/safe-core-sdk'
 import Navigation from './Navigation'
 import Transactions from './Transactions'
 import Dashboard from './Dashboard'
 
 interface Interface {
   web3Provider: any
-  safe: EthersSafe
+  safe: Safe
   handleLogout: () => void
 }
 

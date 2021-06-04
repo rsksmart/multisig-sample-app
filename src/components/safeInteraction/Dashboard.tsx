@@ -1,9 +1,9 @@
-import EthersSafe from '@rsksmart/safe-core-sdk'
+import { Safe } from '@gnosis.pm/safe-core-sdk'
 import React, { useEffect, useState } from 'react'
 import ValueWithButtons from '../shared/ValueWithButtons'
 
 interface Interface {
-  safe: EthersSafe
+  safe: Safe
 }
 
 const Dashboard: React.FC<Interface> = ({ safe }) => {

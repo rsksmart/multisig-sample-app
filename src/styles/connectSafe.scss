@@ -1,9 +1,13 @@
-.connectSafe, .createSafe {
+.connect {
   input {
     width: 600px;
   }
 
-  h3 button {
-    float: right;
+  h2 {
+    font-size: 22px;
+
+    button {
+      float: right;
+    }
   }
 }
