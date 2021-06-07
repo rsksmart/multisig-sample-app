@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Safe, SafeTransaction } from '@gnosis.pm/safe-core-sdk'
-import ValueWithButtons from '../../components/ValueWithButtons'
+import ValueWithButtons from '../../../components/ValueWithButtons'
+import ChangeThresholdModal from './ChangeThresholdModal'
 
 interface Interface {
   safe: Safe
@@ -17,8 +18,8 @@ const PolicyComponent: React.FC<Interface> = ({ safe, addTransaction, handleErro
     safe.getThreshold().then((result: number) => setThreshold(result))
   }, [safe])
 
-  const changeThreshold = () => {
-    safe.getChangeThresholdTx(1)
+  const changeThreshold = (newThreshold: number) => {
+    safe.getChangeThresholdTx(newThreshold)
       .then((transaction: SafeTransaction) =>
         safe.signTransaction(transaction)
           .then(() => addTransaction(transaction))
@@ -43,7 +44,8 @@ const PolicyComponent: React.FC<Interface> = ({ safe, addTransaction, handleErro
           </tr>
         </tbody>
       </table>
-      <button onClick={changeThreshold}>Change Threshold</button>
+
+      {threshold && <ChangeThresholdModal numberOfOwners={owners.length} currentThreshold={threshold} handleSubmit={changeThreshold} />}
     </section>
   )
 }

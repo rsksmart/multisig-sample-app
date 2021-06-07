@@ -3,7 +3,7 @@ import { Safe, SafeTransaction } from '@gnosis.pm/safe-core-sdk'
 import Navigation from './Navigation'
 import TransactionsPanel from './transactions'
 import Dashboard from './Dashboard'
-import PolicyComponent from './PolicyComponent'
+import PolicyComponent from './policies'
 
 interface Interface {
   web3Provider: any
