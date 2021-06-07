@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import RLogin from '@rsksmart/rlogin'
-import EthersSafe from '@rsksmart/safe-core-sdk'
 import { Safe } from '@gnosis.pm/safe-core-sdk'
 
 import './styles/App.scss'
@@ -80,6 +79,7 @@ function App () {
           web3Provider={rLoginResponse?.provider}
           safe={safe}
           handleLogout={handleLogout}
+          handleError={handleError}
         />
       )}
     </div>

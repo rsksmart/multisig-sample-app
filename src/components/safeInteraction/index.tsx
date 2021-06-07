@@ -3,14 +3,16 @@ import { Safe } from '@gnosis.pm/safe-core-sdk'
 import Navigation from './Navigation'
 import Transactions from './Transactions'
 import Dashboard from './Dashboard'
+import PolicyComponent from './PolicyComponent'
 
 interface Interface {
   web3Provider: any
   safe: Safe
   handleLogout: () => void
+  handleError: (err: Error) => void
 }
 
-const SafeInteraction: React.FC<Interface> = ({ safe, web3Provider, handleLogout }) => {
+const SafeInteraction: React.FC<Interface> = ({ safe, web3Provider, handleError, handleLogout }) => {
   const [selectedTab, setSelectedTab] = useState<string>('dashboard')
   const changeActive = (evt: MouseEvent<HTMLButtonElement>) => setSelectedTab(evt.currentTarget.id)
 
@@ -19,6 +21,7 @@ const SafeInteraction: React.FC<Interface> = ({ safe, web3Provider, handleLogout
       <Navigation handleLogout={handleLogout} changeActive={changeActive} selected={selectedTab} />
       {selectedTab === 'dashboard' && <Dashboard safe={safe} />}
       {selectedTab === 'transactions' && <Transactions safeAddress={safe.getAddress()} web3Provider={web3Provider} />}
+      {selectedTab === 'policy' && <PolicyComponent safe={safe} handleError={handleError} />}
     </section>
   )
 }
