@@ -5,9 +5,10 @@ import ValueWithButtons from '../../components/ValueWithButtons'
 interface Interface {
   safe: Safe
   handleError: (err: Error) => void
+  addTransaction: (transaction: SafeTransaction) => void
 }
 
-const PolicyComponent: React.FC<Interface> = ({ safe, handleError }) => {
+const PolicyComponent: React.FC<Interface> = ({ safe, addTransaction, handleError }) => {
   const [owners, setOwners] = useState<string[]>([])
   const [threshold, setThreshold] = useState<number>(0)
 
@@ -18,20 +19,10 @@ const PolicyComponent: React.FC<Interface> = ({ safe, handleError }) => {
 
   const changeThreshold = () => {
     safe.getChangeThresholdTx(1)
-      .then((transaction: SafeTransaction) => {
-        console.log('good', transaction)
-        // transaction.get
+      .then((transaction: SafeTransaction) =>
         safe.signTransaction(transaction)
-          .then((result: any) => {
-            console.log('signed', result)
-            safe.executeTransaction(transaction)
-              .then((result: any) => {
-                console.log('result2', result)
-              })
-              .catch(handleError)
-          })
-          .catch(handleError)
-      })
+          .then(() => addTransaction(transaction))
+          .catch(handleError))
       .catch(handleError)
   }
 

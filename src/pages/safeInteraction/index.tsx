@@ -1,7 +1,7 @@
 import React, { useState, MouseEvent } from 'react'
-import { Safe } from '@gnosis.pm/safe-core-sdk'
+import { Safe, SafeTransaction } from '@gnosis.pm/safe-core-sdk'
 import Navigation from './Navigation'
-import TransactionsPanel from './TransactionsPanel'
+import TransactionsPanel from './transactions'
 import Dashboard from './Dashboard'
 import PolicyComponent from './PolicyComponent'
 
@@ -13,15 +13,20 @@ interface Interface {
 }
 
 const SafeInteraction: React.FC<Interface> = ({ safe, web3Provider, handleError, handleLogout }) => {
+  // UI Only
   const [selectedTab, setSelectedTab] = useState<string>('dashboard')
   const changeActive = (evt: MouseEvent<HTMLButtonElement>) => setSelectedTab(evt.currentTarget.id)
+
+  // Transaction Management
+  const [transactions, setTransactions] = useState<SafeTransaction[]>([])
+  const addTransaction = (transaction: SafeTransaction) => setTransactions([...transactions, transaction])
 
   return (
     <section className="selectedSafe">
       <Navigation handleLogout={handleLogout} changeActive={changeActive} selected={selectedTab} />
       {selectedTab === 'dashboard' && <Dashboard safe={safe} />}
-      {selectedTab === 'transactions' && <TransactionsPanel safe={safe} handleError={handleError} web3Provider={web3Provider} />}
-      {selectedTab === 'policy' && <PolicyComponent safe={safe} handleError={handleError} />}
+      {selectedTab === 'transactions' && <TransactionsPanel transactions={transactions} addTransaction={addTransaction} safe={safe} handleError={handleError} />}
+      {selectedTab === 'policy' && <PolicyComponent safe={safe} addTransaction={addTransaction} handleError={handleError} />}
     </section>
   )
 }
