@@ -1,7 +1,7 @@
 import React, { useState, MouseEvent } from 'react'
 import { Safe } from '@gnosis.pm/safe-core-sdk'
 import Navigation from './Navigation'
-import Transactions from './Transactions'
+import TransactionsPanel from './TransactionsPanel'
 import Dashboard from './Dashboard'
 import PolicyComponent from './PolicyComponent'
 
@@ -20,7 +20,7 @@ const SafeInteraction: React.FC<Interface> = ({ safe, web3Provider, handleError,
     <section className="selectedSafe">
       <Navigation handleLogout={handleLogout} changeActive={changeActive} selected={selectedTab} />
       {selectedTab === 'dashboard' && <Dashboard safe={safe} />}
-      {selectedTab === 'transactions' && <Transactions safeAddress={safe.getAddress()} web3Provider={web3Provider} />}
+      {selectedTab === 'transactions' && <TransactionsPanel safe={safe} handleError={handleError} web3Provider={web3Provider} />}
       {selectedTab === 'policy' && <PolicyComponent safe={safe} handleError={handleError} />}
     </section>
   )

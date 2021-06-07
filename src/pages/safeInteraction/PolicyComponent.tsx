@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
-import { Safe } from '@gnosis.pm/safe-core-sdk'
-import ValueWithButtons from '../shared/ValueWithButtons'
+import { Safe, SafeTransaction } from '@gnosis.pm/safe-core-sdk'
+import ValueWithButtons from '../../components/ValueWithButtons'
 
 interface Interface {
   safe: Safe
@@ -18,7 +18,20 @@ const PolicyComponent: React.FC<Interface> = ({ safe, handleError }) => {
 
   const changeThreshold = () => {
     safe.getChangeThresholdTx(1)
-      .then((result: any) => console.log('good', result))
+      .then((transaction: SafeTransaction) => {
+        console.log('good', transaction)
+        // transaction.get
+        safe.signTransaction(transaction)
+          .then((result: any) => {
+            console.log('signed', result)
+            safe.executeTransaction(transaction)
+              .then((result: any) => {
+                console.log('result2', result)
+              })
+              .catch(handleError)
+          })
+          .catch(handleError)
+      })
       .catch(handleError)
   }
 

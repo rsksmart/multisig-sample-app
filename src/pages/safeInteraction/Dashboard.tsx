@@ -1,6 +1,6 @@
 import { Safe } from '@gnosis.pm/safe-core-sdk'
 import React, { useEffect, useState } from 'react'
-import ValueWithButtons from '../shared/ValueWithButtons'
+import ValueWithButtons from '../../components/ValueWithButtons'
 
 interface Interface {
   safe: Safe
