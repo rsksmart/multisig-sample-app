@@ -1,12 +1,13 @@
 import React, { useState } from 'react'
 import RLogin from '@rsksmart/rlogin'
 import EthersSafe from '@rsksmart/safe-core-sdk'
+import { Safe } from '@gnosis.pm/safe-core-sdk'
 
 import './styles/App.scss'
 import Web3Provider from './components/Web3Provider'
 import ConnectedBar from './components/ConnectedBar'
 import SafeInteraction from './components/safeInteraction'
-import ChooseSafe from './components/ChooseSafe'
+import ChooseSafe from './components/ChooseSafeComponent'
 
 const rLogin = new RLogin({
   cacheProvider: false,
@@ -18,7 +19,7 @@ function App () {
 
   // Web3Provider and Safe variables
   const [rLoginResponse, setRLoginResponse] = useState<{ provider: any, disconnect: any } | null>(null)
-  const [safe, setSafe] = useState<EthersSafe | null>(null)
+  const [safe, setSafe] = useState<Safe | null>(null)
 
   // provider variables
   const [address, setAddress] = useState<string | null>(null)
@@ -30,7 +31,7 @@ function App () {
     setChainId(chainId)
   }
 
-  const handleSetSafe = (safe: EthersSafe) => {
+  const handleSetSafe = (safe: any) => {
     setSafe(safe)
     clearError()
   }
