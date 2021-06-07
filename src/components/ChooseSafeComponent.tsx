@@ -1,22 +1,22 @@
 import React, { useState } from 'react'
-import { Safe } from '@gnosis.pm/safe-core-sdk'
-import { EthersSafeFactory } from '@rsksmart/safe-core-sdk'
+import EthersSafe, { Safe } from '@gnosis.pm/safe-core-sdk'
+import { EthersSafeFactory } from '@rsksmart/safe-factory-sdk'
 import { ethers } from 'ethers'
 
 import CreateSafeComponent from './CreateSafeComponent'
-import ConnectToSafe from './ConnectToSafe'
+import ConnectToSafeComponent from './ConnectToSafeComponent'
 import { proxyFactoryAddress, safeSingletonAddress } from '../config/testnet.json'
 
 interface Interface {
   web3Provider: any
-  handleSetSafe: (safe: Safe) => void
+  handleSetSafe: (safe: Safe | EthersSafe) => any
   handleError: (error: Error) => void
   address: string | null
 }
 
 const ChooseSafe: React.FC<Interface> = ({ web3Provider, handleSetSafe, handleError, address }) => {
   // UI variables
-  const [isCreate, setIsCreate] = useState<boolean>(true)
+  const [isCreate, setIsCreate] = useState<boolean>(false)
   const [isLoading, setIsLoading] = useState<boolean>(false)
 
   // Create a new safe:
@@ -38,6 +38,19 @@ const ChooseSafe: React.FC<Interface> = ({ web3Provider, handleSetSafe, handleEr
       .finally(() => setIsLoading(false))
   }
 
+  // Connect to an existing safe:
+  const connectToSafe = (safeAddress: string) => {
+    setIsLoading(true)
+
+    const provider = new ethers.providers.Web3Provider(web3Provider)
+    const signer = provider.getSigner()
+
+    EthersSafe.create(ethers, safeAddress.toLowerCase(), signer)
+      .then((safe: any) => handleSetSafe(safe))
+      .catch(handleError)
+      .finally(() => setIsLoading(false))
+  }
+
   return isLoading ? <div style={{ textAlign: 'center' }}>Loading...</div>
     : (
       <section className="connect panel">
@@ -54,11 +67,8 @@ const ChooseSafe: React.FC<Interface> = ({ web3Provider, handleSetSafe, handleEr
             connectAddress={address}
           />
         ) : (
-          <ConnectToSafe
-            web3Provider={web3Provider}
-            setSafe={handleSetSafe}
-            handleError={handleError}
-            switchView={() => setIsCreate(!isCreate)}
+          <ConnectToSafeComponent
+            connectToSafe={connectToSafe}
           />
         )}
       </section>

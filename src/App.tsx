@@ -31,7 +31,7 @@ function App () {
     setChainId(chainId)
   }
 
-  const handleSetSafe = (safe: Safe) => {
+  const handleSetSafe = (safe: any) => {
     setSafe(safe)
     clearError()
   }
