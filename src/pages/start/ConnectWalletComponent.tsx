@@ -1,7 +1,7 @@
 import React from 'react'
 import { RLoginButton } from '@rsksmart/rlogin'
-import rifSafeLogo from '../images/rif-safe.svg'
-import poweredByLogo from '../images/powered-by-iov.svg'
+import rifSafeLogo from '../../images/rif-safe.svg'
+import poweredByLogo from '../../images/powered-by-iov.svg'
 
 interface Interface {
   rLogin: any

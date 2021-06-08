@@ -5,7 +5,7 @@ import { ethers } from 'ethers'
 
 import CreateSafeComponent from './CreateSafeComponent'
 import ConnectToSafeComponent from './ConnectToSafeComponent'
-import { proxyFactoryAddress, safeSingletonAddress } from '../config/testnet.json'
+import { getContracts } from '../../config'
 
 interface Interface {
   web3Provider: any
@@ -23,13 +23,14 @@ const ChooseSafe: React.FC<Interface> = ({ web3Provider, handleSetSafe, handleEr
   const createSafe = (addresses: string[], threshold: number) => {
     setIsLoading(true)
 
+    const contracts = getContracts(1337)
     const provider = new ethers.providers.Web3Provider(web3Provider)
     const signer = provider.getSigner()
 
     const safeFactory = new EthersSafeFactory(
       signer,
-      proxyFactoryAddress.toLowerCase(),
-      safeSingletonAddress.toLowerCase()
+      contracts.proxyFactoryAddress.toLowerCase(),
+      contracts.safeSingletonAddress.toLowerCase()
     )
 
     safeFactory.createSafe({ owners: addresses, threshold })

@@ -1,13 +1,12 @@
 import React, { useState } from 'react'
 import RLogin from '@rsksmart/rlogin'
-import EthersSafe from '@rsksmart/safe-core-sdk'
 import { Safe } from '@gnosis.pm/safe-core-sdk'
 
 import './styles/App.scss'
-import Web3Provider from './components/Web3Provider'
+import Web3Provider from './pages/start/ConnectWalletComponent'
 import ConnectedBar from './components/ConnectedBar'
-import SafeInteraction from './components/safeInteraction'
-import ChooseSafe from './components/ChooseSafeComponent'
+import SafeInteraction from './pages/safeInteraction'
+import ChooseSafe from './pages/connectToSafe'
 
 const rLogin = new RLogin({
   cacheProvider: false,
@@ -77,9 +76,9 @@ function App () {
 
       {safe && (
         <SafeInteraction
-          web3Provider={rLoginResponse?.provider}
           safe={safe}
           handleLogout={handleLogout}
+          handleError={handleError}
         />
       )}
     </div>

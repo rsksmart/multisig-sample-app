@@ -5,7 +5,7 @@ interface Interface {
 }
 
 const ConnectToSafeComponent: React.FC<Interface> = ({ connectToSafe }) => {
-  const [safeAddress, setSafeAddress] = useState<string>('0xFa5C0Ff042F54158613D755d5a61c1A00dD1ccE1')
+  const [safeAddress, setSafeAddress] = useState<string>('0x3820D3b1382622732dfeb675640dbEd12C12DDEE'.toLowerCase())
 
   return (
     <div>

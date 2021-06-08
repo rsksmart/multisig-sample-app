@@ -6,11 +6,18 @@ interface Interface {
 }
 
 const ConnectedBar: React.FC<Interface> = ({ chainId }) => {
+  const chainIdtoString = (id: number) => {
+    switch (id) {
+      case 31: return 'RSK Testnet'
+      case 30: return 'RSK Mainnet'
+      default: return 'Local'
+    }
+  }
   return (
     <section className="header">
       <ul className="inline">
         <li><img src={rifSafeLogo} alt="RIF Safe" /></li>
-        <li className="chainId"><span>{chainId === 31 ? 'RSK Testnet' : 'RSK Mainnet'}</span></li>
+        <li className="chainId"><span>{chainId && chainIdtoString(chainId)}</span></li>
       </ul>
     </section>
   )
