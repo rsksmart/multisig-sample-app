@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { Safe, SafeTransaction } from '@gnosis.pm/safe-core-sdk'
 import ValueWithButtons from '../../../components/ValueWithButtons'
 import ChangeThresholdModal from './ChangeThresholdModal'
+import AddOwnerModal from './AddOwnerModal'
 
 interface Interface {
   safe: Safe
@@ -18,14 +19,17 @@ const PolicyComponent: React.FC<Interface> = ({ safe, addTransaction, handleErro
     safe.getThreshold().then((result: number) => setThreshold(result))
   }, [safe])
 
-  const changeThreshold = (newThreshold: number) => {
+  // Create transaction for changing the thresold:
+  const changeThreshold = (newThreshold: number) =>
     safe.getChangeThresholdTx(newThreshold)
-      .then((transaction: SafeTransaction) =>
-        safe.signTransaction(transaction)
-          .then(() => addTransaction(transaction))
-          .catch(handleError))
+      .then((transaction: SafeTransaction) => addTransaction(transaction))
       .catch(handleError)
-  }
+
+  // Add an owner and update threshold:
+  const addOwner = (newOwner: string, newThreshold: number) =>
+    safe.getAddOwnerTx(newOwner.toLowerCase(), newThreshold)
+      .then((transaction: SafeTransaction) => addTransaction(transaction))
+      .catch(handleError)
 
   return (
     <section className="section panel">
@@ -35,7 +39,9 @@ const PolicyComponent: React.FC<Interface> = ({ safe, addTransaction, handleErro
           <tr>
             <th>Owners</th>
             <td>
-              {owners.map((owner: string) => <div key={owner} ><ValueWithButtons value={owner} /></div>)}
+              <ul>
+                {owners.map((owner: string) => <li key={owner} ><ValueWithButtons value={owner} /></li>)}
+              </ul>
             </td>
           </tr>
           <tr className="text">
@@ -46,6 +52,8 @@ const PolicyComponent: React.FC<Interface> = ({ safe, addTransaction, handleErro
       </table>
 
       {threshold && <ChangeThresholdModal numberOfOwners={owners.length} currentThreshold={threshold} handleSubmit={changeThreshold} />}
+
+      <AddOwnerModal numberOfOwners={owners.length} handleSubmit={addOwner} />
     </section>
   )
 }

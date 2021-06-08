@@ -76,7 +76,6 @@ function App () {
 
       {safe && (
         <SafeInteraction
-          web3Provider={rLoginResponse?.provider}
           safe={safe}
           handleLogout={handleLogout}
           handleError={handleError}

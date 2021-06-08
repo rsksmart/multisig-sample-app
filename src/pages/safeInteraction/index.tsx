@@ -6,13 +6,12 @@ import Dashboard from './Dashboard'
 import PolicyComponent from './policies'
 
 interface Interface {
-  web3Provider: any
   safe: Safe
   handleLogout: () => void
   handleError: (err: Error) => void
 }
 
-const SafeInteraction: React.FC<Interface> = ({ safe, web3Provider, handleError, handleLogout }) => {
+const SafeInteraction: React.FC<Interface> = ({ safe, handleError, handleLogout }) => {
   // UI Only
   const [selectedTab, setSelectedTab] = useState<string>('dashboard')
   const changeActive = (evt: MouseEvent<HTMLButtonElement>) => setSelectedTab(evt.currentTarget.id)

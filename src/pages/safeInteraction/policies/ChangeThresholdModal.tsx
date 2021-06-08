@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import ThresholdDropdown from '../../../components/ThresholdDropdown'
 
 interface Interface {
   numberOfOwners: number
@@ -20,9 +21,11 @@ const ChangeThresholdModal: React.FC<Interface> = ({ numberOfOwners, currentThre
       <p>Change the number of approvers for a transaction to be executed</p>
       <label>
         New threshold:
-        <select value={newThreshold} onChange={evt => setNewThreshold(parseInt(evt.target.value))}>
-          {options.map((number: number) => <option key={number}>{number}</option>)}
-        </select>
+        <ThresholdDropdown
+          numberOfOwners={numberOfOwners}
+          value={newThreshold}
+          onChange={(value: number) => setNewThreshold(value)}
+        />
       </label>
       <p><button onClick={() => handleSubmit(newThreshold)}>Change threshold</button></p>
     </div>
