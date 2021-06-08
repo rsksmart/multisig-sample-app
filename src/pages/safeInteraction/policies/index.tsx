@@ -3,6 +3,8 @@ import { Safe, SafeTransaction } from '@gnosis.pm/safe-core-sdk'
 import ValueWithButtons from '../../../components/ValueWithButtons'
 import ChangeThresholdModal from './ChangeThresholdModal'
 import AddOwnerModal from './AddOwnerModal'
+import RemoveOwnerModal from './RemoveOwnerModal'
+import SwapOwnerModal from './SwapOwnerModal'
 
 interface Interface {
   safe: Safe
@@ -11,8 +13,15 @@ interface Interface {
 }
 
 const PolicyComponent: React.FC<Interface> = ({ safe, addTransaction, handleError }) => {
+  // Safe variables:
   const [owners, setOwners] = useState<string[]>([])
   const [threshold, setThreshold] = useState<number>(0)
+
+  // UI components:
+  const [addNewOwner, setNewOwner] = useState<boolean>(false)
+  const [changeThreshold, setChangeThreshold] = useState<boolean>(false)
+  const [removeOwner, setRemoveOwner] = useState<null | string>(null)
+  const [swapOwner, setSwapOwner] = useState<null | string>(null)
 
   useEffect(() => {
     safe.getOwners().then((owners: string[]) => setOwners(owners))
@@ -20,14 +29,26 @@ const PolicyComponent: React.FC<Interface> = ({ safe, addTransaction, handleErro
   }, [safe])
 
   // Create transaction for changing the thresold:
-  const changeThreshold = (newThreshold: number) =>
+  const changeThresholdFunction = (newThreshold: number) =>
     safe.getChangeThresholdTx(newThreshold)
       .then((transaction: SafeTransaction) => addTransaction(transaction))
       .catch(handleError)
 
   // Add an owner and update threshold:
-  const addOwner = (newOwner: string, newThreshold: number) =>
-    safe.getAddOwnerTx(newOwner.toLowerCase(), newThreshold)
+  const addOwnerFunction = (newOwner: string, newThreshold: number) =>
+    safe.getAddOwnerTx(newOwner, newThreshold)
+      .then((transaction: SafeTransaction) => addTransaction(transaction))
+      .catch(handleError)
+
+  // remove an owner and update the threshold:
+  const removeOwnerFunction = (removeOwner: string, newThreshold: number) =>
+    safe.getRemoveOwnerTx(removeOwner, newThreshold)
+      .then((transaction: SafeTransaction) => addTransaction(transaction))
+      .catch(handleError)
+
+  // swap one owner for another:
+  const swapOwnerFunction = (swapOwner: string, newOwner: string) =>
+    safe.getSwapOwnerTx(swapOwner, newOwner)
       .then((transaction: SafeTransaction) => addTransaction(transaction))
       .catch(handleError)
 
@@ -40,20 +61,31 @@ const PolicyComponent: React.FC<Interface> = ({ safe, addTransaction, handleErro
             <th>Owners</th>
             <td>
               <ul>
-                {owners.map((owner: string) => <li key={owner} ><ValueWithButtons value={owner} /></li>)}
+                {owners.map((owner: string) => (
+                  <li key={owner} >
+                    <ValueWithButtons value={owner} />
+                    <button onClick={() => setRemoveOwner(owner)}>delete</button>
+                    <button onClick={() => setSwapOwner(owner)}>swap</button>
+                  </li>
+                ))}
               </ul>
+              <button onClick={() => setNewOwner(true)}>Add Owner</button>
             </td>
           </tr>
           <tr className="text">
             <th>Threshold</th>
-            <td>{threshold}</td>
+            <td>
+              {threshold}
+              <button onClick={() => setChangeThreshold(true)}>Change</button>
+            </td>
           </tr>
         </tbody>
       </table>
 
-      {threshold && <ChangeThresholdModal numberOfOwners={owners.length} currentThreshold={threshold} handleSubmit={changeThreshold} />}
-
-      <AddOwnerModal numberOfOwners={owners.length} handleSubmit={addOwner} />
+      {changeThreshold && <ChangeThresholdModal numberOfOwners={owners.length} currentThreshold={threshold} handleSubmit={changeThresholdFunction} />}
+      {addNewOwner && <AddOwnerModal numberOfOwners={owners.length} handleSubmit={addOwnerFunction} handleError={handleError} />}
+      {removeOwner && <RemoveOwnerModal removeAddress={removeOwner} numberOfOwners={owners.length} handleSubmit={removeOwnerFunction} />}
+      {swapOwner && <SwapOwnerModal oldAddress={swapOwner} handleSubmit={swapOwnerFunction} handleError={handleError} />}
     </section>
   )
 }

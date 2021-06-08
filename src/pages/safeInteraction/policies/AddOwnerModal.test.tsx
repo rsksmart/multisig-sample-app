@@ -11,10 +11,14 @@ describe('Component: AddOwnerModal', () => {
     expect(wrapper).toBeDefined()
   })
 
+  it('select box has one more than number of Onwers', () => {
+    const wrapper = mount(<AddOwnerModal {...sharedProps} />)
+    expect(wrapper.find('option')).toHaveLength(5)
+  })
+
   it('handles error checking on submit', () => {
     const localProps = { ...sharedProps, handleError: jest.fn() }
     const wrapper = mount(<AddOwnerModal {...localProps} />)
-    expect(wrapper.find('option')).toHaveLength(5)
 
     wrapper.find('input.newOwner').simulate('change', { target: { value: 'hello' } })
     wrapper.find('button').simulate('click')
