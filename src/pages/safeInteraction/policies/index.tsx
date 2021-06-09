@@ -5,6 +5,7 @@ import ChangeThresholdModal from './ChangeThresholdModal'
 import AddOwnerModal from './AddOwnerModal'
 import RemoveOwnerModal from './RemoveOwnerModal'
 import SwapOwnerModal from './SwapOwnerModal'
+import Modal from '../../../components/Modal'
 
 interface Interface {
   safe: Safe
@@ -18,7 +19,7 @@ const PolicyComponent: React.FC<Interface> = ({ safe, addTransaction, handleErro
   const [threshold, setThreshold] = useState<number>(0)
 
   // UI components:
-  const [addNewOwner, setNewOwner] = useState<boolean>(false)
+  const [addNewOwner, setAddNewOwner] = useState<boolean>(false)
   const [changeThreshold, setChangeThreshold] = useState<boolean>(false)
   const [removeOwner, setRemoveOwner] = useState<null | string>(null)
   const [swapOwner, setSwapOwner] = useState<null | string>(null)
@@ -69,7 +70,7 @@ const PolicyComponent: React.FC<Interface> = ({ safe, addTransaction, handleErro
                   </li>
                 ))}
               </ul>
-              <button onClick={() => setNewOwner(true)}>Add Owner</button>
+              <button onClick={() => setAddNewOwner(true)}>Add Owner</button>
             </td>
           </tr>
           <tr className="text">
@@ -82,10 +83,10 @@ const PolicyComponent: React.FC<Interface> = ({ safe, addTransaction, handleErro
         </tbody>
       </table>
 
-      {changeThreshold && <ChangeThresholdModal numberOfOwners={owners.length} currentThreshold={threshold} handleSubmit={changeThresholdFunction} />}
-      {addNewOwner && <AddOwnerModal numberOfOwners={owners.length} handleSubmit={addOwnerFunction} handleError={handleError} />}
-      {removeOwner && <RemoveOwnerModal removeAddress={removeOwner} numberOfOwners={owners.length} handleSubmit={removeOwnerFunction} />}
-      {swapOwner && <SwapOwnerModal oldAddress={swapOwner} handleSubmit={swapOwnerFunction} handleError={handleError} />}
+      {changeThreshold && <Modal handleClose={() => setChangeThreshold(false)}><ChangeThresholdModal numberOfOwners={owners.length} currentThreshold={threshold} handleSubmit={changeThresholdFunction} /></Modal>}
+      {addNewOwner && <Modal handleClose={() => setAddNewOwner(false)}><AddOwnerModal numberOfOwners={owners.length} handleSubmit={addOwnerFunction} handleError={handleError} /></Modal>}
+      {removeOwner && <Modal handleClose={() => setRemoveOwner(null)}><RemoveOwnerModal removeAddress={removeOwner} numberOfOwners={owners.length} handleSubmit={removeOwnerFunction} /></Modal>}
+      {swapOwner && <Modal handleClose={() => setSwapOwner(null)}><SwapOwnerModal oldAddress={swapOwner} handleSubmit={swapOwnerFunction} handleError={handleError} /></Modal>}
     </section>
   )
 }

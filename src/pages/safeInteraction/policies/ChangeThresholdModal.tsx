@@ -16,17 +16,16 @@ const ChangeThresholdModal: React.FC<Interface> = ({ numberOfOwners, currentThre
   }
 
   return (
-    <div className="modal">
+    <div>
       <h3>Change threshold</h3>
       <p>Change the number of approvers for a transaction to be executed</p>
-      <label>
-        New threshold:
-        <ThresholdDropdown
-          numberOfOwners={numberOfOwners}
-          value={newThreshold}
-          onChange={(value: number) => setNewThreshold(value)}
-        />
-      </label>
+      <label>New threshold:</label>
+      <ThresholdDropdown
+        numberOfOwners={numberOfOwners}
+        value={newThreshold}
+        onChange={(value: number) => setNewThreshold(value)}
+      />
+
       <p><button onClick={() => handleSubmit(newThreshold)}>Change threshold</button></p>
     </div>
   )
