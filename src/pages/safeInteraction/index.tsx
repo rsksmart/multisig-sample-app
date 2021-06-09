@@ -4,6 +4,7 @@ import Navigation from './Navigation'
 import TransactionsPanel from './transactions'
 import Dashboard from './Dashboard'
 import PolicyComponent from './policies'
+import AssetsComponent from './assets'
 
 interface Interface {
   safe: Safe
@@ -26,6 +27,7 @@ const SafeInteraction: React.FC<Interface> = ({ safe, walletAddress, handleError
       <Navigation handleLogout={handleLogout} changeActive={changeActive} selected={selectedTab} />
       {selectedTab === 'dashboard' && <Dashboard safe={safe} />}
       {selectedTab === 'transactions' && <TransactionsPanel transactions={transactions} addTransaction={addTransaction} safe={safe} handleError={handleError} walletAddress={walletAddress} />}
+      {selectedTab === 'assets' && <AssetsComponent safe={safe} handleError={handleError} addTransaction={addTransaction} />}
       {selectedTab === 'policy' && <PolicyComponent safe={safe} addTransaction={addTransaction} handleError={handleError} />}
     </section>
   )

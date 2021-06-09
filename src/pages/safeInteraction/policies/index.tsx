@@ -9,6 +9,7 @@ import Modal from '../../../components/Modal'
 import deleteIcon from '../../../images/delete.svg'
 import swapIcon from '../../../images/swap.svg'
 import editIcon from '../../../images/edit.svg'
+import TransactionCreatedModal from '../../../components/TransactionCreatedModal'
 
 interface Interface {
   safe: Safe
@@ -119,13 +120,7 @@ const PolicyComponent: React.FC<Interface> = ({ safe, addTransaction, handleErro
       {addNewOwner && <Modal handleClose={() => setAddNewOwner(false)}><AddOwnerModal numberOfOwners={owners.length} handleSubmit={addOwnerFunction} handleError={handleError} /></Modal>}
       {removeOwner && <Modal handleClose={() => setRemoveOwner(null)}><RemoveOwnerModal removeAddress={removeOwner} numberOfOwners={owners.length} handleSubmit={removeOwnerFunction} /></Modal>}
       {swapOwner && <Modal handleClose={() => setSwapOwner(null)}><SwapOwnerModal oldAddress={swapOwner} handleSubmit={swapOwnerFunction} handleError={handleError} /></Modal>}
-      {showComplete && (
-        <Modal handleClose={() => setShowComplete(false)}>
-          <h2>Transaction Created</h2>
-          <p>A transaction has been created and added to the transaction panel. You can sign the transaction there, and when enough signatures are collected, execute it.</p>
-          <p><button onClick={() => setShowComplete(false)}>Close</button></p>
-        </Modal>
-      )}
+      {showComplete && <TransactionCreatedModal closeModal={() => setShowComplete(false)} />}
     </section>
   )
 }
