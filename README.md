@@ -3,7 +3,7 @@
 </p>
 <h3 align="middle"><code>multisig-sample-app</code></h3>
 <p align="middle">
-  Sample application for the RIF Multisig project
+  Sample application for the RIF Savings and Vault project
 </p>
 <p align="middle">
   <a href="https://circleci.com/gh/rsksmart/react-app-rif-template">
@@ -16,6 +16,48 @@
     <img src="https://img.shields.io/lgtm/grade/javascript/github/rsksmart/react-app-rif-template" alt="Code Quality">
   </a>
 </p>
+
+## Developer Resources:
+
+This repo contains many of the functions available from the RSK Safe Factory SDK. Below is a list of the methods and where they are implemented.
+
+### Setup:
+
+The SDK uses etheres to connect with the web3Provider. Many of the examples below assume that you have a provider and/or a signer available. In this repo we are using [rLogin](https://github.com/rsksmart/rlogin) to get the web3Provider.
+
+```
+import { ethers } from 'ethers'
+// ...
+const provider = new ethers.providers.Web3Provider(web3Provider)
+const signer = provider.getSigner()
+```
+
+### Creating and connecting
+
+* `createSafe({ addresses, threshold })` - create a safe with addresses and threshold for executing transactions. [Code Example](https://github.com/rsksmart/multisig-sample-app/blob/main/src/pages/connectToSafe/index.tsx#L36)
+* `create(etheres, safeAddress, signer)` - connect to a deployed safe. [Code Example](https://github.com/rsksmart/multisig-sample-app/blob/main/src/pages/connectToSafe/index.tsx#L49)
+
+### Query the safe
+
+* `safe.getBalance().then(console.log)` - Returns a promise of the balance of the safe. [Code Example](https://github.com/rsksmart/multisig-sample-app/blob/main/src/pages/safeInteraction/Dashboard.tsx#L13)
+* `safe.getAddress()` - Returns the safe address. [Code Example](https://github.com/rsksmart/multisig-sample-app/blob/main/src/pages/safeInteraction/Dashboard.tsx#L23)
+* `safe.getOwners()` - Returns a promise with an array of addresses who are the owners of the safe. [Code Example](https://github.com/rsksmart/multisig-sample-app/blob/main/src/pages/safeInteraction/policies/index.tsx#L29)
+* `safe.getThreshold()` - Returns a promise with the number of signatures required to execute a transaction. [Code Example](https://github.com/rsksmart/multisig-sample-app/blob/main/src/pages/safeInteraction/policies/index.tsx#L30)
+
+### Policy Updates
+
+All of the following return a transaction that needs to be signed and then executed (see under transactions).
+
+* `getChangeThresholdTx(number)` - Change the number of signers required to execute a transaction. [Code example](https://github.com/rsksmart/multisig-sample-app/blob/main/src/pages/safeInteraction/policies/index.tsx#L35)
+* `getAddOwner(address, threshold)` - Add an owner and update the threshold if needed. [Code example](https://github.com/rsksmart/multisig-sample-app/blob/main/src/pages/safeInteraction/policies/index.tsx#L44)
+* `getRemoveOwnerTx(address, threshold)` - Remove an owher and update the threshold if needed. [Code Example](https://github.com/rsksmart/multisig-sample-app/blob/main/src/pages/safeInteraction/policies/index.tsx#L53)
+* `getSwapOwnerTx(address)` - Swap one owner for another. [Code Example](https://github.com/rsksmart/multisig-sample-app/blob/main/src/pages/safeInteraction/policies/index.tsx#L62)
+
+### Transactions
+
+* `createTransaction({ to, value, nonce, data })` - Create a transaction. [Code Example](https://github.com/rsksmart/multisig-sample-app/blob/main/src/pages/safeInteraction/transactions/index.tsx#L30) 
+* `approveTransactionHash(txHash)` - approve a transaction **on-chain** using its hash. See example on how to get the hash of a transaction. [Code Example](https://github.com/rsksmart/multisig-sample-app/blob/main/src/pages/safeInteraction/transactions/index.tsx#L43)
+* `executeTransaction(transaction)` - execute a transaction that has the proper number of approvers. [Code Example](https://github.com/rsksmart/multisig-sample-app/blob/main/src/pages/safeInteraction/transactions/index.tsx#L49) 
 
 
 
