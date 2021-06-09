@@ -1,0 +1,29 @@
+.modal {
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 100%;
+  width: 100%;
+  background-color: rgba(0,0,0,0.4);
+
+  .modalBody {
+    position: relative;
+    max-width: 600px;
+    margin: 15% auto;
+    padding: 15px;
+    background-color: $white;
+    border: 2px solid $gray;
+    border-radius: 10px;
+
+    button.close {
+      position: absolute;
+      top: 5px;
+      right: 10px;
+      border-radius: 10px;
+    }
+
+    h2, h3 {
+      border-bottom: none;
+    }
+  }
+}
