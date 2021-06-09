@@ -19,7 +19,7 @@ const AddOwnerModal: React.FC<Interface> = ({ handleSubmit, handleError, numberO
   }
 
   return (
-    <div className="modal">
+    <div>
       <h3>Add new owner</h3>
       <label>
         Address</label>

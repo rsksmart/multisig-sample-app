@@ -10,7 +10,7 @@ describe('Component: RemoveOwnerModal', () => {
     expect(wrapper).toBeDefined()
   })
 
-  it('submits with the value', () => { 
+  it('submits with the value', () => {
     wrapper.find('button').simulate('click')
     expect(sharedProps.handleSubmit).toBeCalledWith('hello', 2)
   })

@@ -16,7 +16,7 @@ const SwapOwnerModal: React.FC<Interface> = ({ oldAddress, handleError, handleSu
       : handleError(new Error('Address is not valid'))
 
   return (
-    <div className="modal">
+    <div>
       <h2>Swap Address</h2>
       <p>Swap address for a new one.</p>
       <label>Old Address:</label>

@@ -11,10 +11,10 @@ const RemoveOwnerModal: React.FC<Interface> = ({ numberOfOwners, handleSubmit, r
   const [threshold, setThreshold] = useState<number>(numberOfOwners - 1)
 
   return (
-    <div className="modal">
+    <div>
       <h3>Are you sure</h3>
       <p>Are you sure you want to remove this owner?</p>
-      <code>{removeAddress}</code>
+      <input type="text" defaultValue={removeAddress} />
 
       <p>
         <label>New threshold:</label>

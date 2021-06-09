@@ -16,6 +16,7 @@ body {
 .App { 
   height: 100vh;
   min-height: 100%;
+  position: relative;
 
   section {
     max-width: 1200px;
@@ -40,12 +41,14 @@ body {
   @import './table';
   @import './forms';
   @import './errors';
-  @import './panel.scss';
+  @import './panel';
   @import './navigation';
+  @import './modal';
 }
 
 // pages
 @import './signin';
 @import './header';
-@import './connectSafe.scss';
+@import './connectSafe';
+@import './transaction';
 

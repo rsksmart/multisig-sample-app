@@ -9,7 +9,7 @@ input:focus{
 
 select {
   padding: 10px;
-  margin: 0 10px;
+  margin: 0 10px 0 0;
 }
 
 button, a.button {
@@ -39,4 +39,5 @@ label {
   font-size: 85%;
   color: $gray;
   display: block;
+  padding: 5px 0;
 }
