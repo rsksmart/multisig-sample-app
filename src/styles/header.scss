@@ -3,7 +3,7 @@
   padding: 0;
 
   ul.inline {
-    margin: 0;
+    margin: 0 20px;
     padding: 0;
 
     li {
@@ -26,6 +26,7 @@
     li.address {
       font-size: 20px;
       margin-left: 75px;
+      color: $gray;
     }
 
     li.chainId {
