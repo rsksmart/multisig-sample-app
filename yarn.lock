@@ -1864,6 +1864,13 @@
     keccak "^2.0.0"
     rlp "^2.2.4"
 
+"@rsksmart/safe-factory-sdk@^0.0.1-beta.1":
+  version "0.0.1-beta.1"
+  resolved "https://registry.yarnpkg.com/@rsksmart/safe-factory-sdk/-/safe-factory-sdk-0.0.1-beta.1.tgz#db42fb0bea1cc73f7620a25687fd2ae1b61fd4b1"
+  integrity sha512-8qUXiEaLinAMJymIOndnnxMDTbPg0DkWIHgFqFK978I6V9ZcV1UJ+IQIcnHZqA8HIbPF/FUxjSbY25EHhldh/Q==
+  dependencies:
+    "@gnosis.pm/safe-core-sdk" "^0.1.2"
+
 "@rsksmart/vc-json-schemas-parser@^1.0.0":
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/@rsksmart/vc-json-schemas-parser/-/vc-json-schemas-parser-1.0.0.tgz#4259cf5326758d0c8039151a070dbe83074c6bfd"
