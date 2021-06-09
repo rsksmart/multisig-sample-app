@@ -1,5 +1,7 @@
 import { Safe, SafeTransaction } from '@gnosis.pm/safe-core-sdk'
+import { ContractTransaction } from 'ethers'
 import React, { useState } from 'react'
+import ApprovedModal from './ApprovedModal'
 import TransactionDetailComponent from './TransactionDetailComponent'
 
 interface Interface {
@@ -12,6 +14,7 @@ interface Interface {
 
 const TransactionsPanel: React.FC<Interface> = ({ safe, handleError, addTransaction, walletAddress, transactions }) => {
   const [newTransaction, setNewTransaction] = useState<{ to: string, value: string, nonce: string }>({ to: '0x3dd03d7d6c3137f1eb7582ba5957b8a2e26f304a', value: '10000', nonce: '1' })
+  const [showApprovedModal, setShowApprovedModal] = useState<string | null>(null)
 
   const handleInputChange = (evt: React.FormEvent<HTMLInputElement>) =>
     setNewTransaction({
@@ -35,7 +38,7 @@ const TransactionsPanel: React.FC<Interface> = ({ safe, handleError, addTransact
     safe.getTransactionHash(transaction)
       .then((hash: string) =>
         safe.approveTransactionHash(hash)
-          .then((result: any) => console.log('approved!', result)) // getApprovals(hash))
+          .then((result: ContractTransaction) => setShowApprovedModal(result.hash))
           .catch(handleError))
 
   // Execute transaction
@@ -77,6 +80,8 @@ const TransactionsPanel: React.FC<Interface> = ({ safe, handleError, addTransact
         </p>
         <button onClick={createTransaction}>Create Transaction</button>
       </section>
+
+      {showApprovedModal && <ApprovedModal hash={showApprovedModal} handleClose={() => setShowApprovedModal(null)} />}
     </>
   )
 }

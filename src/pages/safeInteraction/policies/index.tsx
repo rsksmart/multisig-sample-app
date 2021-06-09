@@ -23,6 +23,7 @@ const PolicyComponent: React.FC<Interface> = ({ safe, addTransaction, handleErro
   const [changeThreshold, setChangeThreshold] = useState<boolean>(false)
   const [removeOwner, setRemoveOwner] = useState<null | string>(null)
   const [swapOwner, setSwapOwner] = useState<null | string>(null)
+  const [showComplete, setShowComplete] = useState<boolean>(false)
 
   useEffect(() => {
     safe.getOwners().then((owners: string[]) => setOwners(owners))
@@ -32,26 +33,48 @@ const PolicyComponent: React.FC<Interface> = ({ safe, addTransaction, handleErro
   // Create transaction for changing the thresold:
   const changeThresholdFunction = (newThreshold: number) =>
     safe.getChangeThresholdTx(newThreshold)
-      .then((transaction: SafeTransaction) => addTransaction(transaction))
+      .then((transaction: SafeTransaction) => {
+        addTransaction(transaction)
+        afterTransaction()
+      })
       .catch(handleError)
 
   // Add an owner and update threshold:
   const addOwnerFunction = (newOwner: string, newThreshold: number) =>
     safe.getAddOwnerTx(newOwner, newThreshold)
-      .then((transaction: SafeTransaction) => addTransaction(transaction))
+      .then((transaction: SafeTransaction) => {
+        addTransaction(transaction)
+        afterTransaction()
+      })
       .catch(handleError)
 
   // remove an owner and update the threshold:
   const removeOwnerFunction = (removeOwner: string, newThreshold: number) =>
     safe.getRemoveOwnerTx(removeOwner, newThreshold)
-      .then((transaction: SafeTransaction) => addTransaction(transaction))
+      .then((transaction: SafeTransaction) => {
+        addTransaction(transaction)
+        afterTransaction()
+      })
       .catch(handleError)
 
   // swap one owner for another:
   const swapOwnerFunction = (swapOwner: string, newOwner: string) =>
     safe.getSwapOwnerTx(swapOwner, newOwner)
-      .then((transaction: SafeTransaction) => addTransaction(transaction))
+      .then((transaction: SafeTransaction) => {
+        addTransaction(transaction)
+        afterTransaction()
+      })
       .catch(handleError)
+
+  // close ALL modals and show notice about transaction
+  const afterTransaction = () => {
+    setAddNewOwner(false)
+    setChangeThreshold(false)
+    setRemoveOwner(null)
+    setSwapOwner(null)
+
+    setShowComplete(true)
+  }
 
   return (
     <section className="section panel">
@@ -87,6 +110,13 @@ const PolicyComponent: React.FC<Interface> = ({ safe, addTransaction, handleErro
       {addNewOwner && <Modal handleClose={() => setAddNewOwner(false)}><AddOwnerModal numberOfOwners={owners.length} handleSubmit={addOwnerFunction} handleError={handleError} /></Modal>}
       {removeOwner && <Modal handleClose={() => setRemoveOwner(null)}><RemoveOwnerModal removeAddress={removeOwner} numberOfOwners={owners.length} handleSubmit={removeOwnerFunction} /></Modal>}
       {swapOwner && <Modal handleClose={() => setSwapOwner(null)}><SwapOwnerModal oldAddress={swapOwner} handleSubmit={swapOwnerFunction} handleError={handleError} /></Modal>}
+      {showComplete && (
+        <Modal handleClose={() => setShowComplete(false)}>
+          <h2>Transaction Created</h2>
+          <p>A transaction has been created and added to the transaction panel. You can sign the transaction there, and when enough signatures are collected, execute it.</p>
+          <p><button onClick={() => setShowComplete(false)}>Close</button></p>
+        </Modal>
+      )}
     </section>
   )
 }

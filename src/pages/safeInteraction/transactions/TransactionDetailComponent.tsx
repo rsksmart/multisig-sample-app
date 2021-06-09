@@ -38,8 +38,8 @@ const TransactionDetailComponent: React.FC<Interface> = ({
         <p><strong>to: </strong>
           <ValueWithButtons value={transaction.data.to} />
         </p>
-        <p><strong>value:</strong> {transaction.data.value}</p>
-        <p><strong>approvals:</strong>
+        <p><strong>value: </strong>{transaction.data.value}</p>
+        <p><strong>approvals: </strong>
           {signatures.length} out of {threshold}
           <button onClick={() => getApprovals(hash)}>refresh</button>
         </p>
