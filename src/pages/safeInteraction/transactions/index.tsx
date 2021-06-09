@@ -1,5 +1,5 @@
 import { Safe, SafeTransaction } from '@gnosis.pm/safe-core-sdk'
-import { Contract, ContractTransaction } from 'ethers'
+import { ContractTransaction } from 'ethers'
 import React, { useState } from 'react'
 import ApprovedModal from './ApprovedModal'
 import ExecutedModal from './ExecutedModal'
