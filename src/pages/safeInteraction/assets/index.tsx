@@ -1,5 +1,7 @@
 import { Safe, SafeTransaction } from '@gnosis.pm/safe-core-sdk'
 import React, { useState } from 'react'
+import Modal from '../../../components/Modal'
+import TransferValueModal, { NewTransaction } from './TransferValueModal'
 
 interface Interface {
   safe: Safe
@@ -8,18 +10,10 @@ interface Interface {
 }
 
 const AssetsComponent: React.FC<Interface> = ({ safe, addTransaction, handleError }) => {
-  const [newTransaction, setNewTransaction] = useState<{
-    to: string, value: string, nonce: string, data: string
-  }>({ to: '', value: '10000', nonce: '1', data: '' })
+  const [showTransfer, setShowTransfer] = useState<boolean>(false)
 
-  const handleInputChange = (evt: React.FormEvent<HTMLInputElement>) =>
-    setNewTransaction({
-      ...newTransaction,
-      [evt.currentTarget.id]: evt.currentTarget.value
-    })
-
-  // Create transaction to send rbtc
-  const createTransaction = () =>
+  // Create transaction to send rbtc or data
+  const createTransaction = (newTransaction: NewTransaction) =>
     safe.createTransaction({
       to: newTransaction.to.toLowerCase(),
       value: newTransaction.value,
@@ -28,32 +22,34 @@ const AssetsComponent: React.FC<Interface> = ({ safe, addTransaction, handleErro
     })
       .then((transaction: SafeTransaction) => addTransaction(transaction))
       .catch(handleError)
+
   return (
     <>
       <div className="panel">
         <h2>Assets</h2>
-
+        <table>
+          <thead>
+            <tr>
+              <th>Asset</th>
+              <th>Amount</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><p>rBtc</p></td>
+              <td>
+                <p>1</p>
+                <button onClick={() => setShowTransfer(true)}>transfer</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
-      <section className="panel">
-        <h3>Create Transaction</h3>
-        <p>
-          <label>Recepient:</label>
-          <input type="text" id="to" value={newTransaction.to} onChange={handleInputChange} />
-        </p>
-        <p>
-          <label>Value:</label>
-          <input type="number" id="value" value={newTransaction.value} onChange={handleInputChange} />
-        </p>
-        <p>
-          <label>Nonce:</label>
-          <input type="number" id="nonce" value={newTransaction.nonce} onChange={handleInputChange} />
-        </p>
-        <p>
-          <label>Data: (leave blank for just sending rbtc)</label>
-          <input type="string" id="data" value={newTransaction.data} onChange={handleInputChange} />
-        </p>
-        <button onClick={createTransaction}>Create Transaction</button>
-      </section>
+      {showTransfer && (
+        <Modal handleClose={() => setShowTransfer(false)}>
+          <TransferValueModal createTransaction={createTransaction} />
+        </Modal>
+      )}
     </>
   )
 }

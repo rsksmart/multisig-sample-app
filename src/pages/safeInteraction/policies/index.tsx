@@ -9,7 +9,6 @@ import Modal from '../../../components/Modal'
 import deleteIcon from '../../../images/delete.svg'
 import swapIcon from '../../../images/swap.svg'
 import editIcon from '../../../images/edit.svg'
-import TransactionCreatedModal from '../../../components/TransactionCreatedModal'
 
 interface Interface {
   safe: Safe
@@ -27,7 +26,6 @@ const PolicyComponent: React.FC<Interface> = ({ safe, addTransaction, handleErro
   const [changeThreshold, setChangeThreshold] = useState<boolean>(false)
   const [removeOwner, setRemoveOwner] = useState<null | string>(null)
   const [swapOwner, setSwapOwner] = useState<null | string>(null)
-  const [showComplete, setShowComplete] = useState<boolean>(false)
 
   useEffect(() => {
     safe.getOwners().then((owners: string[]) => setOwners(owners))
@@ -70,14 +68,12 @@ const PolicyComponent: React.FC<Interface> = ({ safe, addTransaction, handleErro
       })
       .catch(handleError)
 
-  // close ALL modals and show notice about transaction
+  // close ALL modals
   const afterTransaction = () => {
     setAddNewOwner(false)
     setChangeThreshold(false)
     setRemoveOwner(null)
     setSwapOwner(null)
-
-    setShowComplete(true)
   }
 
   return (
@@ -120,7 +116,6 @@ const PolicyComponent: React.FC<Interface> = ({ safe, addTransaction, handleErro
       {addNewOwner && <Modal handleClose={() => setAddNewOwner(false)}><AddOwnerModal numberOfOwners={owners.length} handleSubmit={addOwnerFunction} handleError={handleError} /></Modal>}
       {removeOwner && <Modal handleClose={() => setRemoveOwner(null)}><RemoveOwnerModal removeAddress={removeOwner} numberOfOwners={owners.length} handleSubmit={removeOwnerFunction} /></Modal>}
       {swapOwner && <Modal handleClose={() => setSwapOwner(null)}><SwapOwnerModal oldAddress={swapOwner} handleSubmit={swapOwnerFunction} handleError={handleError} /></Modal>}
-      {showComplete && <TransactionCreatedModal closeModal={() => setShowComplete(false)} />}
     </section>
   )
 }
