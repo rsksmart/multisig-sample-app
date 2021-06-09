@@ -29,11 +29,8 @@ function App () {
     setAddress(address)
     setChainId(chainId)
 
-    // listen for address change:
-    response.provider.on('accountsChanged', () =>
-      response.provider.request({ method: 'eth_accounts' })
-        .then((accounts: string[]) => setAddress(accounts[0])))
-      .catch(handleError)
+    // listen for address change and update:
+    response.provider.on('accountsChanged', (accounts: string[]) => setAddress(accounts[0]))
   }
 
   const handleSetSafe = (safe: any) => {
