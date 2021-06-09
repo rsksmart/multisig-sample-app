@@ -1,6 +1,7 @@
 import { Safe, SafeTransaction } from '@gnosis.pm/safe-core-sdk'
 import React, { useEffect, useState } from 'react'
 import ValueWithButtons from '../../../components/ValueWithButtons'
+import refreshIcon from '../../../images/refresh.svg'
 
 interface Interface {
   safe: Safe
@@ -18,6 +19,7 @@ const TransactionDetailComponent: React.FC<Interface> = ({
   const [hash, setHash] = useState<string>('')
   const [signatures, setSignatures] = useState<string[]>([])
   const [threshold, setThreshold] = useState<number>(0)
+  const [isRefreshing, setIsRefreshing] = useState<boolean>(false)
 
   useEffect(() => {
     safe.getTransactionHash(transaction).then((txHash: string) => {
@@ -28,9 +30,13 @@ const TransactionDetailComponent: React.FC<Interface> = ({
     safe.getThreshold().then((safeThreshold: number) => setThreshold(safeThreshold))
   }, [transaction])
 
-  const getApprovals = (txHash: string) => safe.getOwnersWhoApprovedTx(txHash)
-    .then((signers: string[]) => setSignatures(signers))
-    .catch(handleError)
+  const getApprovals = (txHash: string) => {
+    setIsRefreshing(true)
+    safe.getOwnersWhoApprovedTx(txHash)
+      .then((signers: string[]) => setSignatures(signers))
+      .catch(handleError)
+      .finally(() => setIsRefreshing(false))
+  }
 
   return (
     <div className="transaction">
@@ -40,8 +46,10 @@ const TransactionDetailComponent: React.FC<Interface> = ({
         </p>
         <p><strong>value: </strong>{transaction.data.value}</p>
         <p><strong>approvals: </strong>
-          {signatures.length} out of {threshold}
-          <button onClick={() => getApprovals(hash)}>refresh</button>
+          {isRefreshing ? 'loading...' : `${signatures.length} out of ${threshold}`}
+          <button className="icon" onClick={() => getApprovals(hash)}>
+            <img src={refreshIcon} alt="refresh" />
+          </button>
         </p>
       </div>
       <div className="buttons">
