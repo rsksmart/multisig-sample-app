@@ -1,0 +1,36 @@
+.transaction {
+  display: flex;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+
+  .summary {
+    flex: 1 0 66%;
+    white-space: nowrap;
+    padding: 10px;
+    box-sizing: border-box;
+
+    p {
+      margin: 0 0 2px 0;
+    }
+  }
+
+  .buttons {
+    flex: 1 0 33%;
+    white-space: nowrap;
+    padding: 10px;
+    box-sizing: border-box;
+  }
+
+
+  table {
+    flex: none;
+    width: 100%;
+
+    border: 1px solid $gray;
+  }
+
+  p.data {
+    word-wrap: break-word;
+    max-width: 750px;
+  }
+}

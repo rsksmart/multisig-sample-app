@@ -7,11 +7,12 @@ import PolicyComponent from './policies'
 
 interface Interface {
   safe: Safe
+  walletAddress: string
   handleLogout: () => void
   handleError: (err: Error) => void
 }
 
-const SafeInteraction: React.FC<Interface> = ({ safe, handleError, handleLogout }) => {
+const SafeInteraction: React.FC<Interface> = ({ safe, walletAddress, handleError, handleLogout }) => {
   // UI Only
   const [selectedTab, setSelectedTab] = useState<string>('dashboard')
   const changeActive = (evt: MouseEvent<HTMLButtonElement>) => setSelectedTab(evt.currentTarget.id)
@@ -24,7 +25,7 @@ const SafeInteraction: React.FC<Interface> = ({ safe, handleError, handleLogout 
     <section className="selectedSafe">
       <Navigation handleLogout={handleLogout} changeActive={changeActive} selected={selectedTab} />
       {selectedTab === 'dashboard' && <Dashboard safe={safe} />}
-      {selectedTab === 'transactions' && <TransactionsPanel transactions={transactions} addTransaction={addTransaction} safe={safe} handleError={handleError} />}
+      {selectedTab === 'transactions' && <TransactionsPanel transactions={transactions} addTransaction={addTransaction} safe={safe} handleError={handleError} walletAddress={walletAddress} />}
       {selectedTab === 'policy' && <PolicyComponent safe={safe} addTransaction={addTransaction} handleError={handleError} />}
     </section>
   )

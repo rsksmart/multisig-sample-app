@@ -28,6 +28,12 @@ function App () {
     setRLoginResponse(response)
     setAddress(address)
     setChainId(chainId)
+
+    // listen for address change:
+    response.provider.on('accountsChanged', () =>
+      response.provider.request({ method: 'eth_accounts' })
+        .then((accounts: string[]) => setAddress(accounts[0])))
+      .catch(handleError)
   }
 
   const handleSetSafe = (safe: any) => {
@@ -55,7 +61,7 @@ function App () {
           setRLoginResponse={web3ProviderResponse}
           handleError={handleError}
         />
-      ) : <ConnectedBar chainId={chainId} />
+      ) : <ConnectedBar chainId={chainId} walletAddress={address} />
       }
 
       {error && (
@@ -74,9 +80,10 @@ function App () {
         />
       )}
 
-      {safe && (
+      {address && safe && (
         <SafeInteraction
           safe={safe}
+          walletAddress={address}
           handleLogout={handleLogout}
           handleError={handleError}
         />
