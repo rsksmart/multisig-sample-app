@@ -6,6 +6,9 @@ import AddOwnerModal from './AddOwnerModal'
 import RemoveOwnerModal from './RemoveOwnerModal'
 import SwapOwnerModal from './SwapOwnerModal'
 import Modal from '../../../components/Modal'
+import deleteIcon from '../../../images/delete.svg'
+import swapIcon from '../../../images/swap.svg'
+import editIcon from '../../../images/edit.svg'
 
 interface Interface {
   safe: Safe
@@ -88,19 +91,25 @@ const PolicyComponent: React.FC<Interface> = ({ safe, addTransaction, handleErro
                 {owners.map((owner: string) => (
                   <li key={owner} >
                     <ValueWithButtons value={owner} />
-                    <button onClick={() => setRemoveOwner(owner)}>delete</button>
-                    <button onClick={() => setSwapOwner(owner)}>swap</button>
+                    <button className="icon delete" onClick={() => setRemoveOwner(owner)}>
+                      <img src={deleteIcon} alt="delete address" />
+                    </button>
+                    <button className="icon" onClick={() => setSwapOwner(owner)}>
+                      <img src={swapIcon} alt="swap address" />
+                    </button>
                   </li>
                 ))}
               </ul>
-              <button onClick={() => setAddNewOwner(true)}>Add Owner</button>
+              <button onClick={() => setAddNewOwner(true)}>+ Add Owner</button>
             </td>
           </tr>
           <tr className="text">
             <th>Threshold</th>
             <td>
               {threshold}
-              <button onClick={() => setChangeThreshold(true)}>Change</button>
+              <button className="icon" onClick={() => setChangeThreshold(true)}>
+                <img src={editIcon} alt="edit threshold" />
+              </button>
             </td>
           </tr>
         </tbody>

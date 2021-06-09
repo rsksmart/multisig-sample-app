@@ -17,7 +17,7 @@ const SwapOwnerModal: React.FC<Interface> = ({ oldAddress, handleError, handleSu
 
   return (
     <div>
-      <h2>Swap Address</h2>
+      <h3>Swap Owner</h3>
       <p>Swap address for a new one.</p>
       <label>Old Address:</label>
       <input type="text" defaultValue={oldAddress} />
