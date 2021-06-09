@@ -12,7 +12,7 @@ const RemoveOwnerModal: React.FC<Interface> = ({ numberOfOwners, handleSubmit, r
 
   return (
     <div>
-      <h3>Are you sure</h3>
+      <h3>Remove owner</h3>
       <p>Are you sure you want to remove this owner?</p>
       <input type="text" defaultValue={removeAddress} />
 

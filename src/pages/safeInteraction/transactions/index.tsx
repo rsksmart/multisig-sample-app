@@ -56,7 +56,7 @@ const TransactionsPanel: React.FC<Interface> = ({ safe, handleError, addTransact
   return (
     <>
       <section className="panel">
-        <h3>Pending Transactions</h3>
+        <h2>Transactions</h2>
         {transactions.map((transaction: SafeTransaction, index: number) =>
           <TransactionDetailComponent
             safe={safe}
