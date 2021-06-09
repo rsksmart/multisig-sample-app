@@ -15,6 +15,7 @@
   "dependencies": {
     "@rsksmart/rlogin": "^1.0.7-beta.1",
     "@rsksmart/rsk-utils": "1.1.0",
+    "@rsksmart/safe-factory-sdk": "^0.0.1-beta.1",
     "ethers": "^5.2.0",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
