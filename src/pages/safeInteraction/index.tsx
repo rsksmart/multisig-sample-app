@@ -23,6 +23,7 @@ const SafeInteraction: React.FC<Interface> = ({ safe, walletAddress, handleError
   // Transaction Management
   const [transactions, setTransactions] = useState<SafeTransaction[]>([])
   const addTransaction = (transaction: SafeTransaction) => {
+    console.log(transaction)
     setTransactions([...transactions, transaction])
     setShowTransactionInfo(true)
   }

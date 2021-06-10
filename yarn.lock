@@ -1871,6 +1871,13 @@
   dependencies:
     "@gnosis.pm/safe-core-sdk" "^0.1.2"
 
+"@rsksmart/safe-transactions-sdk@^0.0.1-beta.1":
+  version "0.0.1-beta.1"
+  resolved "https://registry.yarnpkg.com/@rsksmart/safe-transactions-sdk/-/safe-transactions-sdk-0.0.1-beta.1.tgz#bfb8aa145e191aa85868208a42d8375df8d36919"
+  integrity sha512-Z41Svf/ic0LMDe7Rtm3Fz92SeNB1rKM1E9pOOE+skmCkvcbwAYwN0tKQ70LYEX2BMkB/Jag9W/kR+PZ6G9rgIw==
+  dependencies:
+    "@gnosis.pm/safe-core-sdk" "^0.1.2"
+
 "@rsksmart/vc-json-schemas-parser@^1.0.0":
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/@rsksmart/vc-json-schemas-parser/-/vc-json-schemas-parser-1.0.0.tgz#4259cf5326758d0c8039151a070dbe83074c6bfd"

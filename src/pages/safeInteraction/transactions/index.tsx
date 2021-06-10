@@ -17,7 +17,6 @@ const TransactionsPanel: React.FC<Interface> = ({ safe, handleError, addTransact
   const [showApprovedModal, setShowApprovedModal] = useState<string | null>(null)
   const [showExecutedModal, setShowExecutedModal] = useState<string | null>(null)
 
-
   // Sign transaction "on-chain"
   const approveTransactionHash = (transaction: SafeTransaction) =>
     safe.getTransactionHash(transaction)
