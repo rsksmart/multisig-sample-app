@@ -17,11 +17,11 @@ describe('Component: TransferValueModal', () => {
   })
 
   it('submits the correct info', () => {
-    wrapper.find('#to').simulate('change', { target: { value: safeSingletonAddress } })
+    wrapper.find('input.to').simulate('change', { target: { value: safeSingletonAddress } })
+    wrapper.find('input.amount').simulate('change', { target: { value: '20000' } })
 
-    console.log(wrapper.debug())
-    wrapper.find('button').simulate('click')
+    wrapper.find('button.submit').simulate('click')
 
-    // expect(sharedProps.handleError).toBeCalledWith()
+    expect(sharedProps.createTransaction).toBeCalledWith(safeSingletonAddress, 20000)
   })
 })

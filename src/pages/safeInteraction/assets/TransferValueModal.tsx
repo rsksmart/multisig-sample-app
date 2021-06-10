@@ -1,30 +1,21 @@
 import { isAddress } from '@ethersproject/address'
 import React, { useState } from 'react'
 
-export interface NewTransaction {
-  to: string, amount: string, data: string
-}
-
 interface Interface {
-  createTransaction: (data: NewTransaction) => void
+  createTransaction: (recipient: string, amount: number) => void
   handleError: (error: Error) => void
 }
 
 const TransferValueModal: React.FC<Interface> = ({ createTransaction, handleError }) => {
-  const [newTransaction, setNewTransaction] = useState<NewTransaction>({ to: '', amount: '10000', data: '' })
-
-  const handleInputChange = (evt: React.FormEvent<HTMLInputElement>) =>
-    setNewTransaction({
-      ...newTransaction,
-      [evt.currentTarget.id]: evt.currentTarget.value
-    })
+  const [recipient, setRecipient] = useState<string>('')
+  const [amount, setAmount] = useState<number>(10000)
 
   const validateTransaction = () => {
-    if (!isAddress(newTransaction.to)) {
+    if (!isAddress(recipient)) {
       return handleError(new Error('Recipient is not an address.'))
     }
 
-    createTransaction(newTransaction)
+    createTransaction(recipient, amount)
   }
 
   return (
@@ -32,15 +23,11 @@ const TransferValueModal: React.FC<Interface> = ({ createTransaction, handleErro
       <h3>Create Transaction</h3>
       <p>
         <label>Recepient:</label>
-        <input type="text" id="to" value={newTransaction.to} onChange={handleInputChange} />
+        <input type="text" className="to" value={recipient} onChange={evt => setRecipient(evt.target.value)} />
       </p>
       <p>
         <label>Amount:</label>
-        <input type="number" id="amount" value={newTransaction.amount} onChange={handleInputChange} />
-      </p>
-      <p>
-        <label>Data: (leave blank for just sending rbtc)</label>
-        <input type="string" id="data" value={newTransaction.data} onChange={handleInputChange} />
+        <input type="number" className="amount" value={amount} onChange={evt => setAmount(parseInt(evt.target.value))} />
       </p>
       <button className="submit" onClick={validateTransaction}>Create Transaction</button>
     </>

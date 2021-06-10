@@ -31,6 +31,6 @@ describe('Component: TransferTokenModal', () => {
   it('submits', () => {
     wrapper.find('input.amount').simulate('change', { target: { value: '4' } })
     wrapper.find('button.submit').simulate('click')
-    expect(sharedProps.createTransaction).toBeCalledWith('0x123', 4, safeSingletonAddress.toLowerCase())
+    expect(sharedProps.createTransaction).toBeCalledWith(token, 4, safeSingletonAddress.toLowerCase())
   })
 })
