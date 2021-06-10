@@ -66,6 +66,7 @@ const TransactionDetailComponent: React.FC<Interface> = ({
       <div className="summary">
         <p><strong>{formatted && getTransactionName()}</strong></p>
         <p><strong>to: </strong>
+          {transaction.data.to === safe.getAddress() && <em>(Safe) </em>}
           <ValueWithButtons value={transaction.data.to} />
         </p>
         {transaction.data.value !== '0' && <p><strong>value: </strong>{transaction.data.value}</p>}
@@ -111,8 +112,12 @@ const TransactionDetailComponent: React.FC<Interface> = ({
             <th>Approvals:</th>
             <td>
               {signatures.length === 0 ? <p><em>No signatures</em></p> : (
-                <ol>
-                  {signatures.map((approval: string) => <li key={approval}><ValueWithButtons value={approval} /></li>)}
+                <ol >
+                  {signatures.map((approval: string) =>
+                    <li key={approval}>
+                      <ValueWithButtons value={approval} />
+                      {walletAddress.toLowerCase() === approval.toLowerCase() && <em>(Connected Account)</em>}
+                    </li>)}
                 </ol>
               )}
             </td>
