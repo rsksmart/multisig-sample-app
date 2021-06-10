@@ -3,7 +3,7 @@ import { ERC20TransactionBuilder } from '@rsksmart/safe-transactions-sdk'
 import { BigNumber, Contract } from 'ethers'
 import React, { useEffect, useState } from 'react'
 import Modal from '../../../components/Modal'
-import TransferValueModal, { NewTransaction } from './TransferValueModal'
+import TransferValueModal from './TransferValueModal'
 import erc20Abi from './erc20.json'
 import refreshIcon from '../../../images/refresh.svg'
 import TransferTokenModal from './TransferTokenModal'
@@ -57,17 +57,15 @@ const AssetsComponent: React.FC<Interface> = ({ safe, addTransaction, handleErro
   }
 
   // Create transaction to send rbtc or data
-  const createTransaction = (newTransaction: NewTransaction) =>
-    safe.getNonce().then((nonce: number) =>
-      safe.createTransaction({
-        to: newTransaction.to.toLowerCase(),
-        value: newTransaction.amount,
-        nonce,
-        data: newTransaction.data !== '' ? newTransaction.data : '0x'
-      })
-        .then((transaction: SafeTransaction) => addTransaction(transaction))
-        .catch(handleError)
-        .finally(() => setShowTransfer(false)))
+  const createTransaction = (to: string, amount: number) =>
+    safe.createTransaction({
+      to,
+      value: amount.toString(),
+      data: '0x'
+    })
+      .then((transaction: SafeTransaction) => addTransaction(transaction))
+      .catch(handleError)
+      .finally(() => setShowTransfer(false))
 
   // Create transaction to send an ERC20 token:
   const createTokenTransaction = (token: Erc20Token, amount: number, to: string) => {

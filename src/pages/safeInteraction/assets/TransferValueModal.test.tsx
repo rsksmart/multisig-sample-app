@@ -22,6 +22,6 @@ describe('Component: TransferValueModal', () => {
 
     wrapper.find('button.submit').simulate('click')
 
-    expect(sharedProps.createTransaction).toBeCalledWith(safeSingletonAddress, 20000)
+    expect(sharedProps.createTransaction).toBeCalledWith(safeSingletonAddress.toLowerCase(), 20000)
   })
 })

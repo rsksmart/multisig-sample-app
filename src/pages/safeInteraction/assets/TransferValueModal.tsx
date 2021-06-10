@@ -15,7 +15,7 @@ const TransferValueModal: React.FC<Interface> = ({ createTransaction, handleErro
       return handleError(new Error('Recipient is not an address.'))
     }
 
-    createTransaction(recipient, amount)
+    createTransaction(recipient.toLowerCase(), amount)
   }
 
   return (
