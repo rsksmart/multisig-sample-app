@@ -77,7 +77,7 @@ function App () {
         />
       )}
 
-      {address && safe && (
+      {rLoginResponse && address && safe && (
         <SafeInteraction
           safe={safe}
           walletAddress={address}

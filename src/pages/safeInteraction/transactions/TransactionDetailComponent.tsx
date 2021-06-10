@@ -3,6 +3,10 @@ import React, { useEffect, useState } from 'react'
 import ValueWithButtons from '../../../components/ValueWithButtons'
 import refreshIcon from '../../../images/refresh.svg'
 
+import safeAbi from '@gnosis.pm/safe-core-sdk/dist/src/abis/SafeAbiV1-2-0.json'
+import erc20Abi from '../assets/erc20.json'
+import InputDataDecoder from 'ethereum-input-data-decoder'
+
 interface Interface {
   safe: Safe
   transaction: SafeTransaction
@@ -20,11 +24,20 @@ const TransactionDetailComponent: React.FC<Interface> = ({
   const [signatures, setSignatures] = useState<string[]>([])
   const [threshold, setThreshold] = useState<number>(0)
   const [isRefreshing, setIsRefreshing] = useState<boolean>(false)
+  const [formatted, setFormatted] = useState<any>(null)
 
   useEffect(() => {
     safe.getTransactionHash(transaction).then((txHash: string) => {
       setHash(txHash)
       getApprovals(txHash)
+
+      // try to decode the data
+      const formatted = new InputDataDecoder(safeAbi).decodeData(transaction.data.data)
+      if (formatted.method) {
+        setFormatted(formatted)
+      } else {
+        setFormatted(new InputDataDecoder(erc20Abi).decodeData(transaction.data.data))
+      }
     })
 
     safe.getThreshold().then((safeThreshold: number) => setThreshold(safeThreshold))
@@ -38,13 +51,24 @@ const TransactionDetailComponent: React.FC<Interface> = ({
       .finally(() => setIsRefreshing(false))
   }
 
+  const getTransactionName = () => {
+    if (transaction.data.data === '0x') {
+      return 'Send Value'
+    } else if (formatted.method) {
+      return formatted.method
+    } else {
+      return 'unknown'
+    }
+  }
+
   return (
     <div className="transaction">
       <div className="summary">
+        <p><strong>{formatted && getTransactionName()}</strong></p>
         <p><strong>to: </strong>
           <ValueWithButtons value={transaction.data.to} />
         </p>
-        <p><strong>value: </strong>{transaction.data.value}</p>
+        {transaction.data.value !== '0' && <p><strong>value: </strong>{transaction.data.value}</p>}
         <p><strong>approvals: </strong>
           {isRefreshing ? 'loading...' : `${signatures.length} out of ${threshold}`}
           <button className="icon" onClick={() => getApprovals(hash)}>
@@ -64,7 +88,7 @@ const TransactionDetailComponent: React.FC<Interface> = ({
       </div>
 
       {showDetails && (
-        <table>
+        <table><tbody>
           <tr>
             <th>Transaction Hash</th>
             <td><ValueWithButtons value={hash} /></td>
@@ -74,8 +98,14 @@ const TransactionDetailComponent: React.FC<Interface> = ({
             <td><p>{transaction.data.nonce}</p></td>
           </tr>
           <tr>
-            <th>Data</th>
+            <th>Raw Data</th>
             <td><p className="data">{transaction.data.data}</p></td>
+          </tr>
+          <tr>
+            <th>Decoded Data</th>
+            <td>
+              <pre>{JSON.stringify(formatted, null, 2)}</pre>
+            </td>
           </tr>
           <tr>
             <th>Approvals:</th>
@@ -87,7 +117,7 @@ const TransactionDetailComponent: React.FC<Interface> = ({
               )}
             </td>
           </tr>
-        </table>
+        </tbody></table>
       )}
     </div>
   )
