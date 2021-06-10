@@ -75,13 +75,19 @@ const AssetsComponent: React.FC<Interface> = ({ safe, addTransaction, handleErro
 
     console.log('safe', safe.getAddress())
     console.log('to', to)
+    console.log('amount', BigNumber.from(amount))
 
     // "VM Exception while processing transaction: revert ERC20: transfer amount exceeds allowance"
-    // transaction.transferFrom(safe.getAddress(), to, BigNumber.from(amount))
-    transaction.transfer(to, BigNumber.from(amount))
-      .then((transaction: SafeTransaction) => addTransaction(transaction))
-      .catch(handleError)
-      .finally(() => setShowTokenTransfer(null))
+
+    transaction.approve(safe.getAddress(), BigNumber.from(amount))
+      .then((response: SafeTransaction) => {
+        console.log('aprrove', response)
+        transaction.transferFrom(safe.getAddress(), to, BigNumber.from(amount))
+          .then((transaction: SafeTransaction) => addTransaction(transaction))
+          .catch((err: Error) => console.log('inner error', err))
+          .finally(() => setShowTokenTransfer(null))
+      })
+      .catch((err: Error) => console.log('outer error!', err))
   }
 
   return (

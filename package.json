@@ -18,6 +18,7 @@
     "@rsksmart/rsk-utils": "1.1.0",
     "@rsksmart/safe-factory-sdk": "^0.0.1-beta.1",
     "@rsksmart/safe-transactions-sdk": "^0.0.1-beta.1",
+    "ethereum-input-data-decoder": "^0.3.2",
     "ethers": "^5.2.0",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
