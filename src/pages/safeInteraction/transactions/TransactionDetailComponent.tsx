@@ -88,7 +88,7 @@ const TransactionDetailComponent: React.FC<Interface> = ({
       </div>
 
       {showDetails && (
-        <table>
+        <table><tbody>
           <tr>
             <th>Transaction Hash</th>
             <td><ValueWithButtons value={hash} /></td>
@@ -117,7 +117,7 @@ const TransactionDetailComponent: React.FC<Interface> = ({
               )}
             </td>
           </tr>
-        </table>
+        </tbody></table>
       )}
     </div>
   )

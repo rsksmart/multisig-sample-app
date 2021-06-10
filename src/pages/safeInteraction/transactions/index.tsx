@@ -29,6 +29,7 @@ const TransactionsPanel: React.FC<Interface> = ({ safe, handleError, addTransact
   const executeTransaction = (transaction: SafeTransaction) =>
     safe.executeTransaction(transaction)
       .then((result: ContractTransaction) => {
+        console.log('executed:', result)
         setShowExecutedModal(result.hash)
         // @todo move transaction from pending to confirmed ;-)
       })

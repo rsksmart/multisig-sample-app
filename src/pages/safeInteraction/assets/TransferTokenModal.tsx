@@ -13,10 +13,11 @@ const TransferTokenModal: React.FC<Interface> = ({ token, createTransaction, han
 
   const validateTransaction = () => {
     if (!isAddress(transaction.address)) {
-      return handleError(new Error('Recipient is not an address!'))
+      return handleError(new Error('Recipient is not an address.'))
     }
-    if (transaction.amount > token.amount) {
-      return handleError(new Error('Amount is higher than safe balance!'))
+
+    if (transaction.amount > token.amount || transaction.amount < 1) {
+      return handleError(new Error(`Amount should be between 1 and ${token.amount}.`))
     }
 
     return createTransaction(token, transaction.amount, transaction.address.toLowerCase())
@@ -31,14 +32,18 @@ const TransferTokenModal: React.FC<Interface> = ({ token, createTransaction, han
       </p>
       <p>
         <label>Amount to sent:</label>
-        <input type="number" value={transaction.amount} onChange={evt => setTransaction({ ...transaction, amount: parseInt(evt.target.value) })} />
+        <input type="number" className="amount" value={transaction.amount} onChange={evt => setTransaction({ ...transaction, amount: parseInt(evt.target.value) })} />
       </p>
       <p>
         <label>Recipient</label>
-        <input type="string" value={transaction.address} onChange={evt => setTransaction({ ...transaction, address: evt.target.value })} />
+        <input type="string" className="recipient" value={transaction.address} onChange={evt => setTransaction({ ...transaction, address: evt.target.value })} />
       </p>
 
-      <p><button onClick={validateTransaction}>Create Transaction</button></p>
+      <p>
+        <button className="submit" onClick={validateTransaction}>
+          Create Transaction
+        </button>
+      </p>
     </div>
   )
 }

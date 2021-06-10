@@ -58,36 +58,28 @@ const AssetsComponent: React.FC<Interface> = ({ safe, addTransaction, handleErro
 
   // Create transaction to send rbtc or data
   const createTransaction = (newTransaction: NewTransaction) =>
-    safe.createTransaction({
-      to: newTransaction.to.toLowerCase(),
-      value: newTransaction.value,
-      nonce: parseInt(newTransaction.nonce),
-      data: newTransaction.data !== '' ? newTransaction.data : '0x'
-    })
-      .then((transaction: SafeTransaction) => addTransaction(transaction))
-      .catch(handleError)
-      .finally(() => setShowTransfer(false))
+    safe.getNonce().then((nonce: number) =>
+      safe.createTransaction({
+        to: newTransaction.to.toLowerCase(),
+        value: newTransaction.amount,
+        nonce,
+        data: newTransaction.data !== '' ? newTransaction.data : '0x'
+      })
+        .then((transaction: SafeTransaction) => addTransaction(transaction))
+        .catch(handleError)
+        .finally(() => setShowTransfer(false)))
 
-  // Create transaction to send ERC20 token:
+  // Create transaction to send an ERC20 token:
   const createTokenTransaction = (token: Erc20Token, amount: number, to: string) => {
     const contract = new Contract(token.contractAddress, erc20Abi, safe.getSigner())
-    const transaction = new ERC20TransactionBuilder(safe, contract)
+    const txBuilder = new ERC20TransactionBuilder(safe, contract)
 
-    console.log('safe', safe.getAddress())
-    console.log('to', to)
-    console.log('amount', BigNumber.from(amount))
+    const bigAmount = BigNumber.from(amount).mul(BigNumber.from(10).pow(token.decimals))
 
-    // "VM Exception while processing transaction: revert ERC20: transfer amount exceeds allowance"
-
-    transaction.approve(safe.getAddress(), BigNumber.from(amount))
-      .then((response: SafeTransaction) => {
-        console.log('aprrove', response)
-        transaction.transferFrom(safe.getAddress(), to, BigNumber.from(amount))
-          .then((transaction: SafeTransaction) => addTransaction(transaction))
-          .catch((err: Error) => console.log('inner error', err))
-          .finally(() => setShowTokenTransfer(null))
-      })
-      .catch((err: Error) => console.log('outer error!', err))
+    txBuilder.transfer(to, bigAmount)
+      .then((transaction: SafeTransaction) => addTransaction(transaction))
+      .catch(handleError)
+      .finally(() => setShowTokenTransfer(null))
   }
 
   return (
@@ -103,7 +95,7 @@ const AssetsComponent: React.FC<Interface> = ({ safe, addTransaction, handleErro
           </thead>
           <tbody>
             <tr>
-              <td><p>rBtc</p></td>
+              <td><p>rBTC</p></td>
               <td>
                 <p>
                   {(parseInt(balance) / 1000000000000000000).toString()}
@@ -133,7 +125,10 @@ const AssetsComponent: React.FC<Interface> = ({ safe, addTransaction, handleErro
       </div>
       {showTransfer && (
         <Modal handleClose={() => setShowTransfer(false)}>
-          <TransferValueModal createTransaction={createTransaction} />
+          <TransferValueModal
+            createTransaction={createTransaction}
+            handleError={handleError}
+          />
         </Modal>
       )}
       {showTokenTransfer && (
