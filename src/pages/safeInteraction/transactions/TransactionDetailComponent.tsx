@@ -61,6 +61,9 @@ const TransactionDetailComponent: React.FC<Interface> = ({
     }
   }
 
+  const walletHasSigned = signatures.filter((value: string) => value.toLowerCase() === walletAddress.toLowerCase()).length === 1
+  const canExecute = threshold > signatures.length
+
   return (
     <div className="transaction">
       <div className="summary">
@@ -81,10 +84,10 @@ const TransactionDetailComponent: React.FC<Interface> = ({
         <button
           onClick={() => setShowDetails(!showDetails)}>{showDetails ? 'hide ' : 'show '}details</button>
         <button
-          disabled={signatures.filter((value: string) => value === walletAddress).length === 1}
+          disabled={walletHasSigned}
           onClick={() => approveTransactionHash(transaction)}>approve</button>
         <button
-          disabled={threshold > signatures.length}
+          disabled={canExecute}
           onClick={() => executeTransaction(transaction)}>execute</button>
       </div>
 
@@ -98,16 +101,20 @@ const TransactionDetailComponent: React.FC<Interface> = ({
             <th>Nonce</th>
             <td><p>{transaction.data.nonce}</p></td>
           </tr>
-          <tr>
-            <th>Raw Data</th>
-            <td><p className="data">{transaction.data.data}</p></td>
-          </tr>
-          <tr>
-            <th>Decoded Data</th>
-            <td>
-              <pre>{JSON.stringify(formatted, null, 2)}</pre>
-            </td>
-          </tr>
+          {transaction.data.data !== '0x' && (
+            <>
+              <tr>
+                <th>Raw Data</th>
+                <td><p className="data">{transaction.data.data}</p></td>
+              </tr>
+              <tr>
+                <th>Decoded Data</th>
+                <td>
+                  <pre>{JSON.stringify(formatted, null, 2)}</pre>
+                </td>
+              </tr>
+            </>
+          )}
           <tr>
             <th>Approvals:</th>
             <td>

@@ -37,7 +37,7 @@ const SafeInteraction: React.FC<Interface> = ({ safe, walletAddress, handleError
     <section className="selectedSafe">
       <Navigation handleLogout={handleLogout} changeActive={changeActive} selected={selectedTab} />
       {selectedTab === 'dashboard' && <Dashboard safe={safe} />}
-      {selectedTab === 'transactions' && <TransactionsPanel transactions={transactions} addTransaction={addTransaction} safe={safe} handleError={handleError} walletAddress={walletAddress} />}
+      {selectedTab === 'transactions' && <TransactionsPanel transactions={transactions} safe={safe} handleError={handleError} walletAddress={walletAddress} />}
       {selectedTab === 'assets' && <AssetsComponent safe={safe} handleError={handleError} addTransaction={addTransaction} />}
       {selectedTab === 'policy' && <PolicyComponent safe={safe} addTransaction={addTransaction} handleError={handleError} />}
 

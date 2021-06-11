@@ -39,6 +39,7 @@ const TransactionsPanel: React.FC<Interface> = ({ safe, handleError, addTransact
     <>
       <section className="panel">
         <h2>Transactions</h2>
+        <h3>Pending Transactions</h3>
         {transactions.map((transaction: SafeTransaction, index: number) =>
           <TransactionDetailComponent
             safe={safe}
@@ -50,6 +51,8 @@ const TransactionsPanel: React.FC<Interface> = ({ safe, handleError, addTransact
             key={index}
           />
         )}
+
+        <h3>Executed Transactions</h3>
       </section>
 
       {showApprovedModal && <ApprovedModal hash={showApprovedModal} handleClose={() => setShowApprovedModal(null)} />}
