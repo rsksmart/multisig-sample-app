@@ -38,14 +38,11 @@ const SafeInteraction: React.FC<Interface> = ({ safe, walletAddress, handleError
   }
 
   // update a transaction to 'EXECUTED'
-  const updateTransactionStatus = (transaction: SafeTransaction) => {
-    safe.getTransactionHash(transaction)
-      .then((hash: string) => {
-        const newTransactionList = transactions.map((item: TransactionStatus) =>
-          item.hash === hash ? { ...item, status: 'EXECUTED' } : item
-        )
-        setTransactions(newTransactionList as TransactionStatus[])
-      })
+  const updateTransactionStatus = (transaction: TransactionStatus) => {
+    const newTransactionList = transactions.map((item: TransactionStatus) =>
+      item.hash === transaction.hash ? { ...item, status: 'EXECUTED' } : item
+    )
+    setTransactions(newTransactionList as TransactionStatus[])
   }
 
   const closeModalAndSwitchScreen = () => {

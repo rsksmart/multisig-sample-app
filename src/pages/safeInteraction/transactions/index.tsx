@@ -9,7 +9,7 @@ import TransactionDetailComponent from './TransactionDetailComponent'
 interface Interface {
   safe: Safe
   handleError: (err: Error) => void
-  updateTransactionStatus: (transaction: SafeTransaction) => void
+  updateTransactionStatus: (transaction: TransactionStatus) => void
   transactions: TransactionStatus[]
   walletAddress: string
 }
@@ -27,8 +27,8 @@ const TransactionsPanel: React.FC<Interface> = ({ safe, handleError, updateTrans
           .catch(handleError))
 
   // Execute transaction
-  const executeTransaction = (transaction: SafeTransaction) =>
-    safe.executeTransaction(transaction)
+  const executeTransaction = (transaction: TransactionStatus) =>
+    safe.executeTransaction(transaction.transaction)
       .then((result: ContractTransaction) => {
         setShowExecutedModal(result.hash)
         updateTransactionStatus(transaction)
@@ -43,7 +43,7 @@ const TransactionsPanel: React.FC<Interface> = ({ safe, handleError, updateTrans
         {transactions.map((transaction: TransactionStatus, index: number) =>
           transaction.status === 'PENDING' && <TransactionDetailComponent
             safe={safe}
-            transaction={transaction.transaction}
+            transactionStatus={transaction}
             handleError={handleError}
             approveTransactionHash={approveTransactionHash}
             executeTransaction={executeTransaction}
@@ -56,7 +56,7 @@ const TransactionsPanel: React.FC<Interface> = ({ safe, handleError, updateTrans
         {transactions.map((transaction: TransactionStatus, index: number) =>
           transaction.status === 'EXECUTED' && <TransactionDetailComponent
             safe={safe}
-            transaction={transaction.transaction}
+            transactionStatus={transaction}
             walletAddress={walletAddress}
             key={index}
           />

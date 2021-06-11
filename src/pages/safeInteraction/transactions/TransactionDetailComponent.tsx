@@ -6,21 +6,24 @@ import refreshIcon from '../../../images/refresh.svg'
 import safeAbi from '@gnosis.pm/safe-core-sdk/dist/src/abis/SafeAbiV1-2-0.json'
 import erc20Abi from '../assets/erc20.json'
 import InputDataDecoder from 'ethereum-input-data-decoder'
+import { TransactionStatus } from '..'
 
 interface Interface {
   safe: Safe
-  transaction: SafeTransaction
+  transactionStatus: TransactionStatus
   walletAddress: string
   approveTransactionHash?: (transaction: SafeTransaction) => Promise<any>
-  executeTransaction?: (transaction: SafeTransaction) => void
+  executeTransaction?: (transaction: TransactionStatus) => void
   handleError?: (error: Error) => void
 }
 
 const TransactionDetailComponent: React.FC<Interface> = ({
-  safe, transaction, walletAddress, handleError, approveTransactionHash, executeTransaction
+  safe, transactionStatus, walletAddress, handleError, approveTransactionHash, executeTransaction
 }) => {
+  const transaction = transactionStatus.transaction
+  const hash = transactionStatus.hash
+
   const [showDetails, setShowDetails] = useState<boolean>(false)
-  const [hash, setHash] = useState<string>('')
   const [signatures, setSignatures] = useState<string[]>([])
   const [threshold, setThreshold] = useState<number>(0)
   const [isRefreshing, setIsRefreshing] = useState<boolean>(false)
@@ -28,7 +31,6 @@ const TransactionDetailComponent: React.FC<Interface> = ({
 
   useEffect(() => {
     safe.getTransactionHash(transaction).then((txHash: string) => {
-      setHash(txHash)
       getApprovals(txHash)
 
       // try to decode the data
@@ -88,7 +90,7 @@ const TransactionDetailComponent: React.FC<Interface> = ({
           onClick={() => approveTransactionHash(transaction)}>approve</button>}
         {executeTransaction && <button
           disabled={canExecute}
-          onClick={() => executeTransaction(transaction)}>execute</button>}
+          onClick={() => executeTransaction(transactionStatus)}>execute</button>}
       </div>
 
       {showDetails && (
