@@ -11,9 +11,9 @@ interface Interface {
   safe: Safe
   transaction: SafeTransaction
   walletAddress: string
-  approveTransactionHash: (transaction: SafeTransaction) => Promise<any>
-  executeTransaction: (transaction: SafeTransaction) => void
-  handleError: (error: Error) => void
+  approveTransactionHash?: (transaction: SafeTransaction) => Promise<any>
+  executeTransaction?: (transaction: SafeTransaction) => void
+  handleError?: (error: Error) => void
 }
 
 const TransactionDetailComponent: React.FC<Interface> = ({
@@ -83,12 +83,12 @@ const TransactionDetailComponent: React.FC<Interface> = ({
       <div className="buttons">
         <button
           onClick={() => setShowDetails(!showDetails)}>{showDetails ? 'hide ' : 'show '}details</button>
-        <button
+        {approveTransactionHash && <button
           disabled={walletHasSigned}
-          onClick={() => approveTransactionHash(transaction)}>approve</button>
-        <button
+          onClick={() => approveTransactionHash(transaction)}>approve</button>}
+        {executeTransaction && <button
           disabled={canExecute}
-          onClick={() => executeTransaction(transaction)}>execute</button>
+          onClick={() => executeTransaction(transaction)}>execute</button>}
       </div>
 
       {showDetails && (

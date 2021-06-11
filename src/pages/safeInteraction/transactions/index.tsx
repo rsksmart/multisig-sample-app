@@ -1,6 +1,7 @@
 import { Safe, SafeTransaction } from '@gnosis.pm/safe-core-sdk'
 import { ContractTransaction } from 'ethers'
 import React, { useState } from 'react'
+import { TransactionStatus } from '..'
 import ApprovedModal from './ApprovedModal'
 import ExecutedModal from './ExecutedModal'
 import TransactionDetailComponent from './TransactionDetailComponent'
@@ -8,12 +9,12 @@ import TransactionDetailComponent from './TransactionDetailComponent'
 interface Interface {
   safe: Safe
   handleError: (err: Error) => void
-  transactions: SafeTransaction[]
-  addTransaction: (transaction: SafeTransaction) => void
+  updateTransactionStatus: (transaction: SafeTransaction) => void
+  transactions: TransactionStatus[]
   walletAddress: string
 }
 
-const TransactionsPanel: React.FC<Interface> = ({ safe, handleError, addTransaction, walletAddress, transactions }) => {
+const TransactionsPanel: React.FC<Interface> = ({ safe, handleError, updateTransactionStatus, walletAddress, transactions }) => {
   const [showApprovedModal, setShowApprovedModal] = useState<string | null>(null)
   const [showExecutedModal, setShowExecutedModal] = useState<string | null>(null)
 
@@ -29,9 +30,8 @@ const TransactionsPanel: React.FC<Interface> = ({ safe, handleError, addTransact
   const executeTransaction = (transaction: SafeTransaction) =>
     safe.executeTransaction(transaction)
       .then((result: ContractTransaction) => {
-        console.log('executed:', result)
         setShowExecutedModal(result.hash)
-        // @todo move transaction from pending to confirmed ;-)
+        updateTransactionStatus(transaction)
       })
       .catch(handleError)
 
@@ -40,10 +40,10 @@ const TransactionsPanel: React.FC<Interface> = ({ safe, handleError, addTransact
       <section className="panel">
         <h2>Transactions</h2>
         <h3>Pending Transactions</h3>
-        {transactions.map((transaction: SafeTransaction, index: number) =>
-          <TransactionDetailComponent
+        {transactions.map((transaction: TransactionStatus, index: number) =>
+          transaction.status === 'PENDING' && <TransactionDetailComponent
             safe={safe}
-            transaction={transaction}
+            transaction={transaction.transaction}
             handleError={handleError}
             approveTransactionHash={approveTransactionHash}
             executeTransaction={executeTransaction}
@@ -53,6 +53,14 @@ const TransactionsPanel: React.FC<Interface> = ({ safe, handleError, addTransact
         )}
 
         <h3>Executed Transactions</h3>
+        {transactions.map((transaction: TransactionStatus, index: number) =>
+          transaction.status === 'EXECUTED' && <TransactionDetailComponent
+            safe={safe}
+            transaction={transaction.transaction}
+            walletAddress={walletAddress}
+            key={index}
+          />
+        )}
       </section>
 
       {showApprovedModal && <ApprovedModal hash={showApprovedModal} handleClose={() => setShowApprovedModal(null)} />}
