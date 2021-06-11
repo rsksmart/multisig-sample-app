@@ -14,7 +14,8 @@ interface Interface {
   handleError: (err: Error) => void
 }
 
-export interface TransactionStatus {
+// Wrapper for transaction to keep track of the status, and hash to be used as an identifier
+export interface TransactionBundle {
   transaction: SafeTransaction
   hash: string
   status: 'PENDING' | 'EXECUTED'
@@ -27,7 +28,7 @@ const SafeInteraction: React.FC<Interface> = ({ safe, walletAddress, handleError
   const changeActive = (evt: MouseEvent<HTMLButtonElement>) => setSelectedTab(evt.currentTarget.id)
 
   // Transaction Management, pending transactions:
-  const [transactions, setTransactions] = useState<TransactionStatus[]>([])
+  const [transactions, setTransactions] = useState<TransactionBundle[]>([])
   const addTransaction = (transaction: SafeTransaction) => {
     // get the hash to be used as an identifier
     safe.getTransactionHash(transaction)
@@ -38,11 +39,11 @@ const SafeInteraction: React.FC<Interface> = ({ safe, walletAddress, handleError
   }
 
   // update a transaction to 'EXECUTED'
-  const updateTransactionStatus = (transaction: TransactionStatus) => {
-    const newTransactionList = transactions.map((item: TransactionStatus) =>
-      item.hash === transaction.hash ? { ...item, status: 'EXECUTED' } : item
+  const updateTransactionStatus = (transactionBundle: TransactionBundle) => {
+    const newTransactionList = transactions.map((item: TransactionBundle) =>
+      item.hash === transactionBundle.hash ? { ...item, status: 'EXECUTED' } : item
     )
-    setTransactions(newTransactionList as TransactionStatus[])
+    setTransactions(newTransactionList as TransactionBundle[])
   }
 
   const closeModalAndSwitchScreen = () => {

@@ -6,22 +6,21 @@ import refreshIcon from '../../../images/refresh.svg'
 import safeAbi from '@gnosis.pm/safe-core-sdk/dist/src/abis/SafeAbiV1-2-0.json'
 import erc20Abi from '../assets/erc20.json'
 import InputDataDecoder from 'ethereum-input-data-decoder'
-import { TransactionStatus } from '..'
+import { TransactionBundle } from '..'
 
 interface Interface {
   safe: Safe
-  transactionStatus: TransactionStatus
+  transactionBundle: TransactionBundle
   walletAddress: string
   approveTransactionHash?: (transaction: SafeTransaction) => Promise<any>
-  executeTransaction?: (transaction: TransactionStatus) => void
+  executeTransaction?: (transactionBundle: TransactionBundle) => void
   handleError?: (error: Error) => void
 }
 
 const TransactionDetailComponent: React.FC<Interface> = ({
-  safe, transactionStatus, walletAddress, handleError, approveTransactionHash, executeTransaction
+  safe, transactionBundle, walletAddress, handleError, approveTransactionHash, executeTransaction
 }) => {
-  const transaction = transactionStatus.transaction
-  const hash = transactionStatus.hash
+  const { transaction, hash } = transactionBundle
 
   const [showDetails, setShowDetails] = useState<boolean>(false)
   const [signatures, setSignatures] = useState<string[]>([])
@@ -90,7 +89,7 @@ const TransactionDetailComponent: React.FC<Interface> = ({
           onClick={() => approveTransactionHash(transaction)}>approve</button>}
         {executeTransaction && <button
           disabled={canExecute}
-          onClick={() => executeTransaction(transactionStatus)}>execute</button>}
+          onClick={() => executeTransaction(transactionBundle)}>execute</button>}
       </div>
 
       {showDetails && (
