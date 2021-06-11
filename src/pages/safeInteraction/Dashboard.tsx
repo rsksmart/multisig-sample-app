@@ -18,7 +18,7 @@ const Dashboard: React.FC<Interface> = ({ safe }) => {
 
   return (
     <section className="panel">
-      <h3>Safe Dashboard</h3>
+      <h2>Safe Dashboard</h2>
       <table>
         <tbody>
           <tr>
