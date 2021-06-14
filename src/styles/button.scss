@@ -15,6 +15,7 @@ button:hover:not([disabled]), .button:hover {
 
 button[disabled] {
   cursor: not-allowed;
+  color: #ccc;
 }
 
 button.icon, button:hover.icon {

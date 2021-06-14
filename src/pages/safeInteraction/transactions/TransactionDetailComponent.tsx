@@ -6,21 +6,23 @@ import refreshIcon from '../../../images/refresh.svg'
 import safeAbi from '@gnosis.pm/safe-core-sdk/dist/src/abis/SafeAbiV1-2-0.json'
 import erc20Abi from '../assets/erc20.json'
 import InputDataDecoder from 'ethereum-input-data-decoder'
+import { TransactionBundle } from '..'
 
 interface Interface {
   safe: Safe
-  transaction: SafeTransaction
+  transactionBundle: TransactionBundle
   walletAddress: string
-  approveTransactionHash: (transaction: SafeTransaction) => Promise<any>
-  executeTransaction: (transaction: SafeTransaction) => void
-  handleError: (error: Error) => void
+  approveTransactionHash?: (transaction: SafeTransaction) => Promise<any>
+  executeTransaction?: (transactionBundle: TransactionBundle) => void
+  handleError?: (error: Error) => void
 }
 
 const TransactionDetailComponent: React.FC<Interface> = ({
-  safe, transaction, walletAddress, handleError, approveTransactionHash, executeTransaction
+  safe, transactionBundle, walletAddress, handleError, approveTransactionHash, executeTransaction
 }) => {
+  const { transaction, hash } = transactionBundle
+
   const [showDetails, setShowDetails] = useState<boolean>(false)
-  const [hash, setHash] = useState<string>('')
   const [signatures, setSignatures] = useState<string[]>([])
   const [threshold, setThreshold] = useState<number>(0)
   const [isRefreshing, setIsRefreshing] = useState<boolean>(false)
@@ -28,7 +30,6 @@ const TransactionDetailComponent: React.FC<Interface> = ({
 
   useEffect(() => {
     safe.getTransactionHash(transaction).then((txHash: string) => {
-      setHash(txHash)
       getApprovals(txHash)
 
       // try to decode the data
@@ -61,11 +62,15 @@ const TransactionDetailComponent: React.FC<Interface> = ({
     }
   }
 
+  const walletHasSigned = signatures.filter((value: string) => value.toLowerCase() === walletAddress.toLowerCase()).length === 1
+  const canExecute = threshold > signatures.length
+
   return (
     <div className="transaction">
       <div className="summary">
         <p><strong>{formatted && getTransactionName()}</strong></p>
         <p><strong>to: </strong>
+          {transaction.data.to === safe.getAddress() && <em>(Safe) </em>}
           <ValueWithButtons value={transaction.data.to} />
         </p>
         {transaction.data.value !== '0' && <p><strong>value: </strong>{transaction.data.value}</p>}
@@ -79,12 +84,12 @@ const TransactionDetailComponent: React.FC<Interface> = ({
       <div className="buttons">
         <button
           onClick={() => setShowDetails(!showDetails)}>{showDetails ? 'hide ' : 'show '}details</button>
-        <button
-          disabled={signatures.filter((value: string) => value === walletAddress).length === 1}
-          onClick={() => approveTransactionHash(transaction)}>approve</button>
-        <button
-          disabled={threshold > signatures.length}
-          onClick={() => executeTransaction(transaction)}>execute</button>
+        {approveTransactionHash && <button
+          disabled={walletHasSigned}
+          onClick={() => approveTransactionHash(transaction)}>approve</button>}
+        {executeTransaction && <button
+          disabled={canExecute}
+          onClick={() => executeTransaction(transactionBundle)}>execute</button>}
       </div>
 
       {showDetails && (
@@ -97,22 +102,30 @@ const TransactionDetailComponent: React.FC<Interface> = ({
             <th>Nonce</th>
             <td><p>{transaction.data.nonce}</p></td>
           </tr>
-          <tr>
-            <th>Raw Data</th>
-            <td><p className="data">{transaction.data.data}</p></td>
-          </tr>
-          <tr>
-            <th>Decoded Data</th>
-            <td>
-              <pre>{JSON.stringify(formatted, null, 2)}</pre>
-            </td>
-          </tr>
+          {transaction.data.data !== '0x' && (
+            <>
+              <tr>
+                <th>Raw Data</th>
+                <td><p className="data">{transaction.data.data}</p></td>
+              </tr>
+              <tr>
+                <th>Decoded Data</th>
+                <td>
+                  <pre>{JSON.stringify(formatted, null, 2)}</pre>
+                </td>
+              </tr>
+            </>
+          )}
           <tr>
             <th>Approvals:</th>
             <td>
               {signatures.length === 0 ? <p><em>No signatures</em></p> : (
-                <ol>
-                  {signatures.map((approval: string) => <li key={approval}><ValueWithButtons value={approval} /></li>)}
+                <ol >
+                  {signatures.map((approval: string) =>
+                    <li key={approval}>
+                      <ValueWithButtons value={approval} />
+                      {walletAddress.toLowerCase() === approval.toLowerCase() && <em>(Connected Account)</em>}
+                    </li>)}
                 </ol>
               )}
             </td>

@@ -2,6 +2,8 @@
   display: flex;
   flex-wrap: wrap;
   margin-bottom: 10px;
+  background-color: #f9f9f9;
+  
 
   .summary {
     flex: 1 0 66%;
@@ -25,8 +27,6 @@
   table {
     flex: none;
     width: 100%;
-
-    border: 1px solid $gray;
   }
 
   p.data {

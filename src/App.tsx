@@ -38,7 +38,7 @@ function App () {
     clearError()
   }
 
-  const handleError = (error: Error) => setError(error.message)
+  const handleError = (error: Error) => error && setError(error.message)
   const clearError = () => setError(null)
 
   const handleLogout = () => {
