@@ -70,7 +70,7 @@ const CreateSafeComponent: React.FC<Interface> = ({ connectAddress, createSafe, 
       </ul>
       <button className="addAddress" onClick={() => setAddresses([...addresses, ''])}>Add address</button>
 
-      <p>Transactions require the confirmation of at least
+      <p>Transactions require the confirmation of at least{' '}
         <select className="threshold" value={threshold.toString()} onChange={evt => setThreshold(parseInt(evt.target.value))}>
           {loopOptions(addresses.length)}
         </select>
