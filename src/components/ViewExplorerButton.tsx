@@ -1,13 +1,15 @@
 import React from 'react'
 
 interface Interface {
-  address: string
+  address?: string
+  tx?: string
 }
 
-const ViewExplorerButton: React.FC<Interface> = ({ address }) => {
+const ViewExplorerButton: React.FC<Interface> = ({ address, tx }) => {
+  const url = address ? `address/${address.toLowerCase()}` : `tx/${tx}`
   return (
     <a
-      href={`http://explorer.testnet.rsk.co/address/${address.toLowerCase()}`}
+      href={`http://explorer.testnet.rsk.co/${url}`}
       target="_blank"
       rel="noreferrer"
       className="icon explorerLink"

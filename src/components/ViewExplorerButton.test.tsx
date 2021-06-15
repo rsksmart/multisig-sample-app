@@ -9,4 +9,9 @@ describe('Component: ViewExplorerButton', () => {
     expect(wrapper).toBeDefined()
     expect(wrapper.find('a').props().href).toBe('http://explorer.testnet.rsk.co/address/0x123')
   })
+
+  it('renders with a TX address', () => {
+    const wrapper = mount(<ViewExplorerButton tx='0x123' />)
+    expect(wrapper.find('a').props().href).toBe('http://explorer.testnet.rsk.co/tx/0x123')
+  })
 })
