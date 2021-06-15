@@ -8,7 +8,7 @@ export const transactionListener = (web3Provider: Provider, tx: string) =>
           console.log('checking...', response)
           if (response) {
             clearInterval(checkInterval)
-            resolve(response)
+            response.status && response.status === 1 ? resolve(response) : reject(new Error('Transaction Failed'))
           }
         })
         .catch((err: Error) => reject(err))
