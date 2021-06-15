@@ -22,7 +22,7 @@ const ExecutedModal: React.FC<Interface> = ({ handleClose, hash }) => {
       <p>This is the hash of the transaction:</p>
       <p>
         <input type="text" defaultValue={hash} />
-        <ViewExplorerButton address={hash} />
+        <ViewExplorerButton tx={hash} />
       </p>
       <p><button onClick={handleClose}>Close modal</button></p>
     </Modal>
