@@ -9,12 +9,13 @@ import { getContracts } from '../../config'
 
 interface Interface {
   web3Provider: any
+  chainId: number
   handleSetSafe: (safe: Safe | EthersSafe) => any
   handleError: (error: Error) => void
   address: string | null
 }
 
-const ChooseSafe: React.FC<Interface> = ({ web3Provider, handleSetSafe, handleError, address }) => {
+const ChooseSafe: React.FC<Interface> = ({ web3Provider, chainId, handleSetSafe, handleError, address }) => {
   // UI variables
   const [isCreate, setIsCreate] = useState<boolean>(false)
   const [isLoading, setIsLoading] = useState<boolean>(false)
@@ -23,8 +24,9 @@ const ChooseSafe: React.FC<Interface> = ({ web3Provider, handleSetSafe, handleEr
   const createSafe = (addresses: string[], threshold: number) => {
     setIsLoading(true)
 
-    const contracts = getContracts(1337)
+    const contracts = getContracts(chainId)
     const provider = new ethers.providers.Web3Provider(web3Provider)
+
     const signer = provider.getSigner()
 
     const safeFactory = new EthersSafeFactory(
