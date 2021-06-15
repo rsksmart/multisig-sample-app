@@ -68,9 +68,10 @@ function App () {
         </section>
       )}
 
-      {rLoginResponse && !safe && (
+      {rLoginResponse && chainId && !safe && (
         <ChooseSafe
           web3Provider={rLoginResponse.provider}
+          chainId={chainId}
           handleSetSafe={handleSetSafe}
           handleError={handleError}
           address={address}
