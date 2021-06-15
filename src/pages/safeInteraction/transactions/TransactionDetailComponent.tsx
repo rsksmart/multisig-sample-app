@@ -7,6 +7,7 @@ import safeAbi from '@gnosis.pm/safe-core-sdk/dist/src/abis/SafeAbiV1-2-0.json'
 import erc20Abi from '../assets/erc20.json'
 import InputDataDecoder from 'ethereum-input-data-decoder'
 import { TransactionBundle } from '..'
+import ViewExplorerButton from '../../../components/ViewExplorerButton'
 
 interface Interface {
   safe: Safe
@@ -62,6 +63,10 @@ const TransactionDetailComponent: React.FC<Interface> = ({
     }
   }
 
+  const handleApprove = () =>
+    approveTransactionHash && approveTransactionHash(transaction)
+      .then(() => getApprovals(hash))
+
   const walletHasSigned = signatures.filter((value: string) => value.toLowerCase() === walletAddress.toLowerCase()).length === 1
   const canExecute = threshold > signatures.length
 
@@ -86,7 +91,7 @@ const TransactionDetailComponent: React.FC<Interface> = ({
           onClick={() => setShowDetails(!showDetails)}>{showDetails ? 'hide ' : 'show '}details</button>
         {approveTransactionHash && <button
           disabled={walletHasSigned}
-          onClick={() => approveTransactionHash(transaction)}>approve</button>}
+          onClick={handleApprove}>approve</button>}
         {executeTransaction && <button
           disabled={canExecute}
           onClick={() => executeTransaction(transactionBundle)}>execute</button>}
@@ -96,7 +101,9 @@ const TransactionDetailComponent: React.FC<Interface> = ({
         <table><tbody>
           <tr>
             <th>Transaction Hash</th>
-            <td><ValueWithButtons value={hash} /></td>
+            <td>
+              <p>{hash}<ViewExplorerButton tx={hash} /></p>
+            </td>
           </tr>
           <tr>
             <th>Nonce</th>

@@ -8,6 +8,14 @@ interface Interface {
 }
 
 const ExecutedModal: React.FC<Interface> = ({ handleClose, hash }) => {
+  if (hash === 'LOADING') {
+    return (
+      <Modal>
+        <h2>Transaction pending...</h2>
+      </Modal>
+    )
+  }
+
   return (
     <Modal handleClose={handleClose}>
       <h2>Transaction executed</h2>

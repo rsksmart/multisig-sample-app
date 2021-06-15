@@ -2,6 +2,7 @@ import { Safe, SafeTransaction } from '@gnosis.pm/safe-core-sdk'
 import { ContractTransaction } from 'ethers'
 import React, { useState } from 'react'
 import { TransactionBundle } from '..'
+import { transactionListener } from '../../../helpers/transactionListener'
 import ApprovedModal from './ApprovedModal'
 import ExecutedModal from './ExecutedModal'
 import TransactionDetailComponent from './TransactionDetailComponent'
@@ -25,21 +26,35 @@ const TransactionsPanel: React.FC<Interface> = ({ safe, handleError, updateTrans
     bundle.status === 'PENDING' ? pendingTransactions.push(bundle) : executedTransactions.push(bundle))
 
   // Sign transaction "on-chain"
-  const approveTransactionHash = (transaction: SafeTransaction) =>
-    safe.getTransactionHash(transaction)
+  const approveTransactionHash = (transaction: SafeTransaction) => {
+    setShowApprovedModal('LOADING')
+
+    return safe.getTransactionHash(transaction)
       .then((hash: string) =>
         safe.approveTransactionHash(hash)
-          .then((result: ContractTransaction) => setShowApprovedModal(result.hash))
-          .catch(handleError))
+          .then((result: ContractTransaction) => transactionListener(safe.getProvider(), result.hash))
+          .then((receipt: any) => setShowApprovedModal(receipt.transactionHash)))
+      .catch((err: Error) => {
+        setShowApprovedModal(null)
+        handleError(err)
+      })
+  }
 
   // Execute transaction
-  const executeTransaction = (transaction: TransactionBundle) =>
+  const executeTransaction = (transaction: TransactionBundle) => {
+    setShowExecutedModal('LOADING')
+
     safe.executeTransaction(transaction.transaction)
-      .then((result: ContractTransaction) => {
-        setShowExecutedModal(result.hash)
+      .then((result: ContractTransaction) => transactionListener(safe.getProvider(), result.hash))
+      .then((receipt: any) => {
+        setShowExecutedModal(receipt.transactionHash)
         updateTransactionStatus(transaction)
       })
-      .catch(handleError)
+      .catch((err: Error) => {
+        setShowExecutedModal(null)
+        handleError(err)
+      })
+  }
 
   return (
     <>
