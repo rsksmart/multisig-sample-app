@@ -7,6 +7,7 @@ import safeAbi from '@gnosis.pm/safe-core-sdk/dist/src/abis/SafeAbiV1-2-0.json'
 import erc20Abi from '../assets/erc20.json'
 import InputDataDecoder from 'ethereum-input-data-decoder'
 import { TransactionBundle } from '..'
+import ViewExplorerButton from '../../../components/ViewExplorerButton'
 
 interface Interface {
   safe: Safe
@@ -100,7 +101,9 @@ const TransactionDetailComponent: React.FC<Interface> = ({
         <table><tbody>
           <tr>
             <th>Transaction Hash</th>
-            <td><ValueWithButtons value={hash} /></td>
+            <td>
+              <p>{hash}<ViewExplorerButton tx={hash} /></p>
+            </td>
           </tr>
           <tr>
             <th>Nonce</th>

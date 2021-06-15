@@ -11,7 +11,7 @@ const ApprovedModal: React.FC<Interface> = ({ hash, handleClose }) => {
   if (hash === 'LOADING') {
     return (
       <Modal>
-        <h2>Approve transaction pending...</h2>
+        <h2>Transaction pending...</h2>
       </Modal>
     )
   }

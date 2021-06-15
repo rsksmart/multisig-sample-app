@@ -41,13 +41,20 @@ const TransactionsPanel: React.FC<Interface> = ({ safe, handleError, updateTrans
   }
 
   // Execute transaction
-  const executeTransaction = (transaction: TransactionBundle) =>
+  const executeTransaction = (transaction: TransactionBundle) => {
+    setShowExecutedModal('LOADING')
+
     safe.executeTransaction(transaction.transaction)
-      .then((result: ContractTransaction) => {
-        setShowExecutedModal(result.hash)
+      .then((result: ContractTransaction) => transactionListener(safe.getProvider(), result.hash))
+      .then((receipt: any) => {
+        setShowExecutedModal(receipt.transactionHash)
         updateTransactionStatus(transaction)
       })
-      .catch(handleError)
+      .catch((err: Error) => {
+        setShowExecutedModal(null)
+        handleError(err)
+      })
+  }
 
   return (
     <>
