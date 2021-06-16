@@ -45,7 +45,7 @@ const generatePreValidatedSignature = (ownerAddress: string): SafeSignature => {
 
 /**
  * A modified version of Gnosis's safe.executeTransaction function. For RSK, it
- * doubles the gas estimation which is required on RSK.
+ * adds 30,000 to the gas estimation which is required on RSK.
  * @param safe An EthersSafe which is used to get the safe and signer address
  * @param safeTransaction SafeTransaction ready to be executed
  * @returns ContractTransaction
@@ -97,7 +97,7 @@ export const executeRskTransaction = async (
     safeTransaction.data.gasToken,
     safeTransaction.data.refundReceiver,
     safeTransaction.encodedSignatures(),
-    { gasLimit: gasLimit * 2 }
+    { gasLimit: gasLimit + 30000 }
   )
 
   return txResponse
