@@ -1,8 +1,11 @@
-import { Safe, SafeTransaction } from '@gnosis.pm/safe-core-sdk'
+import { Safe, SafeSignature, SafeTransaction } from '@gnosis.pm/safe-core-sdk'
 import { Contract } from 'ethers'
 import safeAbi from '@gnosis.pm/safe-core-sdk/dist/src/abis/SafeAbiV1-2-0.json'
+import { EthSignSignature } from '@gnosis.pm/safe-core-sdk/dist/src/utils/signatures/SafeSignature'
 
-export async function estimateGasForTransactionExecution (
+// COPIED from https://github.com/gnosis/safe-core-sdk/blob/main/packages/safe-core-sdk/src/utils/transactions/gas.ts#L84-L107
+// the function is as is and not modified other than removal of 'export'
+async function estimateGasForTransactionExecution (
   contract: any,
   from: string,
   tx: SafeTransaction
@@ -21,18 +24,28 @@ export async function estimateGasForTransactionExecution (
       tx.encodedSignatures(),
       { from, gasPrice: tx.data.gasPrice }
     )
-    // Double the gasLimit for RSK networks. In the end, it will use the original gasEstimage
-    // but for it to work on RSK, it needs to be increased
-    const newGasEstimate = gas.toNumber() * 2
 
-    return newGasEstimate
+    return gas.toNumber()
   } catch (error) {
     return Promise.reject(error)
   }
 }
 
+// copied from https://github.com/gnosis/safe-core-sdk/blob/main/packages/safe-core-sdk/src/utils/signatures/index.ts
+// the function is as is and not modified other than removal of 'export'
+const generatePreValidatedSignature = (ownerAddress: string): SafeSignature => {
+  const signature =
+    '0x000000000000000000000000' +
+    ownerAddress.slice(2) +
+    '0000000000000000000000000000000000000000000000000000000000000000' +
+    '01'
+
+  return new EthSignSignature(ownerAddress, signature)
+}
+
 /**
- * Execute a transaction on the RSK network estimating double the gas that it should.
+ * A modified version of Gnosis's safe.executeTransaction function. For RSK, it
+ * doubles the gas estimation which is required on RSK.
  * @param safe An EthersSafe which is used to get the safe and signer address
  * @param safeTransaction SafeTransaction ready to be executed
  * @returns ContractTransaction
@@ -42,13 +55,34 @@ export const executeRskTransaction = async (
   safeTransaction: SafeTransaction
 ) => {
   const signer = safe.getSigner()
-  const address = await signer?.getAddress() || ''
+  const signerAddress = await signer?.getAddress()
+
+  if (!signerAddress) {
+    throw new Error('No signer provided')
+  }
 
   const safeContract = new Contract(safe.getAddress(), safeAbi, signer)
+  const txHash = await safe.getTransactionHash(safeTransaction)
+  const ownersWhoApprovedTx = await safe.getOwnersWhoApprovedTx(txHash)
+
+  // add the signatures to the safeTransaction object
+  for (const owner of ownersWhoApprovedTx) {
+    safeTransaction.addSignature(generatePreValidatedSignature(owner))
+  }
+
+  const threshold = await safe.getThreshold()
+  if (threshold > safeTransaction.signatures.size) {
+    const signaturesMissing = threshold - safeTransaction.signatures.size
+    throw new Error(
+      `There ${signaturesMissing > 1 ? 'are' : 'is'} ${signaturesMissing} signature${
+        signaturesMissing > 1 ? 's' : ''
+      } missing`
+    )
+  }
 
   const gasLimit = await estimateGasForTransactionExecution(
     safeContract,
-    address,
+    signerAddress.toLowerCase(),
     safeTransaction
   )
 
@@ -63,7 +97,7 @@ export const executeRskTransaction = async (
     safeTransaction.data.gasToken,
     safeTransaction.data.refundReceiver,
     safeTransaction.encodedSignatures(),
-    { gasLimit }
+    { gasLimit: gasLimit * 2 }
   )
 
   return txResponse
