@@ -2,6 +2,7 @@ import { Safe, SafeTransaction } from '@gnosis.pm/safe-core-sdk'
 import { ContractTransaction } from 'ethers'
 import React, { useState } from 'react'
 import { TransactionBundle } from '..'
+import { executeRskTransaction } from '../../../helpers/executeTransaction'
 import { transactionListener } from '../../../helpers/transactionListener'
 import ApprovedModal from './ApprovedModal'
 import ExecutedModal from './ExecutedModal'
@@ -41,14 +42,14 @@ const TransactionsPanel: React.FC<Interface> = ({ safe, handleError, updateTrans
   }
 
   // Execute transaction
-  const executeTransaction = (transaction: TransactionBundle) => {
+  const executeTransaction = (transactionBundle: TransactionBundle) => {
     setShowExecutedModal('LOADING')
 
-    safe.executeTransaction(transaction.transaction)
+    executeRskTransaction(safe, transactionBundle.transaction)
       .then((result: ContractTransaction) => transactionListener(safe.getProvider(), result.hash))
       .then((receipt: any) => {
         setShowExecutedModal(receipt.transactionHash)
-        updateTransactionStatus(transaction)
+        updateTransactionStatus(transactionBundle)
       })
       .catch((err: Error) => {
         setShowExecutedModal(null)
