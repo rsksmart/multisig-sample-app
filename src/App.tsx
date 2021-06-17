@@ -33,13 +33,12 @@ function App () {
     response.provider.on('accountsChanged', (accounts: string[]) => setAddress(accounts[0]))
   }
 
-  const handleSetSafe = (safe: any) => {
+  const handleSetSafe = (safe: Safe) => {
     setSafe(safe)
-    clearError()
+    handleError(null)
   }
 
-  const handleError = (error: Error) => error && setError(error.message)
-  const clearError = () => setError(null)
+  const handleError = (error: Error | null) => error ? setError(error.message) : setError(null)
 
   const handleLogout = () => {
     rLoginResponse?.disconnect()
@@ -64,7 +63,7 @@ function App () {
       {error && (
         <section className="error">
           <p>{error}</p>
-          <button onClick={clearError}>x</button>
+          <button onClick={() => handleError(null)}>x</button>
         </section>
       )}
 
