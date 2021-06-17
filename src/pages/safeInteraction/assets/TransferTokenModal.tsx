@@ -4,7 +4,7 @@ import { Erc20Token } from '.'
 
 interface Interface {
   token: Erc20Token
-  handleError: (err: Error) => void
+  handleError: (err: Error | null) => void
   createTransaction: (token: Erc20Token, amount: number, to: string) => void
 }
 
@@ -12,6 +12,8 @@ const TransferTokenModal: React.FC<Interface> = ({ token, createTransaction, han
   const [transaction, setTransaction] = useState<{amount: number, address: string}>({ amount: 0, address: '' })
 
   const validateTransaction = () => {
+    handleError(null)
+
     if (!isAddress(transaction.address)) {
       return handleError(new Error('Recipient is not an address.'))
     }

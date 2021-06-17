@@ -11,7 +11,7 @@ interface Interface {
   safe: Safe
   walletAddress: string
   handleLogout: () => void
-  handleError: (err: Error) => void
+  handleError: (err: Error | null) => void
 }
 
 // Wrapper for transaction to keep track of the status, and hash to be used as an identifier

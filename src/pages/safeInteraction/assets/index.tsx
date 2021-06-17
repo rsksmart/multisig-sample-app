@@ -11,7 +11,7 @@ import { getContracts } from '../../../config'
 
 interface Interface {
   safe: Safe
-  handleError: (err: Error) => void
+  handleError: (err: Error | null) => void
   addTransaction: (transaction: SafeTransaction) => void
 }
 
@@ -57,7 +57,8 @@ const AssetsComponent: React.FC<Interface> = ({ safe, addTransaction, handleErro
   }
 
   // Create transaction to send rbtc or data
-  const createTransaction = (to: string, amount: number) =>
+  const createTransaction = (to: string, amount: number) => {
+    handleError(null)
     safe.createTransaction({
       to,
       value: amount.toString(),
@@ -66,9 +67,11 @@ const AssetsComponent: React.FC<Interface> = ({ safe, addTransaction, handleErro
       .then((transaction: SafeTransaction) => addTransaction(transaction))
       .catch(handleError)
       .finally(() => setShowTransfer(false))
+  }
 
   // Create transaction to send an ERC20 token:
   const createTokenTransaction = (token: Erc20Token, amount: number, to: string) => {
+    handleError(null)
     const contract = new Contract(token.contractAddress, erc20Abi, safe.getSigner())
     const txBuilder = new ERC20TransactionBuilder(safe, contract)
 
