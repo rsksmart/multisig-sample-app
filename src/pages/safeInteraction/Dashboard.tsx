@@ -42,7 +42,7 @@ const Dashboard: React.FC<Interface> = ({ safe }) => {
                 {nonce.toString()}
                 <button onClick={getNonce} className="icon"><img src={refreshIcon} alt="Refresh" /></button>
               </td>
-            </tr> 
+            </tr>
           )}
         </tbody>
       </table>
