@@ -17,7 +17,7 @@ interface Interface {
 
 const TransactionsPanel: React.FC<Interface> = ({ safe, handleError, updateTransactionStatus, walletAddress, transactions }) => {
   const [showApprovedModal, setShowApprovedModal] = useState<string | null>(null)
-  const [showExecutedModal, setShowExecutedModal] = useState<string | null>(null)
+  const [showExecutedModal, setShowExecutedModal] = useState<{ status: string, hash?: string } | null>(null)
 
   const pendingTransactions: TransactionBundle[] = []
   const executedTransactions: TransactionBundle[] = []
@@ -42,10 +42,11 @@ const TransactionsPanel: React.FC<Interface> = ({ safe, handleError, updateTrans
 
   // Execute transaction
   const executeTransaction = (transaction: TransactionBundle) => {
-    setShowExecutedModal('LOADING')
-
     safe.executeTransaction(transaction.transaction)
-      .then((result: ContractTransaction) => transactionListener(safe.getProvider(), result.hash))
+      .then((result: ContractTransaction) => {
+        setShowExecutedModal({ status: 'LOADING', hash: result.hash })
+        return transactionListener(safe.getProvider(), result.hash)
+      })
       .then((receipt: any) => {
         setShowExecutedModal(receipt.transactionHash)
         updateTransactionStatus(transaction)
@@ -96,7 +97,7 @@ const TransactionsPanel: React.FC<Interface> = ({ safe, handleError, updateTrans
       </section>
 
       {showApprovedModal && <ApprovedModal hash={showApprovedModal} handleClose={() => setShowApprovedModal(null)} />}
-      {showExecutedModal && <ExecutedModal hash={showExecutedModal} handleClose={() => setShowExecutedModal(null)} />}
+      {showExecutedModal && <ExecutedModal status={showExecutedModal} handleClose={() => setShowExecutedModal(null)} />}
     </>
   )
 }

@@ -5,14 +5,14 @@ import ViewExplorerButton from '../../../components/ViewExplorerButton'
 
 interface Interface {
   handleClose: () => void
-  hash: string
+  status: { hash?: string, status?: string }
 }
 
-const ExecutedModal: React.FC<Interface> = ({ handleClose, hash }) => {
-  if (hash === 'LOADING') {
+const ExecutedModal: React.FC<Interface> = ({ handleClose, status }) => {
+  if (status.status === 'LOADING') {
     return (
       <Modal>
-        <LoadingComponent text="Executing the transaction." />
+        <LoadingComponent text="Executing the transaction." hash={status.hash} />
       </Modal>
     )
   }
@@ -22,8 +22,8 @@ const ExecutedModal: React.FC<Interface> = ({ handleClose, hash }) => {
       <h2>Transaction executed</h2>
       <p>This is the hash of the transaction:</p>
       <p>
-        <input type="text" defaultValue={hash} />
-        <ViewExplorerButton tx={hash} />
+        <input type="text" defaultValue={status.hash} />
+        <ViewExplorerButton tx={status.hash} />
       </p>
       <p><button onClick={handleClose}>Close modal</button></p>
     </Modal>
