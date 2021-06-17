@@ -6,6 +6,7 @@ import { ethers } from 'ethers'
 import CreateSafeComponent from './CreateSafeComponent'
 import ConnectToSafeComponent from './ConnectToSafeComponent'
 import { getContracts } from '../../config'
+import LoadingComponent from '../../components/LoadingComponent'
 
 interface Interface {
   web3Provider: any
@@ -54,7 +55,7 @@ const ChooseSafe: React.FC<Interface> = ({ web3Provider, chainId, handleSetSafe,
       .finally(() => setIsLoading(false))
   }
 
-  return isLoading ? <div style={{ textAlign: 'center' }}>Loading...</div>
+  return isLoading ? <LoadingComponent />
     : (
       <section className="connect panel">
         <h2>
