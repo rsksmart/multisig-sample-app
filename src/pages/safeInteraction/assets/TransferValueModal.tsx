@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 
 interface Interface {
   createTransaction: (recipient: string, amount: number) => void
-  handleError: (error: Error) => void
+  handleError: (error: Error | null) => void
 }
 
 const TransferValueModal: React.FC<Interface> = ({ createTransaction, handleError }) => {
@@ -11,6 +11,8 @@ const TransferValueModal: React.FC<Interface> = ({ createTransaction, handleErro
   const [amount, setAmount] = useState<number>(10000)
 
   const validateTransaction = () => {
+    handleError(null)
+
     if (!isAddress(recipient)) {
       return handleError(new Error('Recipient is not an address.'))
     }

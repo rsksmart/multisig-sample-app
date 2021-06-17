@@ -1,10 +1,13 @@
 section.error {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+
   color: $white;
   background-color: $deepRed;
-  position: relative;
   padding: 5px 20px;
   margin-top: 25px;
-  border-radius: 15px;
+  z-index: 1000;
 
   button {
     position: absolute;

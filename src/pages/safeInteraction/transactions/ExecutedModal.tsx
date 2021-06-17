@@ -1,4 +1,5 @@
 import React from 'react'
+import LoadingComponent from '../../../components/LoadingComponent'
 import Modal from '../../../components/Modal'
 import ViewExplorerButton from '../../../components/ViewExplorerButton'
 
@@ -11,7 +12,7 @@ const ExecutedModal: React.FC<Interface> = ({ handleClose, hash }) => {
   if (hash === 'LOADING') {
     return (
       <Modal>
-        <h2>Transaction pending...</h2>
+        <LoadingComponent text="Executing the transaction." />
       </Modal>
     )
   }
