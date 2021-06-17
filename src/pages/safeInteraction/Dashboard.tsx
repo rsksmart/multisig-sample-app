@@ -9,12 +9,15 @@ interface Interface {
 
 const Dashboard: React.FC<Interface> = ({ safe }) => {
   const [balance, setBalance] = useState<number>(0)
+  const [nonce, setNonce] = useState<number | null>(null)
 
   useEffect(() => {
     getBalance()
+    getNonce()
   }, [safe])
 
   const getBalance = () => safe.getBalance().then((balance: any) => setBalance(balance))
+  const getNonce = () => safe.getNonce().then((nonce: number) => setNonce(nonce))
 
   return (
     <section className="panel">
@@ -32,6 +35,15 @@ const Dashboard: React.FC<Interface> = ({ safe }) => {
               <button onClick={getBalance} className="icon"><img src={refreshIcon} alt="Refresh" /></button>
             </td>
           </tr>
+          {nonce && (
+            <tr className="text">
+              <th>Nonce</th>
+              <td>
+                {nonce.toString()}
+                <button onClick={getNonce} className="icon"><img src={refreshIcon} alt="Refresh" /></button>
+              </td>
+            </tr> 
+          )}
         </tbody>
       </table>
     </section>
