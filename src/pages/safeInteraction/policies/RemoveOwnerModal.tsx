@@ -14,7 +14,7 @@ const RemoveOwnerModal: React.FC<Interface> = ({ numberOfOwners, handleSubmit, r
     <div>
       <h3>Remove owner</h3>
       <p>Are you sure you want to remove this owner?</p>
-      <input type="text" defaultValue={removeAddress} />
+      <span className="readonly">{removeAddress}</span>
 
       <p>
         <label>New threshold:</label>

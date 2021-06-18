@@ -18,3 +18,10 @@ label {
   display: block;
   padding: 5px 0;
 }
+
+span.readonly {
+  padding: 5px 10px;
+  margin-right: 5px;
+  font-size: 80%;
+  border: 1px solid $gray;
+}
