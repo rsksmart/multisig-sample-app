@@ -22,6 +22,16 @@ describe('Component: TransferValueModal', () => {
 
     wrapper.find('button.submit').simulate('click')
 
-    expect(sharedProps.createTransaction).toBeCalledWith(safeSingletonAddress.toLowerCase(), 20000)
+    expect(sharedProps.createTransaction).toBeCalledWith(safeSingletonAddress.toLowerCase(), 20000, '0x')
+  })
+
+  it('has data when it is sent', () => {
+    wrapper.find('input.to').simulate('change', { target: { value: safeSingletonAddress } })
+    wrapper.find('input.amount').simulate('change', { target: { value: '20000' } })
+    wrapper.find('textarea').simulate('change', { target: { value: '0x123456789' } })
+
+    wrapper.find('button.submit').simulate('click')
+
+    expect(sharedProps.createTransaction).toBeCalledWith(safeSingletonAddress.toLowerCase(), 20000, '0x123456789')
   })
 })

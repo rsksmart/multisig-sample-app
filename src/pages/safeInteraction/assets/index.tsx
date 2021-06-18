@@ -57,12 +57,12 @@ const AssetsComponent: React.FC<Interface> = ({ safe, addTransaction, handleErro
   }
 
   // Create transaction to send rbtc or data
-  const createTransaction = (to: string, amount: number) => {
+  const createTransaction = (to: string, amount: number, data: string) => {
     handleError(null)
     safe.createTransaction({
       to,
       value: amount.toString(),
-      data: '0x'
+      data
     })
       .then((transaction: SafeTransaction) => addTransaction(transaction))
       .catch(handleError)
