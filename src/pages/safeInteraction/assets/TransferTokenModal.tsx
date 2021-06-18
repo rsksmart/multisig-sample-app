@@ -30,7 +30,7 @@ const TransferTokenModal: React.FC<Interface> = ({ token, createTransaction, han
       <h2>Transfer ERC20 Token: {token.symbol}</h2>
       <p>
         <label>You have:</label>
-        <input type="text" className="readonly" defaultValue={token.amount} />
+        <span className="readonly">{token.amount}</span>
       </p>
       <p>
         <label>Amount to sent:</label>

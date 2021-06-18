@@ -35,7 +35,7 @@ const Dashboard: React.FC<Interface> = ({ safe }) => {
               <button onClick={getBalance} className="icon"><img src={refreshIcon} alt="Refresh" /></button>
             </td>
           </tr>
-          {nonce && (
+          {nonce !== null && (
             <tr className="text">
               <th>Nonce</th>
               <td>

@@ -22,7 +22,7 @@ const ApprovedModal: React.FC<Interface> = ({ hash, handleClose }) => {
       <h2>Transaction Approved</h2>
       <p>Your signature has been added to this transaction! This is the hash of the transaction:</p>
       <p>
-        <input type="text" defaultValue={hash} />
+        <span className="readonly">{hash}</span>
         <ViewExplorerButton tx={hash} />
       </p>
       <p><button onClick={handleClose}>Close modal</button></p>

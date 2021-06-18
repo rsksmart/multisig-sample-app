@@ -1,4 +1,4 @@
-input {
+input, textarea {
   min-width: 250px;
   padding: 10px;
 }
@@ -17,4 +17,11 @@ label {
   color: $gray;
   display: block;
   padding: 5px 0;
+}
+
+span.readonly {
+  padding: 5px 10px;
+  margin-right: 5px;
+  font-size: 80%;
+  border: 1px solid $gray;
 }
