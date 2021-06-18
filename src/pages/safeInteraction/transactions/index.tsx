@@ -48,7 +48,7 @@ const TransactionsPanel: React.FC<Interface> = ({ safe, handleError, updateTrans
         return transactionListener(safe.getProvider(), result.hash)
       })
       .then((receipt: any) => {
-        setShowExecutedModal(receipt.transactionHash)
+        setShowExecutedModal({ status: 'COMPLETE', hash: receipt.transactionHash })
         updateTransactionStatus(transaction)
       })
       .catch((err: Error) => {
