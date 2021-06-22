@@ -6,6 +6,7 @@ import Dashboard from './Dashboard'
 import PolicyComponent from './policies'
 import AssetsComponent from './assets'
 import TransactionCreatedModal from '../../components/TransactionCreatedModal'
+import { TransactionStatus } from '../../constants'
 
 interface Interface {
   safe: Safe
@@ -18,7 +19,7 @@ interface Interface {
 export interface TransactionBundle {
   transaction: SafeTransaction
   hash: string
-  status: 'PENDING' | 'EXECUTED'
+  status: TransactionStatus
 }
 
 const SafeInteraction: React.FC<Interface> = ({ safe, walletAddress, handleError, handleLogout }) => {
@@ -33,16 +34,23 @@ const SafeInteraction: React.FC<Interface> = ({ safe, walletAddress, handleError
     // get the hash to be used as an identifier
     safe.getTransactionHash(transaction)
       .then((hash: string) => {
-        setTransactions([...transactions, { status: 'PENDING', transaction, hash }])
+        setTransactions([...transactions, { status: TransactionStatus.PENDING, transaction, hash }])
         setShowTransactionInfo(true)
       })
   }
 
-  // update a transaction to 'EXECUTED'
+  // update a transaction to 'EXECUTED' or 'REJECTED' if nonce is the same
   const updateTransactionStatus = (transactionBundle: TransactionBundle) => {
-    const newTransactionList = transactions.map((item: TransactionBundle) =>
-      item.hash === transactionBundle.hash ? { ...item, status: 'EXECUTED' } : item
-    )
+    const newTransactionList = transactions.map((item: TransactionBundle) => {
+      if (item.hash === transactionBundle.hash || item.transaction.data.nonce === transactionBundle.transaction.data.nonce) {
+        return {
+          ...item,
+          status: item.hash === transactionBundle.hash ? TransactionStatus.EXECUTED : TransactionStatus.REJECTED
+        }
+      } else {
+        return item
+      }
+    })
     setTransactions(newTransactionList as TransactionBundle[])
   }
 

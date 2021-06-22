@@ -1,11 +1,13 @@
 import { Safe, SafeTransaction } from '@gnosis.pm/safe-core-sdk'
 import { ContractTransaction } from 'ethers'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { TransactionBundle } from '..'
+import { TransactionStatus } from '../../../constants'
 import { transactionListener } from '../../../helpers/transactionListener'
 import ApprovedModal from './ApprovedModal'
 import ExecutedModal from './ExecutedModal'
 import TransactionDetailComponent from './TransactionDetailComponent'
+import TransactionMenu from './TransactionMenu'
 
 interface Interface {
   safe: Safe
@@ -19,11 +21,17 @@ const TransactionsPanel: React.FC<Interface> = ({ safe, handleError, updateTrans
   const [showApprovedModal, setShowApprovedModal] = useState<string | null>(null)
   const [showExecutedModal, setShowExecutedModal] = useState<{ status: string, hash?: string } | null>(null)
 
-  const pendingTransactions: TransactionBundle[] = []
-  const executedTransactions: TransactionBundle[] = []
+  const [currentSubTab, setCurrentSubTab] = useState<TransactionStatus>(TransactionStatus.PENDING)
+  const [currentTransactions, setCurrentTransactions] = useState<TransactionBundle[]>([])
 
-  transactions.map((bundle: TransactionBundle) =>
-    bundle.status === 'PENDING' ? pendingTransactions.push(bundle) : executedTransactions.push(bundle))
+  const changeCurrentTab = (name: TransactionStatus) => {
+    setCurrentSubTab(name)
+    setCurrentTransactions(transactions.filter((tran: TransactionBundle) => tran.status === name))
+  }
+
+  useEffect(() => {
+    changeCurrentTab(TransactionStatus.PENDING)
+  }, [])
 
   // Sign transaction "on-chain"
   const approveTransactionHash = (transaction: SafeTransaction) => {
@@ -61,38 +69,23 @@ const TransactionsPanel: React.FC<Interface> = ({ safe, handleError, updateTrans
     <>
       <section className="panel">
         <h2>Transactions</h2>
-        {pendingTransactions.length === 0 && executedTransactions.length === 0 && (
-          <p><em>There are no transactions.</em></p>
-        )}
-        {pendingTransactions.length !== 0 && (
-          <>
-            <h3>Pending Transactions</h3>
-            {pendingTransactions.map((transaction: TransactionBundle, index: number) =>
-              <TransactionDetailComponent
-                safe={safe}
-                transactionBundle={transaction}
-                handleError={handleError}
-                approveTransactionHash={approveTransactionHash}
-                executeTransaction={executeTransaction}
-                walletAddress={walletAddress}
-                key={index}
-              />
-            )}
-          </>
-        )}
 
-        {executedTransactions.length !== 0 && (
-          <>
-            <h3>Executed Transactions</h3>
-            {executedTransactions.map((transaction: TransactionBundle, index: number) =>
-              <TransactionDetailComponent
-                safe={safe}
-                transactionBundle={transaction}
-                walletAddress={walletAddress}
-                key={index}
-              />
-            )}
-          </>
+        <TransactionMenu
+          selected={currentSubTab}
+          handleClick={changeCurrentTab}
+        />
+
+        <h3 style={{ textTransform: 'capitalize' }}>{`${currentSubTab.toString().toLowerCase()} transactions:`}</h3>
+        {currentTransactions.map((transaction: TransactionBundle, index: number) =>
+          <TransactionDetailComponent
+            safe={safe}
+            transactionBundle={transaction}
+            handleError={handleError}
+            approveTransactionHash={approveTransactionHash}
+            executeTransaction={executeTransaction}
+            walletAddress={walletAddress}
+            key={index}
+          />
         )}
       </section>
 
