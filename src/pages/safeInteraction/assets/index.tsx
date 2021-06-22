@@ -11,6 +11,7 @@ import { getContracts } from '../../../config'
 
 interface Interface {
   safe: Safe
+  nonce: number,
   handleError: (err: Error | null) => void
   addTransaction: (transaction: SafeTransaction) => void
 }
@@ -22,7 +23,7 @@ export interface Erc20Token {
   contractAddress: string
 }
 
-const AssetsComponent: React.FC<Interface> = ({ safe, addTransaction, handleError }) => {
+const AssetsComponent: React.FC<Interface> = ({ safe, nonce, addTransaction, handleError }) => {
   const [showTransfer, setShowTransfer] = useState<boolean>(false)
   const [showTokenTransfer, setShowTokenTransfer] = useState<Erc20Token | null>(null)
 
@@ -57,12 +58,13 @@ const AssetsComponent: React.FC<Interface> = ({ safe, addTransaction, handleErro
   }
 
   // Create transaction to send rbtc or data
-  const createTransaction = (to: string, amount: number, data: string) => {
+  const createTransaction = (to: string, amount: number, data: string, nonce: number) => {
     handleError(null)
     safe.createTransaction({
       to,
       value: amount.toString(),
-      data
+      data,
+      nonce
     })
       .then((transaction: SafeTransaction) => addTransaction(transaction))
       .catch(handleError)
@@ -70,7 +72,7 @@ const AssetsComponent: React.FC<Interface> = ({ safe, addTransaction, handleErro
   }
 
   // Create transaction to send an ERC20 token:
-  const createTokenTransaction = (token: Erc20Token, amount: number, to: string) => {
+  const createTokenTransaction = (token: Erc20Token, amount: number, to: string, nonce?: number) => {
     handleError(null)
     const contract = new Contract(token.contractAddress, erc20Abi, safe.getSigner())
     const txBuilder = new ERC20TransactionBuilder(safe, contract)
@@ -127,6 +129,7 @@ const AssetsComponent: React.FC<Interface> = ({ safe, addTransaction, handleErro
       {showTransfer && (
         <Modal handleClose={() => setShowTransfer(false)}>
           <TransferValueModal
+            nonce={nonce}
             createTransaction={createTransaction}
             handleError={handleError}
           />
@@ -135,6 +138,7 @@ const AssetsComponent: React.FC<Interface> = ({ safe, addTransaction, handleErro
       {showTokenTransfer && (
         <Modal handleClose={() => setShowTokenTransfer(null)}>
           <TransferTokenModal
+            nonce={nonce}
             token={showTokenTransfer}
             handleError={handleError}
             createTransaction={createTokenTransaction}

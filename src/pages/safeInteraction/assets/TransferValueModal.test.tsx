@@ -4,7 +4,7 @@ import TransferValueModal from './TransferValueModal'
 import { safeSingletonAddress } from '../../../config/local.json'
 
 describe('Component: TransferValueModal', () => {
-  const sharedProps = { createTransaction: jest.fn(), handleError: jest.fn() }
+  const sharedProps = { createTransaction: jest.fn(), handleError: jest.fn(), nonce: 0 }
   const wrapper = mount(<TransferValueModal {...sharedProps} />)
 
   it('renders the component', () => {
@@ -22,16 +22,17 @@ describe('Component: TransferValueModal', () => {
 
     wrapper.find('button.submit').simulate('click')
 
-    expect(sharedProps.createTransaction).toBeCalledWith(safeSingletonAddress.toLowerCase(), 20000, '0x')
+    expect(sharedProps.createTransaction).toBeCalledWith(safeSingletonAddress.toLowerCase(), 20000, '0x', 0)
   })
 
   it('has data when it is sent', () => {
     wrapper.find('input.to').simulate('change', { target: { value: safeSingletonAddress } })
     wrapper.find('input.amount').simulate('change', { target: { value: '20000' } })
     wrapper.find('textarea').simulate('change', { target: { value: '0x123456789' } })
+    wrapper.find('input.nonce').simulate('change', { target: { value: '2' } })
 
     wrapper.find('button.submit').simulate('click')
 
-    expect(sharedProps.createTransaction).toBeCalledWith(safeSingletonAddress.toLowerCase(), 20000, '0x123456789')
+    expect(sharedProps.createTransaction).toBeCalledWith(safeSingletonAddress.toLowerCase(), 20000, '0x123456789', 2)
   })
 })

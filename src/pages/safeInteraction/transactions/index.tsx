@@ -75,7 +75,7 @@ const TransactionsPanel: React.FC<Interface> = ({ safe, handleError, updateTrans
           handleClick={changeCurrentTab}
         />
 
-        <h3 style={{ textTransform: 'capitalize' }}>{`${currentSubTab.toString().toLowerCase()} transactions:`}</h3>
+        <h3>{`${currentSubTab.toString()} Transactions:`}</h3>
         {currentTransactions.map((transaction: TransactionBundle, index: number) =>
           <TransactionDetailComponent
             safe={safe}
