@@ -24,6 +24,8 @@ const TransactionsPanel: React.FC<Interface> = ({ safe, handleError, updateTrans
   const [currentSubTab, setCurrentSubTab] = useState<TransactionStatus>(TransactionStatus.PENDING)
   const [currentTransactions, setCurrentTransactions] = useState<TransactionBundle[]>([])
 
+  const [safeNonce, setSafeNonce] = useState<number>(0)
+
   const changeCurrentTab = (name: TransactionStatus) => {
     setCurrentSubTab(name)
     setCurrentTransactions(transactions.filter((tran: TransactionBundle) => tran.status === name))
@@ -32,6 +34,10 @@ const TransactionsPanel: React.FC<Interface> = ({ safe, handleError, updateTrans
   useEffect(() => {
     changeCurrentTab(TransactionStatus.PENDING)
   }, [])
+
+  useEffect(() => {
+    safe.getNonce().then((nonce: number) => setSafeNonce(nonce))
+  })
 
   // Sign transaction "on-chain"
   const approveTransactionHash = (transaction: SafeTransaction) => {
@@ -77,16 +83,27 @@ const TransactionsPanel: React.FC<Interface> = ({ safe, handleError, updateTrans
 
         <h3>{`${currentSubTab.toString()} Transactions:`}</h3>
         {currentTransactions.length === 0 && <p><em>No {currentSubTab.toString()} transactions</em></p>}
-        {currentTransactions.map((transaction: TransactionBundle, index: number) =>
-          <TransactionDetailComponent
-            safe={safe}
-            transactionBundle={transaction}
-            handleError={handleError}
-            approveTransactionHash={approveTransactionHash}
-            executeTransaction={executeTransaction}
-            walletAddress={walletAddress}
-            key={index}
-          />
+        {currentTransactions.map((transaction: TransactionBundle, index: number) => {
+          const transactionNonce = transaction.transaction.data.nonce
+          return safeNonce === transactionNonce ? (
+            <TransactionDetailComponent
+              safe={safe}
+              transactionBundle={transaction}
+              handleError={handleError}
+              approveTransactionHash={approveTransactionHash}
+              executeTransaction={executeTransaction}
+              walletAddress={walletAddress}
+              key={index}
+            />
+          ) : (
+            <TransactionDetailComponent
+              safe={safe}
+              transactionBundle={transaction}
+              walletAddress={walletAddress}
+              key={index}
+            />
+          )
+        }
         )}
       </section>
 
