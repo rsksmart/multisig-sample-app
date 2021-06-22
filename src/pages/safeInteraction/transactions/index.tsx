@@ -76,6 +76,7 @@ const TransactionsPanel: React.FC<Interface> = ({ safe, handleError, updateTrans
         />
 
         <h3>{`${currentSubTab.toString()} Transactions:`}</h3>
+        {currentTransactions.length === 0 && <p><em>No {currentSubTab.toString()} transactions</em></p>}
         {currentTransactions.map((transaction: TransactionBundle, index: number) =>
           <TransactionDetailComponent
             safe={safe}

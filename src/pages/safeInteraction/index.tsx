@@ -28,7 +28,12 @@ const SafeInteraction: React.FC<Interface> = ({ safe, walletAddress, handleError
   const [showTransactionInfo, setShowTransactionInfo] = useState<boolean>(false)
   const changeActive = (evt: MouseEvent<HTMLButtonElement>) => setSelectedTab(evt.currentTarget.id)
 
-  const [safeNonce, setSafeNonce] = useState(0)
+  // Keep track of the Apps transaction nonce, starting with the safe's nonce
+  const [appNonce, setAppNonce] = useState(0)
+
+  useEffect(() => {
+    safe.getNonce().then((nonce: number) => setAppNonce(nonce))
+  }, [safe])
 
   // Transaction Management, all transactions:
   const [transactions, setTransactions] = useState<TransactionBundle[]>([])
@@ -40,6 +45,9 @@ const SafeInteraction: React.FC<Interface> = ({ safe, walletAddress, handleError
       .then((hash: string) => {
         setTransactions([...transactions, { status: TransactionStatus.PENDING, transaction, hash }])
         setShowTransactionInfo(true)
+
+        // increase the app's nonce by 1:
+        setAppNonce(appNonce + 1)
       })
   }
 
@@ -56,16 +64,7 @@ const SafeInteraction: React.FC<Interface> = ({ safe, walletAddress, handleError
       }
     })
     setTransactions(newTransactionList as TransactionBundle[])
-
-    // get updated nonce:
-    getSafeNonce()
   }
-
-  const getSafeNonce = () => safe.getNonce().then((nonce: number) => setSafeNonce(nonce))
-
-  useEffect(() => {
-    getSafeNonce()
-  }, [safe])
 
   const closeModalAndSwitchScreen = () => {
     setShowTransactionInfo(false)
@@ -77,7 +76,7 @@ const SafeInteraction: React.FC<Interface> = ({ safe, walletAddress, handleError
       <Navigation handleLogout={handleLogout} changeActive={changeActive} selected={selectedTab} />
       {selectedTab === 'dashboard' && <Dashboard safe={safe} />}
       {selectedTab === 'transactions' && <TransactionsPanel safe={safe} transactions={transactions} handleError={handleError} updateTransactionStatus={updateTransactionStatus} walletAddress={walletAddress} />}
-      {selectedTab === 'assets' && <AssetsComponent safe={safe} handleError={handleError} addTransaction={addTransaction} nonce={safeNonce} />}
+      {selectedTab === 'assets' && <AssetsComponent safe={safe} handleError={handleError} addTransaction={addTransaction} nonce={appNonce} />}
       {selectedTab === 'policy' && <PolicyComponent safe={safe} addTransaction={addTransaction} handleError={handleError} />}
 
       {showTransactionInfo && <TransactionCreatedModal closeModal={() => setShowTransactionInfo(false)} changeScreen={closeModalAndSwitchScreen} />}
