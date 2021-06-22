@@ -2,13 +2,12 @@ import { isAddress } from '@ethersproject/address'
 import React, { useState } from 'react'
 
 interface Interface {
-  nonce: number
-  createTransaction: (recipient: string, amount: number, data: string, nonce: number) => void
+  createTransaction: (recipient: string, amount: number, data: string) => void
   handleError: (error: Error | null) => void
 }
 
-const TransferValueModal: React.FC<Interface> = ({ createTransaction, handleError, nonce }) => {
-  const [transaction, setTransaction] = useState<{amount: number, address: string, nonce: number, data: string}>({ amount: 10000, address: '', nonce, data: '' })
+const TransferValueModal: React.FC<Interface> = ({ createTransaction, handleError }) => {
+  const [transaction, setTransaction] = useState<{amount: number, address: string, data: string}>({ amount: 10000, address: '', data: '' })
 
   const validateTransaction = () => {
     handleError(null)
@@ -21,8 +20,7 @@ const TransferValueModal: React.FC<Interface> = ({ createTransaction, handleErro
     createTransaction(
       transaction.address.toLowerCase(),
       transaction.amount,
-      formattedData,
-      transaction.nonce
+      formattedData
     )
   }
 
@@ -42,10 +40,6 @@ const TransferValueModal: React.FC<Interface> = ({ createTransaction, handleErro
           Data: (optional field used for advanced transactions)
         </label>
         <textarea className="data" value={transaction.data} onChange={evt => setTransaction({ ...transaction, data: evt.target.value })} />
-      </p>
-      <p>
-        <label>Nonce:</label>
-        <input type="number" className="nonce" value={transaction.nonce} onChange={evt => setTransaction({ ...transaction, nonce: parseInt(evt.target.value) })} />
       </p>
       <button className="submit" onClick={validateTransaction}>Create Transaction</button>
     </>

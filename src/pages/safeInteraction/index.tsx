@@ -39,7 +39,10 @@ const SafeInteraction: React.FC<Interface> = ({ safe, walletAddress, handleError
   const [transactions, setTransactions] = useState<TransactionBundle[]>([])
 
   // Add a new PENDING transaction to the list
-  const addTransaction = (transaction: SafeTransaction) => {
+  const addTransaction = (incomingTransaction: SafeTransaction) => {
+    // set the correct nonce if there are pending transactions:
+    const transaction = new SafeTransaction({ ...incomingTransaction.data, nonce: appNonce })
+
     // get the hash to be used as an identifier
     safe.getTransactionHash(transaction)
       .then((hash: string) => {
@@ -76,7 +79,7 @@ const SafeInteraction: React.FC<Interface> = ({ safe, walletAddress, handleError
       <Navigation handleLogout={handleLogout} changeActive={changeActive} selected={selectedTab} />
       {selectedTab === 'dashboard' && <Dashboard safe={safe} />}
       {selectedTab === 'transactions' && <TransactionsPanel safe={safe} transactions={transactions} handleError={handleError} updateTransactionStatus={updateTransactionStatus} walletAddress={walletAddress} />}
-      {selectedTab === 'assets' && <AssetsComponent safe={safe} handleError={handleError} addTransaction={addTransaction} nonce={appNonce} />}
+      {selectedTab === 'assets' && <AssetsComponent safe={safe} handleError={handleError} addTransaction={addTransaction} />}
       {selectedTab === 'policy' && <PolicyComponent safe={safe} addTransaction={addTransaction} handleError={handleError} />}
 
       {showTransactionInfo && <TransactionCreatedModal closeModal={() => setShowTransactionInfo(false)} changeScreen={closeModalAndSwitchScreen} />}

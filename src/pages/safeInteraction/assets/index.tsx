@@ -11,7 +11,6 @@ import { getContracts } from '../../../config'
 
 interface Interface {
   safe: Safe
-  nonce: number,
   handleError: (err: Error | null) => void
   addTransaction: (transaction: SafeTransaction) => void
 }
@@ -23,7 +22,7 @@ export interface Erc20Token {
   contractAddress: string
 }
 
-const AssetsComponent: React.FC<Interface> = ({ safe, nonce, addTransaction, handleError }) => {
+const AssetsComponent: React.FC<Interface> = ({ safe, addTransaction, handleError }) => {
   const [showTransfer, setShowTransfer] = useState<boolean>(false)
   const [showTokenTransfer, setShowTokenTransfer] = useState<Erc20Token | null>(null)
 
@@ -58,13 +57,12 @@ const AssetsComponent: React.FC<Interface> = ({ safe, nonce, addTransaction, han
   }
 
   // Create transaction to send rbtc or data
-  const createTransaction = (to: string, amount: number, data: string, nonce: number) => {
+  const createTransaction = (to: string, amount: number, data: string) => {
     handleError(null)
     safe.createTransaction({
       to,
       value: amount.toString(),
-      data,
-      nonce
+      data
     })
       .then((transaction: SafeTransaction) => addTransaction(transaction))
       .catch(handleError)
@@ -129,7 +127,6 @@ const AssetsComponent: React.FC<Interface> = ({ safe, nonce, addTransaction, han
       {showTransfer && (
         <Modal handleClose={() => setShowTransfer(false)}>
           <TransferValueModal
-            nonce={nonce}
             createTransaction={createTransaction}
             handleError={handleError}
           />
@@ -138,7 +135,6 @@ const AssetsComponent: React.FC<Interface> = ({ safe, nonce, addTransaction, han
       {showTokenTransfer && (
         <Modal handleClose={() => setShowTokenTransfer(null)}>
           <TransferTokenModal
-            nonce={nonce}
             token={showTokenTransfer}
             handleError={handleError}
             createTransaction={createTokenTransaction}
