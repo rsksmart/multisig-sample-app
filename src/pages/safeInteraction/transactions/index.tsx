@@ -89,29 +89,22 @@ const TransactionsPanel: React.FC<Interface> = ({ safe, handleError, updateTrans
 
         <TransactionTabHelperText count={currentTransactions.length} screen={currentSubTab} />
 
-        {currentTransactions.map((transaction: TransactionBundle, index: number) => {
-          const transactionNonce = transaction.transaction.data.nonce
-          return safeNonce === transactionNonce ? (
-            <TransactionDetailComponent
-              safe={safe}
-              transactionBundle={transaction}
-              handleError={handleError}
-              approveTransactionHash={approveTransactionHash}
-              executeTransaction={executeTransaction}
-              rejectTransaction={createRejectionTransaction}
-              walletAddress={walletAddress}
-              key={index}
-            />
-          ) : (
-            <TransactionDetailComponent
-              safe={safe}
-              transactionBundle={transaction}
-              walletAddress={walletAddress}
-              key={index}
-            />
-          )
-        }
-        )}
+        {currentTransactions.map((transaction: TransactionBundle) => {
+          const currentNonce = safeNonce === transaction.transaction.data.nonce
+          const isPending = currentSubTab === TransactionStatus.PENDING
+          const hasDuplicate = currentTransactions.filter((t: TransactionBundle) => t.transaction.data.nonce === transaction.transaction.data.nonce).length > 1
+
+          return <TransactionDetailComponent
+            key={transaction.hash}
+            safe={safe}
+            transactionBundle={transaction}
+            walletAddress={walletAddress}
+            handleError={handleError}
+            approveTransactionHash={currentSubTab === TransactionStatus.PENDING ? approveTransactionHash : undefined}
+            executeTransaction={(isPending && currentNonce) ? executeTransaction : undefined}
+            rejectTransaction={(isPending && currentNonce && !hasDuplicate) ? createRejectionTransaction : undefined}
+          />
+        })}
       </section>
 
       {showApprovedModal && <ApprovedModal hash={showApprovedModal} handleClose={() => setShowApprovedModal(null)} />}
