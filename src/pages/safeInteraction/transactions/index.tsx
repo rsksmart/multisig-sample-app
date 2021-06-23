@@ -1,5 +1,5 @@
 import { Safe, SafeTransaction } from '@gnosis.pm/safe-core-sdk'
-import { rejectTx } from '@rsksmart/safe-transactions-sdk'
+import { rejectTx, executeTransaction } from '@rsksmart/safe-transactions-sdk'
 import { ContractTransaction } from 'ethers'
 import React, { useEffect, useState } from 'react'
 import { TransactionBundle } from '..'
@@ -59,15 +59,16 @@ const TransactionsPanel: React.FC<Interface> = ({ safe, handleError, updateTrans
   }
 
   // Execute transaction
-  const executeTransaction = (transaction: TransactionBundle) => {
-    safe.executeTransaction(transaction.transaction)
+  const handleExecutionTransaction = (bundle: TransactionBundle) => {
+    // safe.executeTransaction(transaction.transaction)
+    executeTransaction(safe, bundle.transaction)
       .then((result: ContractTransaction) => {
         setShowExecutedModal({ status: 'LOADING', hash: result.hash })
         return transactionListener(safe.getProvider(), result.hash)
       })
       .then((receipt: any) => {
         setShowExecutedModal({ status: 'COMPLETE', hash: receipt.transactionHash })
-        updateTransactionStatus(transaction)
+        updateTransactionStatus(bundle)
       })
       .catch((err: Error) => {
         setShowExecutedModal(null)
@@ -101,7 +102,7 @@ const TransactionsPanel: React.FC<Interface> = ({ safe, handleError, updateTrans
             walletAddress={walletAddress}
             handleError={handleError}
             approveTransactionHash={currentSubTab === TransactionStatus.PENDING ? approveTransactionHash : undefined}
-            executeTransaction={(isPending && currentNonce) ? executeTransaction : undefined}
+            executeTransaction={(isPending && currentNonce) ? handleExecutionTransaction : undefined}
             rejectTransaction={(isPending && currentNonce && !hasDuplicate) ? createRejectionTransaction : undefined}
           />
         })}
