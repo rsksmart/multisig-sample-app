@@ -1,4 +1,4 @@
-import React, { useState, MouseEvent, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Safe, SafeTransaction } from '@gnosis.pm/safe-core-sdk'
 import Navigation from './Navigation'
 import TransactionsPanel from './transactions'
