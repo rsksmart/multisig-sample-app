@@ -49,7 +49,15 @@ const SafeInteraction: React.FC<Interface> = ({ safe, walletAddress, handleError
     // get the hash to be used as an identifier
     safe.getTransactionHash(transaction)
       .then((hash: string) => {
-        setTransactions([...transactions, { status: TransactionStatus.PENDING, transaction, hash, isReject: isReject || false }])
+        // create new transaction list
+        const newTransactionList = [...transactions, { status: TransactionStatus.PENDING, transaction, hash, isReject: isReject || false }]
+
+        // sort the order of transactions by nonce:
+        const nonceSorted = newTransactionList.sort((a: TransactionBundle, b: TransactionBundle) =>
+          (a.transaction.data.nonce > b.transaction.data.nonce) ? 1 : -1)
+
+        // set the sorted transactions
+        setTransactions(nonceSorted)
         setShowTransactionInfo(true)
 
         // increase the app's nonce by 1 if it isn't a reject transaction
