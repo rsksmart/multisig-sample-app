@@ -6,7 +6,7 @@ import Dashboard from './Dashboard'
 import PolicyComponent from './policies'
 import AssetsComponent from './assets'
 import TransactionCreatedModal from '../../components/TransactionCreatedModal'
-import { TransactionStatus } from '../../constants'
+import { Screens, TransactionStatus } from '../../constants'
 
 interface Interface {
   safe: Safe
@@ -25,9 +25,9 @@ export interface TransactionBundle {
 
 const SafeInteraction: React.FC<Interface> = ({ safe, walletAddress, handleError, handleLogout }) => {
   // UI Only
-  const [selectedTab, setSelectedTab] = useState<string>('dashboard')
+  const [selectedTab, setSelectedTab] = useState<Screens>(Screens.DASHBOARD)
   const [showTransactionInfo, setShowTransactionInfo] = useState<boolean>(false)
-  const changeActive = (evt: MouseEvent<HTMLButtonElement>) => setSelectedTab(evt.currentTarget.id)
+  const changeActive = (screen: Screens) => setSelectedTab(screen)
 
   // Keep track of the Apps transaction nonce, starting with the safe's nonce
   const [appNonce, setAppNonce] = useState(0)
@@ -82,16 +82,16 @@ const SafeInteraction: React.FC<Interface> = ({ safe, walletAddress, handleError
 
   const closeModalAndSwitchScreen = () => {
     setShowTransactionInfo(false)
-    setSelectedTab('transactions')
+    setSelectedTab(Screens.TRANSACTIONS)
   }
 
   return (
     <section className="selectedSafe">
       <Navigation handleLogout={handleLogout} changeActive={changeActive} selected={selectedTab} />
-      {selectedTab === 'dashboard' && <Dashboard safe={safe} />}
-      {selectedTab === 'transactions' && <TransactionsPanel safe={safe} transactions={transactions} handleError={handleError} addTransaction={addTransaction} updateTransactionStatus={updateTransactionStatus} walletAddress={walletAddress} />}
-      {selectedTab === 'assets' && <AssetsComponent safe={safe} handleError={handleError} addTransaction={addTransaction} />}
-      {selectedTab === 'policy' && <PolicyComponent safe={safe} addTransaction={addTransaction} handleError={handleError} />}
+      {selectedTab === Screens.DASHBOARD && <Dashboard safe={safe} />}
+      {selectedTab === Screens.TRANSACTIONS && <TransactionsPanel safe={safe} transactions={transactions} handleError={handleError} addTransaction={addTransaction} updateTransactionStatus={updateTransactionStatus} walletAddress={walletAddress} />}
+      {selectedTab === Screens.ASSETS && <AssetsComponent safe={safe} handleError={handleError} addTransaction={addTransaction} />}
+      {selectedTab === Screens.POLICY && <PolicyComponent safe={safe} addTransaction={addTransaction} handleError={handleError} />}
 
       {showTransactionInfo && <TransactionCreatedModal closeModal={() => setShowTransactionInfo(false)} changeScreen={closeModalAndSwitchScreen} />}
     </section>
