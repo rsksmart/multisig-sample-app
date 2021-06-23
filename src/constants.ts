@@ -5,3 +5,10 @@ export enum TransactionStatus {
   EXECUTED = 'Executed',
   REJECTED = 'Rejected'
 }
+
+export enum Screens {
+  DASHBOARD = 'DASHBOARD',
+  TRANSACTIONS = 'TRANSACTIONS',
+  ASSETS = 'ASSETS',
+  POLICY = 'POLICY'
+}

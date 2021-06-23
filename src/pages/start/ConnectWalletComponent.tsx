@@ -1,6 +1,6 @@
 import React from 'react'
 import { RLoginButton } from '@rsksmart/rlogin'
-import rifSafeLogo from '../../images/rif-safe.svg'
+import rifSafeLogo from '../../images/rifWhite.svg'
 import poweredByLogo from '../../images/powered-by-iov.svg'
 
 interface Interface {
@@ -24,7 +24,10 @@ const Web3Provider: React.FC<Interface> = ({ rLogin, setRLoginResponse, handleEr
 
   return (
     <section className="login">
-      <img src={rifSafeLogo} alt="RIF Safe" />
+      <div className="logo">
+        <img src={rifSafeLogo} alt="RIF" />
+        Safe and Vault Sample App
+      </div>
       <h2>Login with your wallet</h2>
       <p><RLoginButton onClick={handleLogin}>Connect with rLogin!</RLoginButton></p>
       <img src={poweredByLogo} alt="Powered by IOV Labs" />

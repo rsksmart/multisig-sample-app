@@ -7,6 +7,7 @@ import Web3Provider from './pages/start/ConnectWalletComponent'
 import ConnectedBar from './components/ConnectedBar'
 import SafeInteraction from './pages/safeInteraction'
 import ChooseSafe from './pages/connectToSafe'
+import FooterComponent from './components/FooterComponent'
 
 const rLogin = new RLogin({
   cacheProvider: false,
@@ -85,6 +86,8 @@ function App () {
           handleError={handleError}
         />
       )}
+
+      {rLoginResponse && <FooterComponent />}
     </div>
   )
 }
