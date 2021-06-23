@@ -13,14 +13,14 @@ interface Interface {
   safe: Safe
   transactionBundle: TransactionBundle
   walletAddress: string
-  approveTransactionHash?: (transaction: SafeTransaction) => Promise<any>
+  approveTransaction?: (transaction: TransactionBundle, onChain: boolean) => Promise<any>
   executeTransaction?: (transactionBundle: TransactionBundle) => void
   rejectTransaction?: (transaction: SafeTransaction) => void
   handleError?: (error: Error) => void
 }
 
 const TransactionDetailComponent: React.FC<Interface> = ({
-  safe, transactionBundle, walletAddress, handleError, approveTransactionHash, executeTransaction, rejectTransaction
+  safe, transactionBundle, walletAddress, handleError, approveTransaction, executeTransaction, rejectTransaction
 }) => {
   const { transaction, hash } = transactionBundle
 
@@ -66,8 +66,8 @@ const TransactionDetailComponent: React.FC<Interface> = ({
     }
   }
 
-  const handleApprove = () =>
-    approveTransactionHash && approveTransactionHash(transaction)
+  const handleApprove = (onChain: boolean) =>
+    approveTransaction && approveTransaction(transactionBundle, onChain)
       .then(() => getApprovals(hash))
 
   const handleReject = () =>
@@ -116,12 +116,14 @@ const TransactionDetailComponent: React.FC<Interface> = ({
 
       <div className="buttons">
         <button onClick={() => setShowDetails(!showDetails)}>{showDetails ? 'hide ' : 'show '}details</button>
-        {approveTransactionHash && (
+        {approveTransaction && (
           <>
             <button
               disabled={walletHasSigned}
-              onClick={handleApprove}>approve on-chain</button>
-            <button disabled={walletHasSigned}>approve off-chain</button>
+              onClick={() => handleApprove(true)}>approve on-chain</button>
+            <button
+              disabled={walletHasSigned}
+              onClick={() => handleApprove(false)}>approve off-chain</button>
           </>
         )}
         {!transactionBundle.isReject && rejectTransaction && <button

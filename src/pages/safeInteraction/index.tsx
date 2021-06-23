@@ -65,6 +65,12 @@ const SafeInteraction: React.FC<Interface> = ({ safe, walletAddress, handleError
       })
   }
 
+  // update a transaction bundle
+  const updateTransactionBundle = (transactionBundle: TransactionBundle) => {
+    const list = transactions.map((bundle: TransactionBundle) => bundle.hash === transactionBundle.hash ? transactionBundle : bundle)
+    setTransactions(list)
+  }
+
   // update a transaction to 'EXECUTED' or 'REJECTED' if nonce is the same
   const updateTransactionStatus = (transactionBundle: TransactionBundle) => {
     const newTransactionList = transactions.map((item: TransactionBundle) => {
@@ -89,7 +95,16 @@ const SafeInteraction: React.FC<Interface> = ({ safe, walletAddress, handleError
     <section className="selectedSafe">
       <Navigation handleLogout={handleLogout} changeActive={changeActive} selected={selectedTab} />
       {selectedTab === Screens.DASHBOARD && <Dashboard safe={safe} />}
-      {selectedTab === Screens.TRANSACTIONS && <TransactionsPanel safe={safe} transactions={transactions} handleError={handleError} addTransaction={addTransaction} updateTransactionStatus={updateTransactionStatus} walletAddress={walletAddress} />}
+      {selectedTab === Screens.TRANSACTIONS && (
+        <TransactionsPanel
+          safe={safe}
+          transactions={transactions}
+          handleError={handleError}
+          addTransaction={addTransaction}
+          updateTransactionStatus={updateTransactionStatus}
+          updateTransactionBundle={updateTransactionBundle}
+          walletAddress={walletAddress} />
+      )}
       {selectedTab === Screens.ASSETS && <AssetsComponent safe={safe} handleError={handleError} addTransaction={addTransaction} />}
       {selectedTab === Screens.POLICY && <PolicyComponent safe={safe} addTransaction={addTransaction} handleError={handleError} />}
 

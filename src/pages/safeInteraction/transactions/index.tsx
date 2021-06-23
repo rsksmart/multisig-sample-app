@@ -16,11 +16,12 @@ interface Interface {
   handleError: (err: Error) => void
   addTransaction: (transaction: SafeTransaction, isReject: boolean) => void
   updateTransactionStatus: (transaction: TransactionBundle) => void
+  updateTransactionBundle: (transaction: TransactionBundle) => void
   transactions: TransactionBundle[]
   walletAddress: string
 }
 
-const TransactionsPanel: React.FC<Interface> = ({ safe, handleError, updateTransactionStatus, addTransaction, walletAddress, transactions }) => {
+const TransactionsPanel: React.FC<Interface> = ({ safe, handleError, updateTransactionStatus, updateTransactionBundle, addTransaction, walletAddress, transactions }) => {
   const [showApprovedModal, setShowApprovedModal] = useState<string | null>(null)
   const [showExecutedModal, setShowExecutedModal] = useState<{ status: string, hash?: string } | null>(null)
 
@@ -43,11 +44,15 @@ const TransactionsPanel: React.FC<Interface> = ({ safe, handleError, updateTrans
     rejectTx(safe, transaction)
       .then((transaction: SafeTransaction) => addTransaction(transaction, true))
 
+  // Approve/Sign a transaction
+  const approveTransaction = (transaction: TransactionBundle, onChain: boolean) =>
+    onChain ? approveTransactionHash(transaction) : approveTransactionOffChain(transaction)
+
   // Sign transaction "on-chain"
-  const approveTransactionHash = (transaction: SafeTransaction) => {
+  const approveTransactionHash = (bundle: TransactionBundle) => {
     setShowApprovedModal('LOADING')
 
-    return safe.getTransactionHash(transaction)
+    return safe.getTransactionHash(bundle.transaction)
       .then((hash: string) =>
         safe.approveTransactionHash(hash)
           .then((result: ContractTransaction) => transactionListener(safe.getProvider(), result.hash))
@@ -56,6 +61,15 @@ const TransactionsPanel: React.FC<Interface> = ({ safe, handleError, updateTrans
         setShowApprovedModal(null)
         handleError(err)
       })
+  }
+
+  const approveTransactionOffChain = (bundle: TransactionBundle) => {
+    return safe.signTransaction(bundle.transaction)
+      .then(() => {
+        console.log('is signed:', bundle)
+        updateTransactionBundle(bundle)
+      })
+      .catch(handleError)
   }
 
   // Execute transaction
@@ -101,7 +115,7 @@ const TransactionsPanel: React.FC<Interface> = ({ safe, handleError, updateTrans
             transactionBundle={transaction}
             walletAddress={walletAddress}
             handleError={handleError}
-            approveTransactionHash={currentSubTab === TransactionStatus.PENDING ? approveTransactionHash : undefined}
+            approveTransaction={currentSubTab === TransactionStatus.PENDING ? approveTransaction : undefined}
             executeTransaction={(isPending && currentNonce) ? handleExecutionTransaction : undefined}
             rejectTransaction={(isPending && currentNonce && !hasDuplicate) ? createRejectionTransaction : undefined}
           />
