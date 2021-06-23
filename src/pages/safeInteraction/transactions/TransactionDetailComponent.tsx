@@ -15,11 +15,12 @@ interface Interface {
   walletAddress: string
   approveTransactionHash?: (transaction: SafeTransaction) => Promise<any>
   executeTransaction?: (transactionBundle: TransactionBundle) => void
+  rejectTransaction?: (transaction: SafeTransaction) => void
   handleError?: (error: Error) => void
 }
 
 const TransactionDetailComponent: React.FC<Interface> = ({
-  safe, transactionBundle, walletAddress, handleError, approveTransactionHash, executeTransaction
+  safe, transactionBundle, walletAddress, handleError, approveTransactionHash, executeTransaction, rejectTransaction
 }) => {
   const { transaction, hash } = transactionBundle
 
@@ -28,6 +29,8 @@ const TransactionDetailComponent: React.FC<Interface> = ({
   const [threshold, setThreshold] = useState<number>(0)
   const [isRefreshing, setIsRefreshing] = useState<boolean>(false)
   const [formatted, setFormatted] = useState<any>(null)
+
+  const isRejectTransaction = transaction.data.to === safe.getAddress() && transaction.data.value === '0'
 
   useEffect(() => {
     safe.getTransactionHash(transaction).then((txHash: string) => {
@@ -54,18 +57,23 @@ const TransactionDetailComponent: React.FC<Interface> = ({
   }
 
   const getTransactionName = () => {
-    if (transaction.data.data === '0x') {
+    if (isRejectTransaction) {
+      return 'Rejection Transaction'
+    } else if (transaction.data.data === '0x') {
       return 'Send Value'
     } else if (formatted.method) {
       return formatted.method
     } else {
-      return 'unknown'
+      return 'Transaction'
     }
   }
 
   const handleApprove = () =>
     approveTransactionHash && approveTransactionHash(transaction)
       .then(() => getApprovals(hash))
+
+  const handleReject = () =>
+    rejectTransaction && rejectTransaction(transaction)
 
   const walletHasSigned = signatures.filter((value: string) => value.toLowerCase() === walletAddress.toLowerCase()).length === 1
   const canExecute = threshold > signatures.length
@@ -85,13 +93,16 @@ const TransactionDetailComponent: React.FC<Interface> = ({
             <img src={refreshIcon} alt="refresh" />
           </button>
         </p>
-      </div>
-      <div className="buttons">
         <button
           onClick={() => setShowDetails(!showDetails)}>{showDetails ? 'hide ' : 'show '}details</button>
+      </div>
+      <div className="buttons">
         {approveTransactionHash && <button
           disabled={walletHasSigned}
           onClick={handleApprove}>approve</button>}
+        {!isRejectTransaction && rejectTransaction && <button
+          onClick={handleReject}
+        >create rejection</button>}
         {executeTransaction && <button
           disabled={canExecute}
           onClick={() => executeTransaction(transactionBundle)}>execute</button>}

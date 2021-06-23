@@ -39,9 +39,11 @@ const SafeInteraction: React.FC<Interface> = ({ safe, walletAddress, handleError
   const [transactions, setTransactions] = useState<TransactionBundle[]>([])
 
   // Add a new PENDING transaction to the list
-  const addTransaction = (incomingTransaction: SafeTransaction) => {
+  const addTransaction = (incomingTransaction: SafeTransaction, isReject?: boolean) => {
     // set the correct nonce if there are pending transactions:
-    const transaction = new SafeTransaction({ ...incomingTransaction.data, nonce: appNonce })
+    const transaction = !isReject
+      ? new SafeTransaction({ ...incomingTransaction.data, nonce: appNonce })
+      : incomingTransaction
 
     // get the hash to be used as an identifier
     safe.getTransactionHash(transaction)
@@ -78,7 +80,7 @@ const SafeInteraction: React.FC<Interface> = ({ safe, walletAddress, handleError
     <section className="selectedSafe">
       <Navigation handleLogout={handleLogout} changeActive={changeActive} selected={selectedTab} />
       {selectedTab === 'dashboard' && <Dashboard safe={safe} />}
-      {selectedTab === 'transactions' && <TransactionsPanel safe={safe} transactions={transactions} handleError={handleError} updateTransactionStatus={updateTransactionStatus} walletAddress={walletAddress} />}
+      {selectedTab === 'transactions' && <TransactionsPanel safe={safe} transactions={transactions} handleError={handleError} addTransaction={addTransaction} updateTransactionStatus={updateTransactionStatus} walletAddress={walletAddress} />}
       {selectedTab === 'assets' && <AssetsComponent safe={safe} handleError={handleError} addTransaction={addTransaction} />}
       {selectedTab === 'policy' && <PolicyComponent safe={safe} addTransaction={addTransaction} handleError={handleError} />}
 

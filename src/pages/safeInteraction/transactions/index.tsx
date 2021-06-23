@@ -1,4 +1,5 @@
 import { Safe, SafeTransaction } from '@gnosis.pm/safe-core-sdk'
+import { rejectTx } from '@rsksmart/safe-transactions-sdk'
 import { ContractTransaction } from 'ethers'
 import React, { useEffect, useState } from 'react'
 import { TransactionBundle } from '..'
@@ -12,12 +13,13 @@ import TransactionMenu from './TransactionMenu'
 interface Interface {
   safe: Safe
   handleError: (err: Error) => void
+  addTransaction: (transaction: SafeTransaction, isReject: boolean) => void
   updateTransactionStatus: (transaction: TransactionBundle) => void
   transactions: TransactionBundle[]
   walletAddress: string
 }
 
-const TransactionsPanel: React.FC<Interface> = ({ safe, handleError, updateTransactionStatus, walletAddress, transactions }) => {
+const TransactionsPanel: React.FC<Interface> = ({ safe, handleError, updateTransactionStatus, addTransaction, walletAddress, transactions }) => {
   const [showApprovedModal, setShowApprovedModal] = useState<string | null>(null)
   const [showExecutedModal, setShowExecutedModal] = useState<{ status: string, hash?: string } | null>(null)
 
@@ -32,12 +34,14 @@ const TransactionsPanel: React.FC<Interface> = ({ safe, handleError, updateTrans
   }
 
   useEffect(() => {
+    console.log('transactions updated!')
     changeCurrentTab(TransactionStatus.PENDING)
-  }, [])
-
-  useEffect(() => {
     safe.getNonce().then((nonce: number) => setSafeNonce(nonce))
-  })
+  }, [transactions])
+
+  const createRejectionTransaction = (transaction: SafeTransaction) =>
+    rejectTx(safe, transaction)
+      .then((transaction: SafeTransaction) => addTransaction(transaction, true))
 
   // Sign transaction "on-chain"
   const approveTransactionHash = (transaction: SafeTransaction) => {
@@ -83,6 +87,7 @@ const TransactionsPanel: React.FC<Interface> = ({ safe, handleError, updateTrans
 
         <h3>{`${currentSubTab.toString()} Transactions:`}</h3>
         {currentTransactions.length === 0 && <p><em>No {currentSubTab.toString()} transactions</em></p>}
+
         {currentTransactions.map((transaction: TransactionBundle, index: number) => {
           const transactionNonce = transaction.transaction.data.nonce
           return safeNonce === transactionNonce ? (
@@ -92,6 +97,7 @@ const TransactionsPanel: React.FC<Interface> = ({ safe, handleError, updateTrans
               handleError={handleError}
               approveTransactionHash={approveTransactionHash}
               executeTransaction={executeTransaction}
+              rejectTransaction={createRejectionTransaction}
               walletAddress={walletAddress}
               key={index}
             />
