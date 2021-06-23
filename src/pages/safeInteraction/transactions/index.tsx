@@ -9,6 +9,7 @@ import ApprovedModal from './ApprovedModal'
 import ExecutedModal from './ExecutedModal'
 import TransactionDetailComponent from './TransactionDetailComponent'
 import TransactionMenu from './TransactionMenu'
+import TransactionTabHelperText from './TransactionTabHelperText'
 
 interface Interface {
   safe: Safe
@@ -85,7 +86,8 @@ const TransactionsPanel: React.FC<Interface> = ({ safe, handleError, updateTrans
         />
 
         <h3>{`${currentSubTab.toString()} Transactions:`}</h3>
-        {currentTransactions.length === 0 && <p><em>No {currentSubTab.toString()} transactions</em></p>}
+
+        <TransactionTabHelperText count={currentTransactions.length} screen={currentSubTab} />
 
         {currentTransactions.map((transaction: TransactionBundle, index: number) => {
           const transactionNonce = transaction.transaction.data.nonce
