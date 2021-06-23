@@ -1,0 +1,21 @@
+ul.inline {
+  margin: 0 0 15px 0;
+  padding: 0;
+  
+  li {
+    display: inline-block;
+    margin-right: 5px;
+
+    button {
+      background: none;
+    }
+
+    button:hover {
+      background-color: #e1e1e1;
+    }
+
+    button.selected {
+      border-bottom: 3px solid $blue;
+    }
+  }
+}

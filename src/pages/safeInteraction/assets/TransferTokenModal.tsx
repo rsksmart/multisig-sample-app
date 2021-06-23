@@ -37,10 +37,9 @@ const TransferTokenModal: React.FC<Interface> = ({ token, createTransaction, han
         <input type="number" className="amount" value={transaction.amount} onChange={evt => setTransaction({ ...transaction, amount: parseInt(evt.target.value) })} />
       </p>
       <p>
-        <label>Recipient</label>
+        <label>Recipient address:</label>
         <input type="string" className="recipient" value={transaction.address} onChange={evt => setTransaction({ ...transaction, address: evt.target.value })} />
       </p>
-
       <p>
         <button className="submit" onClick={validateTransaction}>
           Create Transaction

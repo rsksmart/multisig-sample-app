@@ -70,7 +70,7 @@ const AssetsComponent: React.FC<Interface> = ({ safe, addTransaction, handleErro
   }
 
   // Create transaction to send an ERC20 token:
-  const createTokenTransaction = (token: Erc20Token, amount: number, to: string) => {
+  const createTokenTransaction = (token: Erc20Token, amount: number, to: string, nonce?: number) => {
     handleError(null)
     const contract = new Contract(token.contractAddress, erc20Abi, safe.getSigner())
     const txBuilder = new ERC20TransactionBuilder(safe, contract)
