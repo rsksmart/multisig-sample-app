@@ -1,6 +1,12 @@
 table {
   width: 100%;
 
+  thead {
+    th {
+      padding: 10px;
+    }
+  }
+
   th, td {
     text-align: left;
     border-bottom: 1px solid $lightGray;

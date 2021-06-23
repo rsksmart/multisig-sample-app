@@ -78,27 +78,52 @@ const TransactionDetailComponent: React.FC<Interface> = ({
 
   return (
     <div className="transaction">
-      <div className="summary">
-        <p><strong>{formatted && getTransactionName()}</strong></p>
-        <p><strong>to: </strong>
-          {transaction.data.to === safe.getAddress() && <em>(Safe) </em>}
-          <ValueWithButtons value={transaction.data.to} />
-        </p>
-        {transaction.data.value !== '0' && <p><strong>value: </strong>{transaction.data.value}</p>}
-        <p><strong>approvals: </strong>
-          {isRefreshing ? 'loading...' : `${signatures.length} out of ${threshold}`}
-          <button className="icon" onClick={() => getApprovals(hash)}>
-            <img src={refreshIcon} alt="refresh" />
-          </button>
-        </p>
-        <p><strong>nonce:</strong> {transaction.data.nonce}</p>
-        <button
-          onClick={() => setShowDetails(!showDetails)}>{showDetails ? 'hide ' : 'show '}details</button>
-      </div>
+      <table>
+        <thead>
+          <tr>
+            <th colSpan={2}>{formatted && getTransactionName()}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th>to:</th>
+            <td>
+              {transaction.data.to === safe.getAddress() && <em>(Safe) </em>}
+              <ValueWithButtons value={transaction.data.to} />
+            </td>
+          </tr>
+          <tr>
+            <th>approvals:</th>
+            <td>
+              {isRefreshing ? 'loading...' : `${signatures.length} out of ${threshold}`}
+              <button className="icon" onClick={() => getApprovals(hash)}>
+                <img src={refreshIcon} alt="refresh" />
+              </button>
+            </td>
+          </tr>
+          {transaction.data.value !== '0' && (
+            <tr>
+              <th>value:</th>
+              <td><p>{transaction.data.value}</p></td>
+            </tr>
+          )}
+          <tr>
+            <th>nonce:</th>
+            <td><p>{transaction.data.nonce}</p></td>
+          </tr>
+        </tbody>
+      </table>
+
       <div className="buttons">
-        {approveTransactionHash && <button
-          disabled={walletHasSigned}
-          onClick={handleApprove}>approve</button>}
+        <button onClick={() => setShowDetails(!showDetails)}>{showDetails ? 'hide ' : 'show '}details</button>
+        {approveTransactionHash && (
+          <>
+            <button
+              disabled={walletHasSigned}
+              onClick={handleApprove}>approve on-chain</button>
+            <button disabled={walletHasSigned}>approve off-chain</button>
+          </>
+        )}
         {!transactionBundle.isReject && rejectTransaction && <button
           onClick={handleReject}
         >create rejection</button>}
