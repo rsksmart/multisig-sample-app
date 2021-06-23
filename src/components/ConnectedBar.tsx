@@ -1,5 +1,5 @@
 import React from 'react'
-import rifSafeLogo from '../images/rif-safe-header.svg'
+import rifGray from '../images/rifGray.svg'
 
 interface Interface {
   chainId: number | null
@@ -17,7 +17,10 @@ const ConnectedBar: React.FC<Interface> = ({ walletAddress, chainId }) => {
   return (
     <section className="header">
       <ul className="inline">
-        <li><img src={rifSafeLogo} alt="RIF Safe" /></li>
+        <li className="logo">
+          <img src={rifGray} alt="RIF Safe" />
+          Safe and Vault Sample App
+        </li>
         {walletAddress && (
           <li className="address">
             {`${walletAddress.slice(0, 8)}...${walletAddress.slice(walletAddress.length - 6)}`}
