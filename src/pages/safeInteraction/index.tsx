@@ -20,6 +20,7 @@ export interface TransactionBundle {
   transaction: SafeTransaction
   hash: string
   status: TransactionStatus
+  isReject: boolean
 }
 
 const SafeInteraction: React.FC<Interface> = ({ safe, walletAddress, handleError, handleLogout }) => {
@@ -48,11 +49,11 @@ const SafeInteraction: React.FC<Interface> = ({ safe, walletAddress, handleError
     // get the hash to be used as an identifier
     safe.getTransactionHash(transaction)
       .then((hash: string) => {
-        setTransactions([...transactions, { status: TransactionStatus.PENDING, transaction, hash }])
+        setTransactions([...transactions, { status: TransactionStatus.PENDING, transaction, hash, isReject: isReject || false }])
         setShowTransactionInfo(true)
 
-        // increase the app's nonce by 1:
-        setAppNonce(appNonce + 1)
+        // increase the app's nonce by 1 if it isn't a reject transaction
+        !isReject && setAppNonce(appNonce + 1)
       })
   }
 

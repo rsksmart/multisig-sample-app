@@ -34,7 +34,6 @@ const TransactionsPanel: React.FC<Interface> = ({ safe, handleError, updateTrans
   }
 
   useEffect(() => {
-    console.log('transactions updated!')
     changeCurrentTab(TransactionStatus.PENDING)
     safe.getNonce().then((nonce: number) => setSafeNonce(nonce))
   }, [transactions])

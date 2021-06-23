@@ -30,8 +30,6 @@ const TransactionDetailComponent: React.FC<Interface> = ({
   const [isRefreshing, setIsRefreshing] = useState<boolean>(false)
   const [formatted, setFormatted] = useState<any>(null)
 
-  const isRejectTransaction = transaction.data.to === safe.getAddress() && transaction.data.value === '0'
-
   useEffect(() => {
     safe.getTransactionHash(transaction).then((txHash: string) => {
       getApprovals(txHash)
@@ -57,7 +55,7 @@ const TransactionDetailComponent: React.FC<Interface> = ({
   }
 
   const getTransactionName = () => {
-    if (isRejectTransaction) {
+    if (transactionBundle.isReject) {
       return 'Rejection Transaction'
     } else if (transaction.data.data === '0x') {
       return 'Send Value'
@@ -93,6 +91,7 @@ const TransactionDetailComponent: React.FC<Interface> = ({
             <img src={refreshIcon} alt="refresh" />
           </button>
         </p>
+        <p><strong>nonce:</strong> {transaction.data.nonce}</p>
         <button
           onClick={() => setShowDetails(!showDetails)}>{showDetails ? 'hide ' : 'show '}details</button>
       </div>
@@ -100,7 +99,7 @@ const TransactionDetailComponent: React.FC<Interface> = ({
         {approveTransactionHash && <button
           disabled={walletHasSigned}
           onClick={handleApprove}>approve</button>}
-        {!isRejectTransaction && rejectTransaction && <button
+        {!transactionBundle.isReject && rejectTransaction && <button
           onClick={handleReject}
         >create rejection</button>}
         {executeTransaction && <button
@@ -115,10 +114,6 @@ const TransactionDetailComponent: React.FC<Interface> = ({
             <td>
               <p>{hash}<CopyValueButton value={hash} /></p>
             </td>
-          </tr>
-          <tr>
-            <th>Nonce</th>
-            <td><p>{transaction.data.nonce}</p></td>
           </tr>
           {transaction.data.data !== '0x' && (
             <>
