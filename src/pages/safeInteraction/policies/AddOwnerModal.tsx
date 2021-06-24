@@ -27,7 +27,7 @@ const AddOwnerModal: React.FC<Interface> = ({ handleSubmit, handleError, numberO
 
       <label>New Threshold</label>
       <ThresholdDropdown
-        numberOfOwners={numberOfOwners + 1}
+        numberOfOwners={numberOfOwners}
         value={newThreshold}
         onChange={(value: number) => setNewThreshold(value)}
       />
