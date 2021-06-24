@@ -11,9 +11,9 @@ describe('Component: AddOwnerModal', () => {
     expect(wrapper).toBeDefined()
   })
 
-  it('select box has one more than number of Onwers', () => {
+  it('select box has number of current Onwers', () => {
     const wrapper = mount(<AddOwnerModal {...sharedProps} />)
-    expect(wrapper.find('option')).toHaveLength(5)
+    expect(wrapper.find('option')).toHaveLength(4)
   })
 
   it('handles error checking on submit', () => {
