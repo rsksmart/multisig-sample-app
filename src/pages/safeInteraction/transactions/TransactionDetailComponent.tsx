@@ -13,43 +13,53 @@ interface Interface {
   safe: Safe
   transactionBundle: TransactionBundle
   walletAddress: string
-  approveTransactionHash?: (transaction: SafeTransaction) => Promise<any>
+  approveTransaction?: (transaction: TransactionBundle, onChain: boolean) => Promise<any>
   executeTransaction?: (transactionBundle: TransactionBundle) => void
   rejectTransaction?: (transaction: SafeTransaction) => void
   handleError?: (error: Error) => void
 }
 
+interface SignatureType {
+  signature: string,
+  isOnChain: boolean
+}
+
 const TransactionDetailComponent: React.FC<Interface> = ({
-  safe, transactionBundle, walletAddress, handleError, approveTransactionHash, executeTransaction, rejectTransaction
+  safe, transactionBundle, walletAddress, handleError, approveTransaction, executeTransaction, rejectTransaction
 }) => {
   const { transaction, hash } = transactionBundle
 
   const [showDetails, setShowDetails] = useState<boolean>(false)
-  const [signatures, setSignatures] = useState<string[]>([])
+  const [signatures, setSignatures] = useState<SignatureType[]>([])
   const [threshold, setThreshold] = useState<number>(0)
   const [isRefreshing, setIsRefreshing] = useState<boolean>(false)
   const [formatted, setFormatted] = useState<any>(null)
 
   useEffect(() => {
-    safe.getTransactionHash(transaction).then((txHash: string) => {
-      getApprovals(txHash)
+    // get transaction approvals
+    getApprovals()
 
-      // try to decode the data
-      const formatted = new InputDataDecoder(safeAbi).decodeData(transaction.data.data)
-      if (formatted.method) {
-        setFormatted(formatted)
-      } else {
-        setFormatted(new InputDataDecoder(erc20Abi).decodeData(transaction.data.data))
-      }
-    })
+    // try to decode the data
+    const formatted = new InputDataDecoder(safeAbi).decodeData(transaction.data.data)
+    if (formatted.method) {
+      setFormatted(formatted)
+    } else {
+      setFormatted(new InputDataDecoder(erc20Abi).decodeData(transaction.data.data))
+    }
 
     safe.getThreshold().then((safeThreshold: number) => setThreshold(safeThreshold))
   }, [transaction])
 
-  const getApprovals = (txHash: string) => {
+  const getApprovals = () => {
     setIsRefreshing(true)
-    safe.getOwnersWhoApprovedTx(txHash)
-      .then((signers: string[]) => setSignatures(signers))
+
+    const offChain = Array.from(transaction.signatures.keys()).map((signature: string) => ({ signature, isOnChain: false }))
+
+    safe.getOwnersWhoApprovedTx(hash)
+      .then((signers: string[]) => {
+        const onChainSigners = signers.map((signature: string) => ({ signature, isOnChain: true }))
+        setSignatures([...offChain, ...onChainSigners])
+      })
       .catch(handleError)
       .finally(() => setIsRefreshing(false))
   }
@@ -66,39 +76,66 @@ const TransactionDetailComponent: React.FC<Interface> = ({
     }
   }
 
-  const handleApprove = () =>
-    approveTransactionHash && approveTransactionHash(transaction)
-      .then(() => getApprovals(hash))
+  const handleApprove = (onChain: boolean) =>
+    approveTransaction && approveTransaction(transactionBundle, onChain)
+      .then(() => getApprovals())
 
   const handleReject = () =>
     rejectTransaction && rejectTransaction(transaction)
 
-  const walletHasSigned = signatures.filter((value: string) => value.toLowerCase() === walletAddress.toLowerCase()).length === 1
+  const walletHasSigned = signatures.filter((value: SignatureType) => value.signature.toLowerCase() === walletAddress.toLowerCase()).length === 1
   const canExecute = threshold > signatures.length
 
   return (
     <div className="transaction">
-      <div className="summary">
-        <p><strong>{formatted && getTransactionName()}</strong></p>
-        <p><strong>to: </strong>
-          {transaction.data.to === safe.getAddress() && <em>(Safe) </em>}
-          <ValueWithButtons value={transaction.data.to} />
-        </p>
-        {transaction.data.value !== '0' && <p><strong>value: </strong>{transaction.data.value}</p>}
-        <p><strong>approvals: </strong>
-          {isRefreshing ? 'loading...' : `${signatures.length} out of ${threshold}`}
-          <button className="icon" onClick={() => getApprovals(hash)}>
-            <img src={refreshIcon} alt="refresh" />
-          </button>
-        </p>
-        <p><strong>nonce:</strong> {transaction.data.nonce}</p>
-        <button
-          onClick={() => setShowDetails(!showDetails)}>{showDetails ? 'hide ' : 'show '}details</button>
-      </div>
+      <table>
+        <thead>
+          <tr>
+            <th colSpan={2}>{formatted && getTransactionName()}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th>to:</th>
+            <td>
+              {transaction.data.to === safe.getAddress() && <em>(Safe) </em>}
+              <ValueWithButtons value={transaction.data.to} />
+            </td>
+          </tr>
+          <tr>
+            <th>approvals:</th>
+            <td>
+              {isRefreshing ? 'loading...' : `${signatures.length} out of ${threshold}`}
+              <button className="icon" onClick={getApprovals}>
+                <img src={refreshIcon} alt="refresh" />
+              </button>
+            </td>
+          </tr>
+          {transaction.data.value !== '0' && (
+            <tr>
+              <th>value:</th>
+              <td><p>{transaction.data.value}</p></td>
+            </tr>
+          )}
+          <tr>
+            <th>nonce:</th>
+            <td><p>{transaction.data.nonce}</p></td>
+          </tr>
+        </tbody>
+      </table>
+
       <div className="buttons">
-        {approveTransactionHash && <button
-          disabled={walletHasSigned}
-          onClick={handleApprove}>approve</button>}
+        <button onClick={() => setShowDetails(!showDetails)}>{showDetails ? 'hide ' : 'show '}details</button>
+        {approveTransaction && (
+          <>
+            <button
+              disabled={walletHasSigned}
+              onClick={() => handleApprove(true)}>approve on-chain</button>
+            <button
+              disabled={walletHasSigned}
+              onClick={() => handleApprove(false)}>approve off-chain</button>
+          </>
+        )}
         {!transactionBundle.isReject && rejectTransaction && <button
           onClick={handleReject}
         >create rejection</button>}
@@ -133,13 +170,16 @@ const TransactionDetailComponent: React.FC<Interface> = ({
             <th>Approvals:</th>
             <td>
               {signatures.length === 0 ? <p><em>No signatures</em></p> : (
-                <ol >
-                  {signatures.map((approval: string) =>
-                    <li key={approval}>
-                      <ValueWithButtons value={approval} />
-                      {walletAddress.toLowerCase() === approval.toLowerCase() && <em>(Connected Account)</em>}
-                    </li>)}
-                </ol>
+                <>
+                  <ol >
+                    {signatures.map((approval: SignatureType) =>
+                      <li key={approval.signature}>
+                        <ValueWithButtons value={approval.signature} />
+                        {`(${approval.isOnChain ? 'on' : 'off'}-chain)`}
+                        {walletAddress.toLowerCase() === approval.signature.toLowerCase() && <em>(Connected Account)</em>}
+                      </li>)}
+                  </ol>
+                </>
               )}
             </td>
           </tr>

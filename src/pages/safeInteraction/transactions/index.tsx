@@ -3,6 +3,7 @@ import { rejectTx, executeTransaction } from '@rsksmart/safe-transactions-sdk'
 import { ContractTransaction } from 'ethers'
 import React, { useEffect, useState } from 'react'
 import { TransactionBundle } from '..'
+import Modal from '../../../components/Modal'
 import { TransactionStatus } from '../../../constants'
 import { transactionListener } from '../../../helpers/transactionListener'
 import ApprovedModal from './ApprovedModal'
@@ -15,13 +16,14 @@ interface Interface {
   safe: Safe
   handleError: (err: Error) => void
   addTransaction: (transaction: SafeTransaction, isReject: boolean) => void
-  updateTransactionStatus: (transaction: TransactionBundle) => void
+  updateTransactionBundle: (transaction: TransactionBundle) => void
   transactions: TransactionBundle[]
   walletAddress: string
 }
 
-const TransactionsPanel: React.FC<Interface> = ({ safe, handleError, updateTransactionStatus, addTransaction, walletAddress, transactions }) => {
+const TransactionsPanel: React.FC<Interface> = ({ safe, handleError, updateTransactionBundle, addTransaction, walletAddress, transactions }) => {
   const [showApprovedModal, setShowApprovedModal] = useState<string | null>(null)
+  const [approvedOffChainModal, setApprovedOffChainModal] = useState<boolean>(false)
   const [showExecutedModal, setShowExecutedModal] = useState<{ status: string, hash?: string } | null>(null)
 
   const [currentSubTab, setCurrentSubTab] = useState<TransactionStatus>(TransactionStatus.PENDING)
@@ -43,11 +45,15 @@ const TransactionsPanel: React.FC<Interface> = ({ safe, handleError, updateTrans
     rejectTx(safe, transaction)
       .then((transaction: SafeTransaction) => addTransaction(transaction, true))
 
+  // Approve/Sign a transaction
+  const approveTransaction = (transaction: TransactionBundle, onChain: boolean) =>
+    onChain ? approveTransactionHash(transaction) : approveTransactionOffChain(transaction)
+
   // Sign transaction "on-chain"
-  const approveTransactionHash = (transaction: SafeTransaction) => {
+  const approveTransactionHash = (bundle: TransactionBundle) => {
     setShowApprovedModal('LOADING')
 
-    return safe.getTransactionHash(transaction)
+    return safe.getTransactionHash(bundle.transaction)
       .then((hash: string) =>
         safe.approveTransactionHash(hash)
           .then((result: ContractTransaction) => transactionListener(safe.getProvider(), result.hash))
@@ -58,9 +64,16 @@ const TransactionsPanel: React.FC<Interface> = ({ safe, handleError, updateTrans
       })
   }
 
+  const approveTransactionOffChain = (bundle: TransactionBundle) =>
+    safe.signTransaction(bundle.transaction)
+      .then(() => {
+        updateTransactionBundle(bundle)
+        setApprovedOffChainModal(true)
+      })
+      .catch(handleError)
+
   // Execute transaction
   const handleExecutionTransaction = (bundle: TransactionBundle) => {
-    // safe.executeTransaction(transaction.transaction)
     executeTransaction(safe, bundle.transaction)
       .then((result: ContractTransaction) => {
         setShowExecutedModal({ status: 'LOADING', hash: result.hash })
@@ -68,7 +81,7 @@ const TransactionsPanel: React.FC<Interface> = ({ safe, handleError, updateTrans
       })
       .then((receipt: any) => {
         setShowExecutedModal({ status: 'COMPLETE', hash: receipt.transactionHash })
-        updateTransactionStatus(bundle)
+        updateTransactionBundle({ ...bundle, status: TransactionStatus.EXECUTED })
       })
       .catch((err: Error) => {
         setShowExecutedModal(null)
@@ -101,7 +114,7 @@ const TransactionsPanel: React.FC<Interface> = ({ safe, handleError, updateTrans
             transactionBundle={transaction}
             walletAddress={walletAddress}
             handleError={handleError}
-            approveTransactionHash={currentSubTab === TransactionStatus.PENDING ? approveTransactionHash : undefined}
+            approveTransaction={currentSubTab === TransactionStatus.PENDING ? approveTransaction : undefined}
             executeTransaction={(isPending && currentNonce) ? handleExecutionTransaction : undefined}
             rejectTransaction={(isPending && currentNonce && !hasDuplicate) ? createRejectionTransaction : undefined}
           />
@@ -110,6 +123,10 @@ const TransactionsPanel: React.FC<Interface> = ({ safe, handleError, updateTrans
 
       {showApprovedModal && <ApprovedModal hash={showApprovedModal} handleClose={() => setShowApprovedModal(null)} />}
       {showExecutedModal && <ExecutedModal status={showExecutedModal} handleClose={() => setShowExecutedModal(null)} />}
+      {approvedOffChainModal && <Modal handleClose={() => setApprovedOffChainModal(false)}>
+        <h2>Signature Added</h2>
+        <p>Since this is a sample app, this signature will be saved in local state only. It will not be saved if the app refreshed.</p>
+      </Modal>}
     </>
   )
 }
