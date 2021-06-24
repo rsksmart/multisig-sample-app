@@ -62,14 +62,12 @@ const TransactionsPanel: React.FC<Interface> = ({ safe, handleError, updateTrans
       })
   }
 
-  const approveTransactionOffChain = (bundle: TransactionBundle) => {
-    return safe.signTransaction(bundle.transaction)
+  const approveTransactionOffChain = (bundle: TransactionBundle) =>
+    safe.signTransaction(bundle.transaction)
       .then(() => {
-        console.log('is signed:', bundle)
         updateTransactionBundle(bundle)
       })
       .catch(handleError)
-  }
 
   // Execute transaction
   const handleExecutionTransaction = (bundle: TransactionBundle) => {

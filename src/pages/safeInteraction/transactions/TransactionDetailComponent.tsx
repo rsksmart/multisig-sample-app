@@ -19,37 +19,47 @@ interface Interface {
   handleError?: (error: Error) => void
 }
 
+interface SignatureType {
+  signature: string,
+  isOnChain: boolean
+}
+
 const TransactionDetailComponent: React.FC<Interface> = ({
   safe, transactionBundle, walletAddress, handleError, approveTransaction, executeTransaction, rejectTransaction
 }) => {
   const { transaction, hash } = transactionBundle
 
   const [showDetails, setShowDetails] = useState<boolean>(false)
-  const [signatures, setSignatures] = useState<string[]>([])
+  const [signatures, setSignatures] = useState<SignatureType[]>([])
   const [threshold, setThreshold] = useState<number>(0)
   const [isRefreshing, setIsRefreshing] = useState<boolean>(false)
   const [formatted, setFormatted] = useState<any>(null)
 
   useEffect(() => {
-    safe.getTransactionHash(transaction).then((txHash: string) => {
-      getApprovals(txHash)
+    // get transaction approvals
+    getApprovals()
 
-      // try to decode the data
-      const formatted = new InputDataDecoder(safeAbi).decodeData(transaction.data.data)
-      if (formatted.method) {
-        setFormatted(formatted)
-      } else {
-        setFormatted(new InputDataDecoder(erc20Abi).decodeData(transaction.data.data))
-      }
-    })
+    // try to decode the data
+    const formatted = new InputDataDecoder(safeAbi).decodeData(transaction.data.data)
+    if (formatted.method) {
+      setFormatted(formatted)
+    } else {
+      setFormatted(new InputDataDecoder(erc20Abi).decodeData(transaction.data.data))
+    }
 
     safe.getThreshold().then((safeThreshold: number) => setThreshold(safeThreshold))
   }, [transaction])
 
-  const getApprovals = (txHash: string) => {
+  const getApprovals = () => {
     setIsRefreshing(true)
-    safe.getOwnersWhoApprovedTx(txHash)
-      .then((signers: string[]) => setSignatures(signers))
+
+    const offChain = Array.from(transaction.signatures.keys()).map((signature: string) => ({ signature, isOnChain: false }))
+
+    safe.getOwnersWhoApprovedTx(hash)
+      .then((signers: string[]) => {
+        const onChainSigners = signers.map((signature: string) => ({ signature, isOnChain: true }))
+        setSignatures([...offChain, ...onChainSigners])
+      })
       .catch(handleError)
       .finally(() => setIsRefreshing(false))
   }
@@ -68,12 +78,12 @@ const TransactionDetailComponent: React.FC<Interface> = ({
 
   const handleApprove = (onChain: boolean) =>
     approveTransaction && approveTransaction(transactionBundle, onChain)
-      .then(() => getApprovals(hash))
+      .then(() => getApprovals())
 
   const handleReject = () =>
     rejectTransaction && rejectTransaction(transaction)
 
-  const walletHasSigned = signatures.filter((value: string) => value.toLowerCase() === walletAddress.toLowerCase()).length === 1
+  const walletHasSigned = signatures.filter((value: SignatureType) => value.signature.toLowerCase() === walletAddress.toLowerCase()).length === 1
   const canExecute = threshold > signatures.length
 
   return (
@@ -96,7 +106,7 @@ const TransactionDetailComponent: React.FC<Interface> = ({
             <th>approvals:</th>
             <td>
               {isRefreshing ? 'loading...' : `${signatures.length} out of ${threshold}`}
-              <button className="icon" onClick={() => getApprovals(hash)}>
+              <button className="icon" onClick={getApprovals}>
                 <img src={refreshIcon} alt="refresh" />
               </button>
             </td>
@@ -160,13 +170,16 @@ const TransactionDetailComponent: React.FC<Interface> = ({
             <th>Approvals:</th>
             <td>
               {signatures.length === 0 ? <p><em>No signatures</em></p> : (
-                <ol >
-                  {signatures.map((approval: string) =>
-                    <li key={approval}>
-                      <ValueWithButtons value={approval} />
-                      {walletAddress.toLowerCase() === approval.toLowerCase() && <em>(Connected Account)</em>}
-                    </li>)}
-                </ol>
+                <>
+                  <ol >
+                    {signatures.map((approval: SignatureType) =>
+                      <li key={approval.signature}>
+                        <ValueWithButtons value={approval.signature} />
+                        {`(${approval.isOnChain ? 'on' : 'off'}-chain)`}
+                        {walletAddress.toLowerCase() === approval.signature.toLowerCase() && <em>(Connected Account)</em>}
+                      </li>)}
+                  </ol>
+                </>
               )}
             </td>
           </tr>
