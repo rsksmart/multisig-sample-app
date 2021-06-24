@@ -3,6 +3,7 @@ import { rejectTx, executeTransaction } from '@rsksmart/safe-transactions-sdk'
 import { ContractTransaction } from 'ethers'
 import React, { useEffect, useState } from 'react'
 import { TransactionBundle } from '..'
+import Modal from '../../../components/Modal'
 import { TransactionStatus } from '../../../constants'
 import { transactionListener } from '../../../helpers/transactionListener'
 import ApprovedModal from './ApprovedModal'
@@ -22,6 +23,7 @@ interface Interface {
 
 const TransactionsPanel: React.FC<Interface> = ({ safe, handleError, updateTransactionBundle, addTransaction, walletAddress, transactions }) => {
   const [showApprovedModal, setShowApprovedModal] = useState<string | null>(null)
+  const [approvedOffChainModal, setApprovedOffChainModal] = useState<boolean>(false)
   const [showExecutedModal, setShowExecutedModal] = useState<{ status: string, hash?: string } | null>(null)
 
   const [currentSubTab, setCurrentSubTab] = useState<TransactionStatus>(TransactionStatus.PENDING)
@@ -66,6 +68,7 @@ const TransactionsPanel: React.FC<Interface> = ({ safe, handleError, updateTrans
     safe.signTransaction(bundle.transaction)
       .then(() => {
         updateTransactionBundle(bundle)
+        setApprovedOffChainModal(true)
       })
       .catch(handleError)
 
@@ -120,6 +123,10 @@ const TransactionsPanel: React.FC<Interface> = ({ safe, handleError, updateTrans
 
       {showApprovedModal && <ApprovedModal hash={showApprovedModal} handleClose={() => setShowApprovedModal(null)} />}
       {showExecutedModal && <ExecutedModal status={showExecutedModal} handleClose={() => setShowExecutedModal(null)} />}
+      {approvedOffChainModal && <Modal handleClose={() => setApprovedOffChainModal(false)}>
+        <h2>Signature Added</h2>
+        <p>Since this is a sample app, this signature will be saved in local state only. It will not be saved if the app refreshed.</p>
+      </Modal>}
     </>
   )
 }
