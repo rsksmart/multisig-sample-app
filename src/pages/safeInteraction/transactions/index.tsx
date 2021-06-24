@@ -15,13 +15,12 @@ interface Interface {
   safe: Safe
   handleError: (err: Error) => void
   addTransaction: (transaction: SafeTransaction, isReject: boolean) => void
-  updateTransactionStatus: (transaction: TransactionBundle) => void
   updateTransactionBundle: (transaction: TransactionBundle) => void
   transactions: TransactionBundle[]
   walletAddress: string
 }
 
-const TransactionsPanel: React.FC<Interface> = ({ safe, handleError, updateTransactionStatus, updateTransactionBundle, addTransaction, walletAddress, transactions }) => {
+const TransactionsPanel: React.FC<Interface> = ({ safe, handleError, updateTransactionBundle, addTransaction, walletAddress, transactions }) => {
   const [showApprovedModal, setShowApprovedModal] = useState<string | null>(null)
   const [showExecutedModal, setShowExecutedModal] = useState<{ status: string, hash?: string } | null>(null)
 
@@ -74,7 +73,6 @@ const TransactionsPanel: React.FC<Interface> = ({ safe, handleError, updateTrans
 
   // Execute transaction
   const handleExecutionTransaction = (bundle: TransactionBundle) => {
-    // safe.executeTransaction(transaction.transaction)
     executeTransaction(safe, bundle.transaction)
       .then((result: ContractTransaction) => {
         setShowExecutedModal({ status: 'LOADING', hash: result.hash })
@@ -82,7 +80,7 @@ const TransactionsPanel: React.FC<Interface> = ({ safe, handleError, updateTrans
       })
       .then((receipt: any) => {
         setShowExecutedModal({ status: 'COMPLETE', hash: receipt.transactionHash })
-        updateTransactionStatus(bundle)
+        updateTransactionBundle({ ...bundle, status: TransactionStatus.EXECUTED })
       })
       .catch((err: Error) => {
         setShowExecutedModal(null)

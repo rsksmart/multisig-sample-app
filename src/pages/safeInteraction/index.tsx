@@ -67,23 +67,18 @@ const SafeInteraction: React.FC<Interface> = ({ safe, walletAddress, handleError
 
   // update a transaction bundle
   const updateTransactionBundle = (transactionBundle: TransactionBundle) => {
-    const list = transactions.map((bundle: TransactionBundle) => bundle.hash === transactionBundle.hash ? transactionBundle : bundle)
-    setTransactions(list)
-  }
+    console.log('updating bundle', transactionBundle)
+    let list = transactions.map((bundle: TransactionBundle) => bundle.hash === transactionBundle.hash ? transactionBundle : bundle)
 
-  // update a transaction to 'EXECUTED' or 'REJECTED' if nonce is the same
-  const updateTransactionStatus = (transactionBundle: TransactionBundle) => {
-    const newTransactionList = transactions.map((item: TransactionBundle) => {
-      if (item.hash === transactionBundle.hash || item.transaction.data.nonce === transactionBundle.transaction.data.nonce) {
-        return {
-          ...item,
-          status: item.hash === transactionBundle.hash ? TransactionStatus.EXECUTED : TransactionStatus.REJECTED
-        }
-      } else {
-        return item
-      }
-    })
-    setTransactions(newTransactionList as TransactionBundle[])
+    // if the status is EXECUTED, then also update other transactions with the same nonce to REJECTED:
+    if (transactionBundle.status === TransactionStatus.EXECUTED) {
+      list = list.map((bundle: TransactionBundle) =>
+        (bundle.transaction.data.nonce === transactionBundle.transaction.data.nonce && bundle.hash !== transactionBundle.hash)
+          ? { ...transactionBundle, status: TransactionStatus.REJECTED } : bundle
+      )
+    }
+
+    setTransactions(list)
   }
 
   const closeModalAndSwitchScreen = () => {
@@ -101,7 +96,6 @@ const SafeInteraction: React.FC<Interface> = ({ safe, walletAddress, handleError
           transactions={transactions}
           handleError={handleError}
           addTransaction={addTransaction}
-          updateTransactionStatus={updateTransactionStatus}
           updateTransactionBundle={updateTransactionBundle}
           walletAddress={walletAddress} />
       )}
