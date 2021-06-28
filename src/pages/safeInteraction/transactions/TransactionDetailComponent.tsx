@@ -8,6 +8,7 @@ import erc20Abi from '../assets/erc20.json'
 import InputDataDecoder from 'ethereum-input-data-decoder'
 import { TransactionBundle } from '..'
 import CopyValueButton from '../../../components/CopyValueButton'
+import { TransactionStatus } from '../../../constants'
 
 interface Interface {
   safe: Safe
@@ -102,15 +103,17 @@ const TransactionDetailComponent: React.FC<Interface> = ({
               <ValueWithButtons value={transaction.data.to} />
             </td>
           </tr>
-          <tr>
-            <th>approvals:</th>
-            <td>
-              {isRefreshing ? 'loading...' : `${signatures.length} out of ${threshold}`}
-              <button className="icon" onClick={getApprovals}>
-                <img src={refreshIcon} alt="refresh" />
-              </button>
-            </td>
-          </tr>
+          {transactionBundle.status === TransactionStatus.PENDING && (
+            <tr>
+              <th>approvals:</th>
+              <td>
+                {isRefreshing ? 'loading...' : `${signatures.length} out of ${threshold}`}
+                <button className="icon" onClick={getApprovals}>
+                  <img src={refreshIcon} alt="refresh" />
+                </button>
+              </td>
+            </tr>
+          )}
           {transaction.data.value !== '0' && (
             <tr>
               <th>value:</th>
