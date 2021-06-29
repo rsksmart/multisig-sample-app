@@ -50,7 +50,7 @@ const ChooseSafe: React.FC<Interface> = ({ web3Provider, chainId, handleSetSafe,
     const signer = provider.getSigner()
 
     EthersSafe.create(ethers, safeAddress.toLowerCase(), signer)
-      .then((safe: any) => handleSetSafe(safe))
+      .then(handleSetSafe)
       .catch(handleError)
       .finally(() => setIsLoading(false))
   }

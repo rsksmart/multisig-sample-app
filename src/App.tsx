@@ -8,6 +8,7 @@ import ConnectedBar from './components/ConnectedBar'
 import SafeInteraction from './pages/safeInteraction'
 import ChooseSafe from './pages/connectToSafe'
 import FooterComponent from './components/FooterComponent'
+import { saveSafeAddresToLocalStorage } from './helpers/localStorage'
 
 const rLogin = new RLogin({
   cacheProvider: false,
@@ -37,6 +38,7 @@ function App () {
   const handleSetSafe = (safe: Safe) => {
     setSafe(safe)
     handleError(null)
+    saveSafeAddresToLocalStorage(safe.getAddress())
   }
 
   const handleError = (error: Error | null) => error ? setError(error.message) : setError(null)
