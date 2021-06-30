@@ -44,7 +44,7 @@ export const bundleToService = (bundle: TransactionBundle, safeAddress: string) 
   return response
 }
 
-export const serviceToBundle = (transaction: TransactionServiceResponse) => {
+export const serviceToBundle = (transaction: TransactionServiceResponse, safeAddress: string) => {
   const safeTransaction = new SafeTransaction({
     to: transaction.to,
     value: transaction.value,
@@ -58,11 +58,13 @@ export const serviceToBundle = (transaction: TransactionServiceResponse) => {
     refundReceiver: transaction.refundReceiver || ''
   })
 
+  const isReject = (transaction.to === safeAddress && transaction.value === '0' && transaction.data === '0x')
+
   const bundle:TransactionBundle = ({
     transaction: safeTransaction,
     status: transaction.isExecuted ? TransactionStatus.EXECUTED : TransactionStatus.PENDING,
     hash: transaction.safeTxHash,
-    isReject: false // @todo: figure out how a REJECTED tranasction is encoded.
+    isReject
   })
 
   return bundle
@@ -74,8 +76,8 @@ export const bundleToServiceArray = (bundles: TransactionBundle[], safeAddress: 
   return serviceArray
 }
 
-export const serviceToBundles = (serviceResponse: TransactionServiceResponse[]) => {
+export const serviceToBundles = (serviceResponse: TransactionServiceResponse[], safeAddress: string) => {
   const bundles: TransactionBundle[] = []
-  serviceResponse.map((response: TransactionServiceResponse) => bundles.push(serviceToBundle(response)))
+  serviceResponse.map((response: TransactionServiceResponse) => bundles.push(serviceToBundle(response, safeAddress)))
   return bundles
 }

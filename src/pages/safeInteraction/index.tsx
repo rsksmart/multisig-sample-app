@@ -39,7 +39,11 @@ const SafeInteraction: React.FC<Interface> = ({ safe, walletAddress, handleError
 
       if (nonce !== 0) {
         const serviceResponse = getTransactionsFromLocalStorage(safe.getAddress())
-        serviceResponse && setTransactions(serviceResponse)
+        if (serviceResponse) {
+          setTransactions(serviceResponse)
+          // set the App's nonce to the last transaction's nonce +1:
+          setAppNonce(serviceResponse[serviceResponse.length - 1].transaction.data.nonce + 1)
+        }
       }
     })
   }, [safe])

@@ -36,5 +36,5 @@ export const saveTransactionsToLocalStorage = (transactions: TransactionBundle[]
 
 export const getTransactionsFromLocalStorage = (safeAddress: string) => {
   const content = localStorage.getItem(`${LocalStorageKeys.TRANSACTIONS}_${safeAddress.toLowerCase()}`)
-  return content ? serviceToBundles(JSON.parse(content)) : null
+  return content ? serviceToBundles(JSON.parse(content), safeAddress) : null
 }
