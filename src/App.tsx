@@ -38,7 +38,7 @@ function App () {
   const handleSetSafe = (safe: Safe) => {
     setSafe(safe)
     handleError(null)
-    saveSafeAddresToLocalStorage(safe.getAddress())
+    chainId && saveSafeAddresToLocalStorage(safe.getAddress(), chainId)
   }
 
   const handleError = (error: Error | null) => error ? setError(error.message) : setError(null)

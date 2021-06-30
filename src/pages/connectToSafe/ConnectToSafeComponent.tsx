@@ -1,17 +1,12 @@
-import React, { useEffect, useState } from 'react'
-import { getKey, LocalStorageKeys } from '../../helpers/localStorage'
+import React, { useState } from 'react'
 
 interface Interface {
   connectToSafe: (safeAddress: string) => void
+  pastSafes: string[]
 }
 
-const ConnectToSafeComponent: React.FC<Interface> = ({ connectToSafe }) => {
+const ConnectToSafeComponent: React.FC<Interface> = ({ connectToSafe, pastSafes }) => {
   const [safeAddress, setSafeAddress] = useState<string>('')
-  const [pastSafes, setPastSafes] = useState<string[]>([])
-
-  useEffect(() => {
-    setPastSafes(getKey(LocalStorageKeys.SAFES))
-  }, [])
 
   return (
     <div>
