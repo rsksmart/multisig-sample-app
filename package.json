@@ -14,6 +14,7 @@
     "lint:ci": "eslint \"src/**/*.{js,jsx,ts,tsx}\" --format junit --output-file ./reports/eslint.xml"
   },
   "dependencies": {
+    "@gnosis.pm/safe-service-client": "^0.1.0-alpha.0",
     "@rsksmart/rlogin": "^1.0.9",
     "@rsksmart/rsk-utils": "1.1.0",
     "@rsksmart/safe-factory-sdk": "^0.0.1-beta.1",
