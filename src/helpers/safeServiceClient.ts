@@ -2,12 +2,17 @@
 import { Safe, SafeTransaction } from '@gnosis.pm/safe-core-sdk'
 import SafeServiceClient, { SafeMultisigTransactionListResponse, SafeMultisigTransactionResponse } from '@gnosis.pm/safe-service-client'
 import { toChecksumAddress } from '@rsksmart/rsk-utils'
+import { getContracts } from '../config'
 import { TransactionStatus } from '../constants'
 import { TransactionBundle } from '../pages/safeInteraction'
 
 // the transaction service requires the Ethereum checksum
 const toEthereumChecksum = (address: string) => toChecksumAddress(address)
-const safeService = new SafeServiceClient('https://safe-transaction.rinkeby.gnosis.io')
+
+// create the safe service client:
+const getSafeService = (safe: Safe) =>
+  safe.getChainId().then((chainId: number) =>
+    new SafeServiceClient(getContracts(chainId).safeTransactionService))
 
 // Convert the response from the transaction service to our Sample Apps "TransactionByndle"
 const convertToBundle = (transactionResponse: SafeMultisigTransactionResponse) => {
@@ -34,17 +39,18 @@ const convertToBundle = (transactionResponse: SafeMultisigTransactionResponse) =
   return response
 }
 
-export const getTransactions = (safeAddress: string) =>
-  safeService.getMultisigTransactions(toEthereumChecksum(safeAddress))
-    .then((value: SafeMultisigTransactionListResponse) => {
-      const bundleArray: TransactionBundle[] = []
-      value.results.forEach((transaction: SafeMultisigTransactionResponse) =>
-        bundleArray.push(convertToBundle(transaction)))
+export const getTransactions = (safe: Safe) =>
+  getSafeService(safe).then((safeService: SafeServiceClient) =>
+    safeService.getMultisigTransactions(toEthereumChecksum(safe.getAddress()))
+      .then((value: SafeMultisigTransactionListResponse) => {
+        const bundleArray: TransactionBundle[] = []
+        value.results.forEach((transaction: SafeMultisigTransactionResponse) =>
+          bundleArray.push(convertToBundle(transaction)))
 
-      // sort by nonce
-      return bundleArray.sort((a: TransactionBundle, b: TransactionBundle) =>
-        (a.transaction.data.nonce > b.transaction.data.nonce) ? 1 : -1)
-    })
+        // sort by nonce
+        return bundleArray.sort((a: TransactionBundle, b: TransactionBundle) =>
+          (a.transaction.data.nonce > b.transaction.data.nonce) ? 1 : -1)
+      }))
 
 export const publishPendingTransaction = (
   bundle: TransactionBundle,
@@ -57,17 +63,19 @@ export const publishPendingTransaction = (
 
     if (!signature) { reject(new Error('Current account is not a signer on the transaction')) }
 
-    signature && safeService.proposeTransaction(
-      toEthereumChecksum(safe.getAddress()),
-      {
-        ...bundle.transaction.data,
-        to: toEthereumChecksum(bundle.transaction.data.to)
-      },
-      bundle.hash,
-      signature
+    signature && getSafeService(safe).then((safeService: SafeServiceClient) =>
+      safeService.proposeTransaction(
+        toEthereumChecksum(safe.getAddress()),
+        {
+          ...bundle.transaction.data,
+          to: toEthereumChecksum(bundle.transaction.data.to)
+        },
+        bundle.hash,
+        signature
+      )
+        .then((value: any) =>
+          value === '' ? resolve(true) : reject(new Error(JSON.stringify(value))))
+        .catch((err: Error) => reject(err))
     )
-      .then((value: any) =>
-        value === '' ? resolve(true) : reject(new Error(JSON.stringify(value))))
-      .catch((err: Error) => reject(err))
   })
 )
