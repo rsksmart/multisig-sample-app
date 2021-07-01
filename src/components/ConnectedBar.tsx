@@ -9,6 +9,7 @@ interface Interface {
 const ConnectedBar: React.FC<Interface> = ({ walletAddress, chainId }) => {
   const chainIdtoString = (id: number) => {
     switch (id) {
+      case 4: return 'Rinkeby Testnet'
       case 31: return 'RSK Testnet'
       case 30: return 'RSK Mainnet'
       default: return 'Local'

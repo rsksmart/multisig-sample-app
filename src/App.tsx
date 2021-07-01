@@ -12,7 +12,7 @@ import { saveSafeAddresToLocalStorage } from './helpers/localStorage'
 
 const rLogin = new RLogin({
   cacheProvider: false,
-  supportedChains: [31, 1337]
+  supportedChains: [4, 31, 1337]
 })
 
 function App () {
