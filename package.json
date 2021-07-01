@@ -14,7 +14,7 @@
     "lint:ci": "eslint \"src/**/*.{js,jsx,ts,tsx}\" --format junit --output-file ./reports/eslint.xml"
   },
   "dependencies": {
-    "@rsksmart/rlogin": "^1.0.7-beta.1",
+    "@rsksmart/rlogin": "^1.0.9",
     "@rsksmart/rsk-utils": "1.1.0",
     "@rsksmart/safe-factory-sdk": "^0.0.1-beta.1",
     "@rsksmart/safe-transactions-sdk": "^0.0.1-beta.2",
