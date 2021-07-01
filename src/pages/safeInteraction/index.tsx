@@ -7,7 +7,7 @@ import PolicyComponent from './policies'
 import AssetsComponent from './assets'
 import TransactionCreatedModal from '../../components/TransactionCreatedModal'
 import { Screens, TransactionStatus } from '../../constants'
-import { saveTransactionsToLocalStorage, getTransactionsFromLocalStorage } from '../../helpers/localStorage'
+import { getTransactions } from '../../helpers/safeServiceClient'
 
 interface Interface {
   safe: Safe
@@ -37,14 +37,9 @@ const SafeInteraction: React.FC<Interface> = ({ safe, walletAddress, handleError
     safe.getNonce().then((nonce: number) => {
       setAppNonce(nonce)
 
-      if (nonce !== 0) {
-        const serviceResponse = getTransactionsFromLocalStorage(safe.getAddress())
-        if (serviceResponse) {
-          setTransactions(serviceResponse)
-          // set the App's nonce to the last transaction's nonce +1:
-          setAppNonce(serviceResponse[serviceResponse.length - 1].transaction.data.nonce + 1)
-        }
-      }
+      // get transactions from the service
+      getTransactions(safe.getAddress())
+        .then((bundles: TransactionBundle[]) => setTransactions(bundles))
     })
   }, [safe])
 
@@ -72,9 +67,6 @@ const SafeInteraction: React.FC<Interface> = ({ safe, walletAddress, handleError
         setTransactions(nonceSorted)
         setShowTransactionInfo(true)
 
-        // save list to localstorage
-        saveTransactionsToLocalStorage(nonceSorted, safe.getAddress())
-
         // increase the app's nonce by 1 if it isn't a reject transaction
         !isReject && setAppNonce(appNonce + 1)
       })
@@ -95,10 +87,6 @@ const SafeInteraction: React.FC<Interface> = ({ safe, walletAddress, handleError
     }
 
     setTransactions(list)
-
-    // save list to localstorage if not a Rejected transaction
-    status !== TransactionStatus.REJECTED &&
-      saveTransactionsToLocalStorage(list, safe.getAddress())
   }
 
   const closeModalAndSwitchScreen = () => {

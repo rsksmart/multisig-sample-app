@@ -17,6 +17,7 @@ interface Interface {
   approveTransaction?: (transaction: TransactionBundle, onChain: boolean) => Promise<any>
   executeTransaction?: (transactionBundle: TransactionBundle) => void
   rejectTransaction?: (transaction: SafeTransaction) => void
+  publishTransaction?: (transaction: TransactionBundle) => void
   handleError?: (error: Error) => void
 }
 
@@ -26,7 +27,7 @@ interface SignatureType {
 }
 
 const TransactionDetailComponent: React.FC<Interface> = ({
-  safe, transactionBundle, walletAddress, handleError, approveTransaction, executeTransaction, rejectTransaction
+  safe, transactionBundle, walletAddress, handleError, approveTransaction, executeTransaction, rejectTransaction, publishTransaction
 }) => {
   const { transaction, hash } = transactionBundle
 
@@ -137,6 +138,7 @@ const TransactionDetailComponent: React.FC<Interface> = ({
             <button
               disabled={walletHasSigned}
               onClick={() => handleApprove(false)}>approve off-chain</button>
+            <button onClick={() => publishTransaction && publishTransaction(transactionBundle)}>PUBLISH</button>
           </>
         )}
         {!transactionBundle.isReject && rejectTransaction && <button
