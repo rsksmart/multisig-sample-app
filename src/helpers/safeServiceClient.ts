@@ -76,7 +76,7 @@ export const publishPendingTransaction = (
     // get the signature on the transaction
     const signature = bundle.transaction.signatures.get(signerAddress.toLowerCase())
 
-    if (!signature) { reject(new Error('Current account is not a signer on the transaction')) }
+    if (!signature) { reject(new Error('Current account is not a signer on the transaction. Sign the transaction off-chain to publish to the transaction service.')) }
 
     signature && getSafeService(safe).then((safeService: SafeServiceClient) =>
       safeService.proposeTransaction(
