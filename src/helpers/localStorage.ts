@@ -1,7 +1,6 @@
 /* eslint-disable no-unused-vars */
 export enum LocalStorageKeys {
-  SAFES = 'SAFES',
-  TRANSACTIONS = 'TRANSACTIONS'
+  SAFES = 'SAFES'
 }
 
 const setKey = (key: string, value: string) =>
