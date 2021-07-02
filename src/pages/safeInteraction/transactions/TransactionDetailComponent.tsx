@@ -139,6 +139,7 @@ const TransactionDetailComponent: React.FC<Interface> = ({
               disabled={walletHasSigned}
               onClick={() => handleApprove(false)}>approve off-chain</button>
             <button
+              disabled={transactionBundle.isPublished}
               onClick={() => publishTransaction && publishTransaction(transactionBundle)}>Publish</button>
           </>
         )}

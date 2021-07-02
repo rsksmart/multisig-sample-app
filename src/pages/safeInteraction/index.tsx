@@ -22,6 +22,7 @@ export interface TransactionBundle {
   hash: string
   status: TransactionStatus
   isReject: boolean
+  isPublished: boolean
 }
 
 const SafeInteraction: React.FC<Interface> = ({ safe, walletAddress, handleError, handleLogout }) => {
@@ -42,7 +43,8 @@ const SafeInteraction: React.FC<Interface> = ({ safe, walletAddress, handleError
         .then((bundles: TransactionBundle[]) => {
           setTransactions(bundles)
           // update the app's nonce
-          setAppNonce(bundles[bundles.length - 1].transaction.data.nonce + 1)
+          bundles.length !== 0 &&
+            setAppNonce(bundles[bundles.length - 1].transaction.data.nonce + 1)
         })
         .catch(handleError)
     })
@@ -62,7 +64,7 @@ const SafeInteraction: React.FC<Interface> = ({ safe, walletAddress, handleError
     safe.getTransactionHash(transaction)
       .then((hash: string) => {
         // create new transaction list
-        const newTransactionList = [...transactions, { status: TransactionStatus.PENDING, transaction, hash, isReject: isReject || false }]
+        const newTransactionList = [...transactions, { status: TransactionStatus.PENDING, transaction, hash, isReject: isReject || false, isPublished: false }]
 
         // sort the order of transactions by nonce:
         const nonceSorted = newTransactionList.sort((a: TransactionBundle, b: TransactionBundle) =>

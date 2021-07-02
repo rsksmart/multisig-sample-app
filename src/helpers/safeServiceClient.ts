@@ -45,7 +45,8 @@ const convertToBundle = (transactionResponse: SafeMultisigTransactionResponse, s
     transaction,
     hash: transactionResponse.safeTxHash,
     status,
-    isReject
+    isReject,
+    isPublished: true
   }
 
   return response
@@ -55,6 +56,8 @@ export const getTransactions = (safe: Safe, safeNonce: number) =>
   getSafeService(safe).then((safeService: SafeServiceClient) =>
     safeService.getMultisigTransactions(toEthereumChecksum(safe.getAddress()))
       .then((value: SafeMultisigTransactionListResponse) => {
+        if (value.results.length === 0) return []
+
         // convert the response into a bundles
         const bundleArray = value.results.map((transaction: SafeMultisigTransactionResponse) =>
           convertToBundle(transaction, safeNonce))

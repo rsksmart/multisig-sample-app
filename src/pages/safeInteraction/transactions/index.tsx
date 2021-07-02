@@ -95,7 +95,10 @@ const TransactionsPanel: React.FC<Interface> = ({ safe, handleError, updateTrans
   // publish a transaction to the transaction service:
   const publishTransaction = (bundle: TransactionBundle) =>
     publishPendingTransaction(bundle, safe)
-      .then(() => setShowPublishedModal(true))
+      .then(() => {
+        setShowPublishedModal(true)
+        updateTransactionBundle({ ...bundle, isPublished: true })
+      })
       .catch(handleError)
 
   return (
