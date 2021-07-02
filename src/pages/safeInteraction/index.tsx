@@ -38,8 +38,12 @@ const SafeInteraction: React.FC<Interface> = ({ safe, walletAddress, handleError
       setAppNonce(nonce)
 
       // get transactions from the service
-      getTransactions(safe)
-        .then((bundles: TransactionBundle[]) => setTransactions(bundles))
+      getTransactions(safe, nonce)
+        .then((bundles: TransactionBundle[]) => {
+          setTransactions(bundles)
+          // update the app's nonce
+          setAppNonce(bundles[bundles.length - 1].transaction.data.nonce + 1)
+        })
         .catch(handleError)
     })
   }, [safe])

@@ -1,4 +1,3 @@
-// import { SafeTransaction } from '@gnosis.pm/safe-core-sdk'
 import { Safe, SafeTransaction } from '@gnosis.pm/safe-core-sdk'
 import SafeServiceClient, { SafeMultisigTransactionListResponse, SafeMultisigTransactionResponse } from '@gnosis.pm/safe-service-client'
 import { toChecksumAddress } from '@rsksmart/rsk-utils'
@@ -15,11 +14,11 @@ const getSafeService = (safe: Safe) =>
     new SafeServiceClient(getContracts(chainId).safeTransactionService))
 
 // Convert the response from the transaction service to our Sample Apps "TransactionByndle"
-const convertToBundle = (transactionResponse: SafeMultisigTransactionResponse) => {
-  const safeTransaction = new SafeTransaction({
+const convertToBundle = (transactionResponse: SafeMultisigTransactionResponse, safeNonce: number) => {
+  const transaction = new SafeTransaction({
     to: transactionResponse.to,
     value: transactionResponse.value,
-    data: transactionResponse.data || '',
+    data: transactionResponse.data || '0x',
     safeTxGas: transactionResponse.safeTxGas,
     baseGas: transactionResponse.baseGas,
     gasPrice: parseInt(transactionResponse.gasPrice),
@@ -29,23 +28,36 @@ const convertToBundle = (transactionResponse: SafeMultisigTransactionResponse) =
     refundReceiver: transactionResponse.refundReceiver || ''
   })
 
+  const isReject = (
+    transactionResponse.to.toLowerCase() === transactionResponse.safe.toLowerCase() &&
+    transactionResponse.value === '0' &&
+    !transactionResponse.data)
+
+  // Transaction Status
+  let status = TransactionStatus.PENDING
+  if (transactionResponse.isExecuted) {
+    status = TransactionStatus.EXECUTED
+  } else if (transactionResponse.nonce < safeNonce) {
+    status = TransactionStatus.REJECTED
+  }
+
   const response: TransactionBundle = {
-    transaction: safeTransaction,
+    transaction,
     hash: transactionResponse.safeTxHash,
-    status: transactionResponse.isExecuted ? TransactionStatus.EXECUTED : TransactionStatus.PENDING,
-    isReject: false
+    status,
+    isReject
   }
 
   return response
 }
 
-export const getTransactions = (safe: Safe) =>
+export const getTransactions = (safe: Safe, safeNonce: number) =>
   getSafeService(safe).then((safeService: SafeServiceClient) =>
     safeService.getMultisigTransactions(toEthereumChecksum(safe.getAddress()))
       .then((value: SafeMultisigTransactionListResponse) => {
-        const bundleArray: TransactionBundle[] = []
-        value.results.forEach((transaction: SafeMultisigTransactionResponse) =>
-          bundleArray.push(convertToBundle(transaction)))
+        // convert the response into a bundles
+        const bundleArray = value.results.map((transaction: SafeMultisigTransactionResponse) =>
+          convertToBundle(transaction, safeNonce))
 
         // sort by nonce
         return bundleArray.sort((a: TransactionBundle, b: TransactionBundle) =>
