@@ -1,0 +1,6 @@
+{
+  "safeSingletonAddress": "0x34CfAC646f301356fAa8B21e94227e3583Fe3F5F",
+  "proxyFactoryAddress": "0x76E2cFc1F5Fa8F6a5b3fC4c8F4788F0116861F9B",
+  "rifToken": "0x01BE23585060835E02B77ef475b0Cc51aA1e0709",
+  "safeTransactionService": "https://safe-transaction.rinkeby.gnosis.io/"
+}

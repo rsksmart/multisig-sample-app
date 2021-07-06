@@ -1526,12 +1526,25 @@
     "@ethersproject/properties" "^5.2.0"
     "@ethersproject/strings" "^5.2.0"
 
+"@gnosis.pm/safe-core-sdk-types@^0.1.0":
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/@gnosis.pm/safe-core-sdk-types/-/safe-core-sdk-types-0.1.1.tgz#908c394cb4660493b4e9c8e01b5a7aa36efafd30"
+  integrity sha512-PghXGDaI5Foq37nZGmI90U2OKMeGtxh5KqkDqou9aFHwGVa/nf9HRQPxG9/XUzcyfe9OlKttDlJnR3XnC3dSDw==
+
 "@gnosis.pm/safe-core-sdk@^0.1.2":
   version "0.1.2"
   resolved "https://registry.yarnpkg.com/@gnosis.pm/safe-core-sdk/-/safe-core-sdk-0.1.2.tgz#118037442b8cf766e5a2ddfbffeb90cd6dc87d91"
   integrity sha512-tvInAfwENVG7QXWRMbXqCnZkTqPPIWzFnonU/fDRQmA5S5pKI9qIDYCjqOAwPzqRgvuItG3NxmSPynZD09771w==
   dependencies:
     ethereumjs-util "^7.0.10"
+
+"@gnosis.pm/safe-service-client@^0.1.0-alpha.0":
+  version "0.1.0-alpha.0"
+  resolved "https://registry.yarnpkg.com/@gnosis.pm/safe-service-client/-/safe-service-client-0.1.0-alpha.0.tgz#578041419e9ad8044a9c9fa0a241fcf8c7b6e9fb"
+  integrity sha512-Ld8B7VMAjjWMrywa+SNrLw+w4qJrvd6OEeLUkUTfFK6yDW9ybbfy6QO6bUMgOP4WhgUdRnTVpm/526DcddkifA==
+  dependencies:
+    "@gnosis.pm/safe-core-sdk-types" "^0.1.0"
+    axios "^0.21.1"
 
 "@hapi/address@2.x.x":
   version "2.1.4"
@@ -1843,10 +1856,10 @@
     did-jwt "^4.6.2"
     eth-sig-util "^3.0.0"
 
-"@rsksmart/rlogin@^1.0.7-beta.1":
-  version "1.0.7-beta.1"
-  resolved "https://registry.yarnpkg.com/@rsksmart/rlogin/-/rlogin-1.0.7-beta.1.tgz#bc79ccbcbce961538669980d70e30614f201cc14"
-  integrity sha512-X1YBPwIs5LHIn5nzbnawlt/bJ0YBx2MWvNC74gvXUeDBhRtN33FzYWihIPG0lhyNY01xVPZ8wKQTlwj1UEFXdQ==
+"@rsksmart/rlogin@^1.0.9":
+  version "1.0.9"
+  resolved "https://registry.yarnpkg.com/@rsksmart/rlogin/-/rlogin-1.0.9.tgz#c5ee1ff82d5de445d80eabf3979ecf69dc27f56b"
+  integrity sha512-b4EPUrKYWfklhD8aHjIuwVd+Ui0zpKwT88iaWdNwOzGWuA7MePDhzud7YLhYnr9GulhPxDXAj2jS3FKkIv8hFg==
   dependencies:
     "@rsksmart/ipfs-cpinner-client" "0.1.2"
     "@rsksmart/vc-json-schemas-parser" "^1.0.0"
@@ -3579,7 +3592,7 @@ binary-extensions@^2.0.0:
   resolved "https://registry.yarnpkg.com/binary-extensions/-/binary-extensions-2.1.0.tgz#30fa40c9e7fe07dbc895678cd287024dea241dd9"
   integrity sha512-1Yj8h9Q+QDF5FzhMs/c9+6UntbD5MkRfRwac8DoEm9ZfUBZ7tZ55YcGVAzEe4bXsdQHEk+s9S5wsOKVdZrw0tQ==
 
-bindings@^1.5.0:
+bindings@^1.2.1, bindings@^1.5.0:
   version "1.5.0"
   resolved "https://registry.yarnpkg.com/bindings/-/bindings-1.5.0.tgz#10353c9e945334bc0511a6d90b38fbc7c9c504df"
   integrity sha512-p2q/t/mhvuOj/UeLlV6566GD/guowlr0hHxClI0W9m7MWYkL1F0hLo+0Aexs9HSPCtR1SXQ0TD3MMKrXZajbiQ==
@@ -8558,6 +8571,16 @@ jsprim@^1.2.2:
     array-includes "^3.1.1"
     object.assign "^4.1.1"
 
+keccak@^1.0.2:
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/keccak/-/keccak-1.4.0.tgz#572f8a6dbee8e7b3aa421550f9e6408ca2186f80"
+  integrity sha512-eZVaCpblK5formjPjeTBik7TAg+pqnDrMHIffSvi9Lh7PQgM1+hSzakUeZFCk9DVVG0dacZJuaz2ntwlzZUIBw==
+  dependencies:
+    bindings "^1.2.1"
+    inherits "^2.0.3"
+    nan "^2.2.1"
+    safe-buffer "^5.1.0"
+
 keccak@^2.0.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/keccak/-/keccak-2.1.0.tgz#734ea53f2edcfd0f42cdb8d5f4c358fef052752b"
@@ -9298,7 +9321,7 @@ mute-stream@0.0.8:
   resolved "https://registry.yarnpkg.com/mute-stream/-/mute-stream-0.0.8.tgz#1630c42b2251ff81e2a283de96a5497ea92e5e0d"
   integrity sha512-nnbWWOkoWyUsTjKrhgD0dcz22mdkSnpYqbEjIm2nhwhuxlSkpywJmBo8h0ZqJdkp73mb90SssHkN4rsRaBAfAA==
 
-nan@^2.12.1, nan@^2.13.2, nan@^2.14.0:
+nan@^2.12.1, nan@^2.13.2, nan@^2.14.0, nan@^2.2.1:
   version "2.14.2"
   resolved "https://registry.yarnpkg.com/nan/-/nan-2.14.2.tgz#f5376400695168f4cc694ac9393d0c9585eeea19"
   integrity sha512-M2ufzIiINKCuDfBSAUr1vWQ+vuVcA9kqx8JJUsbQi6yf1uGRyb7HfpdfUr5qLXf3B/t8dPvcjhKMmlfnP47EzQ==
@@ -11833,6 +11856,13 @@ rollup@^1.31.1:
     "@types/estree" "*"
     "@types/node" "*"
     acorn "^7.1.0"
+
+rskjs-util@^1.0.3:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/rskjs-util/-/rskjs-util-1.0.3.tgz#c0242d9308d7dc1eb653ffbf0dd1af1309bf55ca"
+  integrity sha512-Q6zfYFQndaBln1iY2gnBfYgDLymbZHAxKXOcZVLAKJkHilcieoUN3ZXVxLA3K30KlgAfmRVG72iTzi+yPNZB1w==
+  dependencies:
+    keccak "^1.0.2"
 
 rst-selector-parser@^2.2.3:
   version "2.2.3"

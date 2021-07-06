@@ -1,10 +1,6 @@
-import { TransactionBundle } from '../pages/safeInteraction'
-import { bundleToServiceArray, serviceToBundles } from './serviceAdapter'
-
 /* eslint-disable no-unused-vars */
 export enum LocalStorageKeys {
-  SAFES = 'SAFES',
-  TRANSACTIONS = 'TRANSACTIONS'
+  SAFES = 'SAFES'
 }
 
 const setKey = (key: string, value: string) =>
@@ -27,14 +23,4 @@ export const saveSafeAddresToLocalStorage = (safeAddress: string, chainId: numbe
   return !safes.includes(safeAddress.toLowerCase())
     ? setJsonKey(LocalStorageKeys.SAFES, chainId, [...safes, safeAddress.toLowerCase()])
     : null
-}
-
-export const saveTransactionsToLocalStorage = (transactions: TransactionBundle[], safeAddress: string) => {
-  const converted = bundleToServiceArray(transactions, safeAddress)
-  setKey(`${LocalStorageKeys.TRANSACTIONS}_${safeAddress.toLowerCase()}`, JSON.stringify(converted))
-}
-
-export const getTransactionsFromLocalStorage = (safeAddress: string) => {
-  const content = localStorage.getItem(`${LocalStorageKeys.TRANSACTIONS}_${safeAddress.toLowerCase()}`)
-  return content ? serviceToBundles(JSON.parse(content), safeAddress) : null
 }
