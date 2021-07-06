@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import EthersSafe, { Safe } from '@gnosis.pm/safe-core-sdk'
 import { EthersSafeFactory } from '@rsksmart/safe-factory-sdk'
 import { ethers } from 'ethers'
@@ -7,6 +7,7 @@ import CreateSafeComponent from './CreateSafeComponent'
 import ConnectToSafeComponent from './ConnectToSafeComponent'
 import { getContracts } from '../../config'
 import LoadingComponent from '../../components/LoadingComponent'
+import { getKey, LocalStorageKeys } from '../../helpers/localStorage'
 
 interface Interface {
   web3Provider: any
@@ -20,6 +21,9 @@ const ChooseSafe: React.FC<Interface> = ({ web3Provider, chainId, handleSetSafe,
   // UI variables
   const [isCreate, setIsCreate] = useState<boolean>(false)
   const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [pastSafes, setPastSafes] = useState<string[]>([])
+
+  useEffect(() => { setPastSafes(getKey(LocalStorageKeys.SAFES, chainId)) }, [])
 
   // Create a new safe:
   const createSafe = (addresses: string[], threshold: number) => {
@@ -50,7 +54,7 @@ const ChooseSafe: React.FC<Interface> = ({ web3Provider, chainId, handleSetSafe,
     const signer = provider.getSigner()
 
     EthersSafe.create(ethers, safeAddress.toLowerCase(), signer)
-      .then((safe: any) => handleSetSafe(safe))
+      .then(handleSetSafe)
       .catch(handleError)
       .finally(() => setIsLoading(false))
   }
@@ -72,6 +76,7 @@ const ChooseSafe: React.FC<Interface> = ({ web3Provider, chainId, handleSetSafe,
           />
         ) : (
           <ConnectToSafeComponent
+            pastSafes={pastSafes}
             connectToSafe={connectToSafe}
           />
         )}

@@ -5,9 +5,11 @@ import React, { useEffect, useState } from 'react'
 import { TransactionBundle } from '..'
 import Modal from '../../../components/Modal'
 import { TransactionStatus } from '../../../constants'
+import { publishPendingTransaction } from '../../../helpers/safeServiceClient'
 import { transactionListener } from '../../../helpers/transactionListener'
 import ApprovedModal from './ApprovedModal'
 import ExecutedModal from './ExecutedModal'
+import PublishedModal from './PublishedModal'
 import TransactionDetailComponent from './TransactionDetailComponent'
 import TransactionMenu from './TransactionMenu'
 import TransactionTabHelperText from './TransactionTabHelperText'
@@ -25,6 +27,7 @@ const TransactionsPanel: React.FC<Interface> = ({ safe, handleError, updateTrans
   const [showApprovedModal, setShowApprovedModal] = useState<string | null>(null)
   const [approvedOffChainModal, setApprovedOffChainModal] = useState<boolean>(false)
   const [showExecutedModal, setShowExecutedModal] = useState<{ status: string, hash?: string } | null>(null)
+  const [showPublishedModal, setShowPublishedModal] = useState<boolean>(false)
 
   const [currentSubTab, setCurrentSubTab] = useState<TransactionStatus>(TransactionStatus.PENDING)
   const [currentTransactions, setCurrentTransactions] = useState<TransactionBundle[]>([])
@@ -89,6 +92,15 @@ const TransactionsPanel: React.FC<Interface> = ({ safe, handleError, updateTrans
       })
   }
 
+  // publish a transaction to the transaction service:
+  const publishTransaction = (bundle: TransactionBundle) =>
+    publishPendingTransaction(bundle, safe)
+      .then(() => {
+        setShowPublishedModal(true)
+        updateTransactionBundle({ ...bundle, isPublished: true })
+      })
+      .catch(handleError)
+
   return (
     <>
       <section className="panel">
@@ -117,12 +129,14 @@ const TransactionsPanel: React.FC<Interface> = ({ safe, handleError, updateTrans
             approveTransaction={currentSubTab === TransactionStatus.PENDING ? approveTransaction : undefined}
             executeTransaction={(isPending && currentNonce) ? handleExecutionTransaction : undefined}
             rejectTransaction={(isPending && currentNonce && !hasDuplicate) ? createRejectionTransaction : undefined}
+            publishTransaction={publishTransaction}
           />
         })}
       </section>
 
       {showApprovedModal && <ApprovedModal hash={showApprovedModal} handleClose={() => setShowApprovedModal(null)} />}
       {showExecutedModal && <ExecutedModal status={showExecutedModal} handleClose={() => setShowExecutedModal(null)} />}
+      {showPublishedModal && <PublishedModal handleClose={() => setShowPublishedModal(false)} />}
       {approvedOffChainModal && <Modal handleClose={() => setApprovedOffChainModal(false)}>
         <h2>Signature Added</h2>
         <p>Since this is a sample app, this signature will be saved in local state only. It will not be saved if the app refreshed.</p>

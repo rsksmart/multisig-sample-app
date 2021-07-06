@@ -7,6 +7,7 @@ import PolicyComponent from './policies'
 import AssetsComponent from './assets'
 import TransactionCreatedModal from '../../components/TransactionCreatedModal'
 import { Screens, TransactionStatus } from '../../constants'
+import { getTransactions } from '../../helpers/safeServiceClient'
 
 interface Interface {
   safe: Safe
@@ -21,6 +22,7 @@ export interface TransactionBundle {
   hash: string
   status: TransactionStatus
   isReject: boolean
+  isPublished: boolean
 }
 
 const SafeInteraction: React.FC<Interface> = ({ safe, walletAddress, handleError, handleLogout }) => {
@@ -33,7 +35,19 @@ const SafeInteraction: React.FC<Interface> = ({ safe, walletAddress, handleError
   const [appNonce, setAppNonce] = useState(0)
 
   useEffect(() => {
-    safe.getNonce().then((nonce: number) => setAppNonce(nonce))
+    safe.getNonce().then((nonce: number) => {
+      setAppNonce(nonce)
+
+      // get transactions from the service
+      getTransactions(safe, nonce)
+        .then((bundles: TransactionBundle[]) => {
+          setTransactions(bundles)
+          // update the app's nonce
+          bundles.length !== 0 &&
+            setAppNonce(bundles[bundles.length - 1].transaction.data.nonce + 1)
+        })
+        .catch(handleError)
+    })
   }, [safe])
 
   // Transaction Management, all transactions:
@@ -50,7 +64,7 @@ const SafeInteraction: React.FC<Interface> = ({ safe, walletAddress, handleError
     safe.getTransactionHash(transaction)
       .then((hash: string) => {
         // create new transaction list
-        const newTransactionList = [...transactions, { status: TransactionStatus.PENDING, transaction, hash, isReject: isReject || false }]
+        const newTransactionList = [...transactions, { status: TransactionStatus.PENDING, transaction, hash, isReject: isReject || false, isPublished: false }]
 
         // sort the order of transactions by nonce:
         const nonceSorted = newTransactionList.sort((a: TransactionBundle, b: TransactionBundle) =>
