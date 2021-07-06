@@ -3,7 +3,7 @@ name: Github Pages Deploy
 on:
   pull_request:
     branches:
-      - main
+      - develop
 
 jobs:
   build-and-deploy:
