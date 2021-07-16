@@ -6,14 +6,14 @@
   Sample application for the RIF Savings and Vault project
 </p>
 <p align="middle">
-  <a href="https://circleci.com/gh/rsksmart/react-app-rif-template">
-    <img src="https://img.shields.io/circleci/build/github/rsksmart/react-app-rif-template?label=CircleCI" alt="npm" />
+  <a href="https://github.com/rsksmart/multisig-sample-app/actions/workflows/ci.yml">
+    <img src="https://github.com/rsksmart/multisig-sample-app/actions/workflows/ci.yml/badge.svg" alt="npm" />
   </a>
-  <a href="https://lgtm.com/projects/g/rsksmart/react-app-rif-template/alerts/">
-    <img src="https://img.shields.io/lgtm/alerts/github/rsksmart/react-app-rif-template" alt="Alerts">
+  <a href="https://lgtm.com/projects/g/rsksmart/multisig-sample-app/alerts/">
+    <img src="https://img.shields.io/lgtm/alerts/github/rsksmart/multisig-sample-app" alt="Alerts">
   </a>
-  <a href="https://lgtm.com/projects/g/rsksmart/react-app-rif-template/context:javascript">
-    <img src="https://img.shields.io/lgtm/grade/javascript/github/rsksmart/react-app-rif-template" alt="Code Quality">
+  <a href="https://lgtm.com/projects/g/rsksmart/multisig-sample-app/context:javascript">
+    <img src="https://img.shields.io/lgtm/grade/javascript/github/rsksmart/multisig-sample-app" alt="Code Quality">
   </a>
 </p>
 
