@@ -13,7 +13,7 @@ const getSafeService = (safe: Safe) =>
   safe.getChainId().then((chainId: number) =>
     new SafeServiceClient(getContracts(chainId).safeTransactionService))
 
-// Convert the response from the transaction service to our Sample Apps "TransactionByndle"
+// Convert the response from the transaction service to our Sample Apps "TransactionBundle"
 const convertToBundle = (transactionResponse: SafeMultisigTransactionResponse, safeNonce: number) => {
   const transaction = new SafeTransaction({
     to: transactionResponse.to,
@@ -40,13 +40,15 @@ const convertToBundle = (transactionResponse: SafeMultisigTransactionResponse, s
   } else if (transactionResponse.nonce < safeNonce) {
     status = TransactionStatus.REJECTED
   }
+  const { confirmations } = transactionResponse
 
   const response: TransactionBundle = {
     transaction,
     hash: transactionResponse.safeTxHash,
     status,
     isReject,
-    isPublished: true
+    isPublished: true,
+    confirmations
   }
 
   return response

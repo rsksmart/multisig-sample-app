@@ -5,6 +5,7 @@ import React, { useEffect, useState } from 'react'
 import { TransactionBundle } from '..'
 import Modal from '../../../components/Modal'
 import { TransactionStatus } from '../../../constants'
+import { removeTransaction, storeTransaction } from '../../../helpers/localStorage'
 import { publishPendingTransaction } from '../../../helpers/safeServiceClient'
 import { transactionListener } from '../../../helpers/transactionListener'
 import ApprovedModal from './ApprovedModal'
@@ -71,6 +72,7 @@ const TransactionsPanel: React.FC<Interface> = ({ safe, handleError, updateTrans
     safe.signTransaction(bundle.transaction)
       .then(() => {
         updateTransactionBundle(bundle)
+        storeTransaction(safe.getAddress(), bundle)
         setApprovedOffChainModal(true)
       })
       .catch(handleError)
@@ -80,6 +82,7 @@ const TransactionsPanel: React.FC<Interface> = ({ safe, handleError, updateTrans
     executeTransaction(safe, bundle.transaction)
       .then((result: ContractTransaction) => {
         setShowExecutedModal({ status: 'LOADING', hash: result.hash })
+        removeTransaction(safe.getAddress(), bundle)
         return transactionListener(safe.getProvider(), result.hash)
       })
       .then((receipt: any) => {
@@ -98,6 +101,7 @@ const TransactionsPanel: React.FC<Interface> = ({ safe, handleError, updateTrans
       .then(() => {
         setShowPublishedModal(true)
         updateTransactionBundle({ ...bundle, isPublished: true })
+        removeTransaction(safe.getAddress(), bundle)
       })
       .catch(handleError)
 

@@ -8,6 +8,7 @@ import AssetsComponent from './assets'
 import TransactionCreatedModal from '../../components/TransactionCreatedModal'
 import { Screens, TransactionStatus } from '../../constants'
 import { getTransactions } from '../../helpers/safeServiceClient'
+import { getTransactions as getTransactionsFromLocalStorage, storeTransaction } from '../../helpers/localStorage'
 
 interface Interface {
   safe: Safe
@@ -16,13 +17,24 @@ interface Interface {
   handleError: (err: Error | null) => void
 }
 
+// FIXME: double-check if safe-service-client exports this type
+declare type SafeMultisigConfirmationResponse = {
+  readonly owner: string;
+  readonly submissionDate: string;
+  readonly transactionHash?: string;
+  readonly confirmationType?: string;
+  readonly signature: string;
+  readonly signatureType?: string;
+};
+
 // Wrapper for transaction to keep track of the status, and hash to be used as an identifier
 export interface TransactionBundle {
   transaction: SafeTransaction
   hash: string
   status: TransactionStatus
   isReject: boolean
-  isPublished: boolean
+  isPublished: boolean,
+  confirmations?: SafeMultisigConfirmationResponse[]
 }
 
 const SafeInteraction: React.FC<Interface> = ({ safe, walletAddress, handleError, handleLogout }) => {
@@ -41,7 +53,8 @@ const SafeInteraction: React.FC<Interface> = ({ safe, walletAddress, handleError
       // get transactions from the service
       getTransactions(safe, nonce)
         .then((bundles: TransactionBundle[]) => {
-          setTransactions(bundles)
+          // merge with locally stored transactions
+          mergeTransactions(bundles)
           // update the app's nonce
           bundles.length !== 0 &&
             setAppNonce(bundles[bundles.length - 1].transaction.data.nonce + 1)
@@ -53,6 +66,18 @@ const SafeInteraction: React.FC<Interface> = ({ safe, walletAddress, handleError
   // Transaction Management, all transactions:
   const [transactions, setTransactions] = useState<TransactionBundle[]>([])
 
+  const mergeTransactions = (bundles: TransactionBundle[]) => {
+    const localTransactions = (getTransactionsFromLocalStorage(safe.getAddress()) || [])
+    console.log('Parsed Transactions', localTransactions)
+    const allTransactions = [...localTransactions, ...bundles]
+    sortAndSetTransactions(allTransactions)
+  }
+
+  const sortAndSetTransactions = (transactions: TransactionBundle[]) => {
+    const nonceSorted = transactions.sort((a: TransactionBundle, b: TransactionBundle) => (a.transaction.data.nonce - b.transaction.data.nonce))
+    setTransactions(nonceSorted)
+  }
+
   // Add a new PENDING transaction to the list
   const addTransaction = (incomingTransaction: SafeTransaction, isReject?: boolean) => {
     // set the correct nonce if there are pending transactions:
@@ -63,15 +88,14 @@ const SafeInteraction: React.FC<Interface> = ({ safe, walletAddress, handleError
     // get the hash to be used as an identifier
     safe.getTransactionHash(transaction)
       .then((hash: string) => {
+        const incomingTxBundle = { status: TransactionStatus.PENDING, transaction, hash, isReject: isReject || false, isPublished: false }
+        // store the new transaction locally
+        storeTransaction(safe.getAddress(), incomingTxBundle)
         // create new transaction list
-        const newTransactionList = [...transactions, { status: TransactionStatus.PENDING, transaction, hash, isReject: isReject || false, isPublished: false }]
-
-        // sort the order of transactions by nonce:
-        const nonceSorted = newTransactionList.sort((a: TransactionBundle, b: TransactionBundle) =>
-          (a.transaction.data.nonce > b.transaction.data.nonce) ? 1 : -1)
+        const newTransactionList = [...transactions, incomingTxBundle]
 
         // set the sorted transactions
-        setTransactions(nonceSorted)
+        sortAndSetTransactions(newTransactionList)
         setShowTransactionInfo(true)
 
         // increase the app's nonce by 1 if it isn't a reject transaction

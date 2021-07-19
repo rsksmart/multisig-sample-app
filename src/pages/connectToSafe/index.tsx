@@ -7,7 +7,7 @@ import CreateSafeComponent from './CreateSafeComponent'
 import ConnectToSafeComponent from './ConnectToSafeComponent'
 import { getContracts } from '../../config'
 import LoadingComponent from '../../components/LoadingComponent'
-import { getKey, LocalStorageKeys } from '../../helpers/localStorage'
+import { getSafeAddresses } from '../../helpers/localStorage'
 
 interface Interface {
   web3Provider: any
@@ -23,7 +23,7 @@ const ChooseSafe: React.FC<Interface> = ({ web3Provider, chainId, handleSetSafe,
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [pastSafes, setPastSafes] = useState<string[]>([])
 
-  useEffect(() => { setPastSafes(getKey(LocalStorageKeys.SAFES, chainId)) }, [])
+  useEffect(() => { setPastSafes(getSafeAddresses(chainId)) }, [])
 
   // Create a new safe:
   const createSafe = (addresses: string[], threshold: number) => {
