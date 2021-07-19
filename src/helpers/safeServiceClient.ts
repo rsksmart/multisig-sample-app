@@ -1,19 +1,21 @@
 import { Safe, SafeTransaction } from '@gnosis.pm/safe-core-sdk'
+import { SafeSignature } from '@gnosis.pm/safe-core-sdk/dist/src/utils/signatures/SafeSignature'
 import SafeServiceClient, { SafeMultisigTransactionListResponse, SafeMultisigTransactionResponse } from '@gnosis.pm/safe-service-client'
 import { toChecksumAddress } from '@rsksmart/rsk-utils'
 import { getContracts } from '../config'
 import { TransactionStatus } from '../constants'
 import { TransactionBundle } from '../pages/safeInteraction'
+import axios from 'axios'
 
 // the transaction service requires the Ethereum checksum
 const toEthereumChecksum = (address: string) => toChecksumAddress(address)
 
-// create the safe service client:
-const getSafeService = (safe: Safe) =>
-  safe.getChainId().then((chainId: number) =>
-    new SafeServiceClient(getContracts(chainId).safeTransactionService))
+const getSafeServiceUrl = (safe: Safe) => safe.getChainId().then((chainId: number) => getContracts(chainId).safeTransactionService)
 
-// Convert the response from the transaction service to our Sample Apps "TransactionByndle"
+// create the safe service client:
+const getSafeService = (safe: Safe) => getSafeServiceUrl(safe).then(url => new SafeServiceClient(url))
+
+// Convert the response from the transaction service to our Sample Apps "TransactionBundle"
 const convertToBundle = (transactionResponse: SafeMultisigTransactionResponse, safeNonce: number) => {
   const transaction = new SafeTransaction({
     to: transactionResponse.to,
@@ -40,13 +42,15 @@ const convertToBundle = (transactionResponse: SafeMultisigTransactionResponse, s
   } else if (transactionResponse.nonce < safeNonce) {
     status = TransactionStatus.REJECTED
   }
+  const { confirmations } = transactionResponse
 
   const response: TransactionBundle = {
     transaction,
     hash: transactionResponse.safeTxHash,
     status,
     isReject,
-    isPublished: true
+    isPublished: true,
+    confirmations
   }
 
   return response
@@ -67,6 +71,36 @@ export const getTransactions = (safe: Safe, safeNonce: number) =>
           (a.transaction.data.nonce > b.transaction.data.nonce) ? 1 : -1)
       }))
 
+export const createOrUpdateTransaction = (
+  bundle: TransactionBundle,
+  safe: Safe
+) => new Promise((resolve, reject) =>
+  // FIXME: AllSettled
+  Promise.all([getSafeServiceUrl(safe), safe.getSigner()?.getAddress()]).then(([safeServiceUrl, signerAddress]) => {
+    if (!signerAddress) {
+      return reject(new Error('The current safe has no signed associated.'))
+    }
+    const bodyWithoutSignature = {
+      ...bundle.transaction.data,
+      to: toEthereumChecksum(bundle.transaction.data.to),
+      contractTransactionHash: bundle.hash,
+      sender: signerAddress
+    }
+    const signature = bundle.transaction.signatures?.get(signerAddress.toLowerCase())
+    const body = signature ? { ...bodyWithoutSignature, signature: signature.data } : bodyWithoutSignature
+
+    const safeAddress = toEthereumChecksum(safe.getAddress())
+    const url = `${safeServiceUrl}/api/v1/safes/${safeAddress}/multisig-transactions/`
+    axios.post(url, body, {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }).then(_ => resolve(true))
+      .catch((error) => {
+        reject(error)
+      })
+  }))
+
 export const publishPendingTransaction = (
   bundle: TransactionBundle,
   safe: Safe
@@ -74,19 +108,23 @@ export const publishPendingTransaction = (
   // get the signer to get the signature later
   safe.getSigner()?.getAddress().then((signerAddress: string) => {
     // get the signature on the transaction
-    const signature = bundle.transaction.signatures.get(signerAddress.toLowerCase())
+    const signature = bundle.transaction.signatures?.get(signerAddress.toLowerCase())
+    console.log('Signature is', signature)
 
-    if (!signature) { reject(new Error('Current account is not a signer on the transaction. Sign the transaction off-chain to publish to the transaction service.')) }
-
-    signature && getSafeService(safe).then((safeService: SafeServiceClient) =>
+    // if (!signature) { reject(new Error('Current account is not a signer on the transaction. Sign the transaction off-chain to publish to the transaction service.')) }
+    const data = {
+      ...bundle.transaction.data,
+      to: toEthereumChecksum(bundle.transaction.data.to)
+    }
+    const safeAddress = toEthereumChecksum(safe.getAddress())
+    console.log('args', safeAddress, data, bundle.hash)
+    // signature && getSafeService(safe).then((safeService: SafeServiceClient) =>
+    getSafeService(safe).then((safeService: SafeServiceClient) =>
       safeService.proposeTransaction(
-        toEthereumChecksum(safe.getAddress()),
-        {
-          ...bundle.transaction.data,
-          to: toEthereumChecksum(bundle.transaction.data.to)
-        },
+        safeAddress,
+        data,
         bundle.hash,
-        signature
+        signature as SafeSignature
       )
         .then((value: any) =>
           value === '' ? resolve(true) : reject(new Error(JSON.stringify(value))))

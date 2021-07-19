@@ -5,7 +5,8 @@ import React, { useEffect, useState } from 'react'
 import { TransactionBundle } from '..'
 import Modal from '../../../components/Modal'
 import { TransactionStatus } from '../../../constants'
-import { publishPendingTransaction } from '../../../helpers/safeServiceClient'
+import { /* removeTransaction, storeTransaction */ } from '../../../helpers/localStorage'
+import { createOrUpdateTransaction, publishPendingTransaction } from '../../../helpers/safeServiceClient'
 import { transactionListener } from '../../../helpers/transactionListener'
 import ApprovedModal from './ApprovedModal'
 import ExecutedModal from './ExecutedModal'
@@ -71,7 +72,9 @@ const TransactionsPanel: React.FC<Interface> = ({ safe, handleError, updateTrans
     safe.signTransaction(bundle.transaction)
       .then(() => {
         updateTransactionBundle(bundle)
-        setApprovedOffChainModal(true)
+        createOrUpdateTransaction(bundle, safe).then(() => {
+          setApprovedOffChainModal(true)
+        })
       })
       .catch(handleError)
 

@@ -7,7 +7,9 @@ import PolicyComponent from './policies'
 import AssetsComponent from './assets'
 import TransactionCreatedModal from '../../components/TransactionCreatedModal'
 import { Screens, TransactionStatus } from '../../constants'
-import { getTransactions } from '../../helpers/safeServiceClient'
+import { createOrUpdateTransaction, getTransactions } from '../../helpers/safeServiceClient'
+// import { getTransactions as getTransactionsFromLocalStorage, storeTransaction } from '../../helpers/localStorage'
+import { SafeMultisigConfirmationResponse } from '../../helpers/missingTypes'
 
 interface Interface {
   safe: Safe
@@ -22,7 +24,8 @@ export interface TransactionBundle {
   hash: string
   status: TransactionStatus
   isReject: boolean
-  isPublished: boolean
+  isPublished: boolean,
+  confirmations?: SafeMultisigConfirmationResponse[]
 }
 
 const SafeInteraction: React.FC<Interface> = ({ safe, walletAddress, handleError, handleLogout }) => {
@@ -53,6 +56,11 @@ const SafeInteraction: React.FC<Interface> = ({ safe, walletAddress, handleError
   // Transaction Management, all transactions:
   const [transactions, setTransactions] = useState<TransactionBundle[]>([])
 
+  const sortAndSetTransactions = (transactions: TransactionBundle[]) => {
+    const nonceSorted = transactions.sort((a: TransactionBundle, b: TransactionBundle) => (a.transaction.data.nonce - b.transaction.data.nonce))
+    setTransactions(nonceSorted)
+  }
+
   // Add a new PENDING transaction to the list
   const addTransaction = (incomingTransaction: SafeTransaction, isReject?: boolean) => {
     // set the correct nonce if there are pending transactions:
@@ -63,19 +71,19 @@ const SafeInteraction: React.FC<Interface> = ({ safe, walletAddress, handleError
     // get the hash to be used as an identifier
     safe.getTransactionHash(transaction)
       .then((hash: string) => {
-        // create new transaction list
-        const newTransactionList = [...transactions, { status: TransactionStatus.PENDING, transaction, hash, isReject: isReject || false, isPublished: false }]
+        const incomingTxBundle = { status: TransactionStatus.PENDING, transaction, hash, isReject: isReject || false, isPublished: false }
+        // store the new transaction locally
+        createOrUpdateTransaction(incomingTxBundle, safe).then(() => {
+          // create new transaction list
+          const newTransactionList = [...transactions, incomingTxBundle]
 
-        // sort the order of transactions by nonce:
-        const nonceSorted = newTransactionList.sort((a: TransactionBundle, b: TransactionBundle) =>
-          (a.transaction.data.nonce > b.transaction.data.nonce) ? 1 : -1)
+          // set the sorted transactions
+          sortAndSetTransactions(newTransactionList)
+          setShowTransactionInfo(true)
 
-        // set the sorted transactions
-        setTransactions(nonceSorted)
-        setShowTransactionInfo(true)
-
-        // increase the app's nonce by 1 if it isn't a reject transaction
-        !isReject && setAppNonce(appNonce + 1)
+          // increase the app's nonce by 1 if it isn't a reject transaction
+          !isReject && setAppNonce(appNonce + 1)
+        })
       })
   }
 
@@ -87,9 +95,8 @@ const SafeInteraction: React.FC<Interface> = ({ safe, walletAddress, handleError
     // if the status is EXECUTED, then also update other transactions with the same nonce to REJECTED:
     if (transactionBundle.status === TransactionStatus.EXECUTED) {
       list = list.map((bundle: TransactionBundle) =>
-        (bundle.transaction.data.nonce === transactionBundle.transaction.data.nonce &&
-          bundle.status === TransactionStatus.PENDING)
-          ? { ...bundle, status: TransactionStatus.REJECTED } : bundle
+        bundle.transaction.data.nonce === transactionBundle.transaction.data.nonce &&
+          bundle.status === TransactionStatus.PENDING ? { ...bundle, status: TransactionStatus.REJECTED } : bundle
       )
     }
 
