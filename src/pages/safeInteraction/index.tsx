@@ -9,6 +9,7 @@ import TransactionCreatedModal from '../../components/TransactionCreatedModal'
 import { Screens, TransactionStatus } from '../../constants'
 import { getTransactions } from '../../helpers/safeServiceClient'
 import { getTransactions as getTransactionsFromLocalStorage, storeTransaction } from '../../helpers/localStorage'
+import { SafeMultisigConfirmationResponse } from '../../helpers/missingTypes'
 
 interface Interface {
   safe: Safe
@@ -16,16 +17,6 @@ interface Interface {
   handleLogout: () => void
   handleError: (err: Error | null) => void
 }
-
-// FIXME: double-check if safe-service-client exports this type
-declare type SafeMultisigConfirmationResponse = {
-  readonly owner: string;
-  readonly submissionDate: string;
-  readonly transactionHash?: string;
-  readonly confirmationType?: string;
-  readonly signature: string;
-  readonly signatureType?: string;
-};
 
 // Wrapper for transaction to keep track of the status, and hash to be used as an identifier
 export interface TransactionBundle {
@@ -68,7 +59,6 @@ const SafeInteraction: React.FC<Interface> = ({ safe, walletAddress, handleError
 
   const mergeTransactions = (bundles: TransactionBundle[]) => {
     const localTransactions = (getTransactionsFromLocalStorage(safe.getAddress()) || [])
-    console.log('Parsed Transactions', localTransactions)
     const allTransactions = [...localTransactions, ...bundles]
     sortAndSetTransactions(allTransactions)
   }

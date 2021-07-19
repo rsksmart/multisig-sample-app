@@ -1,6 +1,6 @@
 import { SafeSignature, SafeTransaction } from '@gnosis.pm/safe-core-sdk'
-import { EthSignSignature } from '@gnosis.pm/safe-core-sdk/dist/src/utils/signatures/SafeSignature'
 import { TransactionBundle } from '../../pages/safeInteraction'
+import { EthSignSignature } from '../missingTypes'
 import { getParsedItem, LocalStorageKeys, removeKey, setJsonKey } from './utils'
 
 const getTransactionKey = (safeAddress: string) =>

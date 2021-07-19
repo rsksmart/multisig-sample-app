@@ -62,9 +62,6 @@ const TransactionDetailComponent: React.FC<Interface> = ({
       })
     }
     const offChainSigners = Array.from(transaction.signatures.keys()).map((signature: string) => ({ signature, isOnChain: false }))
-    // const offChainPublished = confirmations?.map(confirmation => confirmation.owner) || []
-    // const removeDuplicateSet = new Set<string>([...offChainPublished, ...offChainUnpublished])
-    // const offChainSigners = Array.from(removeDuplicateSet).map((signature: string) => ({ signature, isOnChain: false }))
 
     safe.getOwnersWhoApprovedTx(hash)
       .then((signers: string[]) => {
