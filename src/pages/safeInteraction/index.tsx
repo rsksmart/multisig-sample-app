@@ -100,11 +100,15 @@ const SafeInteraction: React.FC<Interface> = ({ safe, walletAddress, handleError
 
     // if the status is EXECUTED, then also update other transactions with the same nonce to REJECTED:
     if (transactionBundle.status === TransactionStatus.EXECUTED) {
-      list = list.map((bundle: TransactionBundle) =>
-        (bundle.transaction.data.nonce === transactionBundle.transaction.data.nonce &&
-          bundle.status === TransactionStatus.PENDING)
-          ? { ...bundle, status: TransactionStatus.REJECTED } : bundle
-      )
+      list = list.map((bundle: TransactionBundle) => {
+        if (bundle.transaction.data.nonce === transactionBundle.transaction.data.nonce &&
+          bundle.status === TransactionStatus.PENDING) {
+          const updatedTxBundle = { ...bundle, status: TransactionStatus.REJECTED }
+          storeTransaction(safe.getAddress(), updatedTxBundle)
+          return updatedTxBundle
+        }
+        return bundle
+      })
     }
 
     setTransactions(list)
