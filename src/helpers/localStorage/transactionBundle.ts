@@ -4,7 +4,7 @@ import { EthSignSignature } from '../missingTypes'
 import { getParsedItem, LocalStorageKeys, removeKey, setJsonKey } from './utils'
 
 const getTransactionKey = (safeAddress: string) =>
-  `${LocalStorageKeys.TRANSACTIONS}_${safeAddress}`
+  `${LocalStorageKeys.TRANSACTIONS}_${safeAddress.toLowerCase()}`
 
 const serializeTransactionBundles = (transactionBundle: TransactionBundle[]) => {
   const serializableObjs = transactionBundle.map(txBundle => ({
