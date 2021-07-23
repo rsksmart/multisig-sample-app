@@ -8,7 +8,6 @@ import AssetsComponent from './assets'
 import TransactionCreatedModal from '../../components/TransactionCreatedModal'
 import { Screens, TransactionStatus } from '../../constants'
 import { createOrUpdateTransaction, getTransactions } from '../../helpers/safeServiceClient'
-// import { getTransactions as getTransactionsFromLocalStorage, storeTransaction } from '../../helpers/localStorage'
 import { SafeMultisigConfirmationResponse } from '../../helpers/missingTypes'
 
 interface Interface {
@@ -24,7 +23,6 @@ export interface TransactionBundle {
   hash: string
   status: TransactionStatus
   isReject: boolean
-  isPublished: boolean,
   confirmations?: SafeMultisigConfirmationResponse[]
 }
 
@@ -71,7 +69,7 @@ const SafeInteraction: React.FC<Interface> = ({ safe, walletAddress, handleError
     // get the hash to be used as an identifier
     safe.getTransactionHash(transaction)
       .then((hash: string) => {
-        const incomingTxBundle = { status: TransactionStatus.PENDING, transaction, hash, isReject: isReject || false, isPublished: false }
+        const incomingTxBundle = { status: TransactionStatus.PENDING, transaction, hash, isReject: isReject || false }
         // store the new transaction locally
         createOrUpdateTransaction(incomingTxBundle, safe).then(() => {
           // create new transaction list
@@ -95,8 +93,10 @@ const SafeInteraction: React.FC<Interface> = ({ safe, walletAddress, handleError
     // if the status is EXECUTED, then also update other transactions with the same nonce to REJECTED:
     if (transactionBundle.status === TransactionStatus.EXECUTED) {
       list = list.map((bundle: TransactionBundle) =>
-        bundle.transaction.data.nonce === transactionBundle.transaction.data.nonce &&
-          bundle.status === TransactionStatus.PENDING ? { ...bundle, status: TransactionStatus.REJECTED } : bundle
+        (bundle.transaction.data.nonce === transactionBundle.transaction.data.nonce &&
+          bundle.status === TransactionStatus.PENDING)
+          ? { ...bundle, status: TransactionStatus.REJECTED }
+          : bundle
       )
     }
 

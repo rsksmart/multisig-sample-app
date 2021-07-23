@@ -1,5 +1,4 @@
 import { Safe, SafeTransaction } from '@gnosis.pm/safe-core-sdk'
-import { SafeSignature } from '@gnosis.pm/safe-core-sdk/dist/src/utils/signatures/SafeSignature'
 import SafeServiceClient, { SafeMultisigTransactionListResponse, SafeMultisigTransactionResponse } from '@gnosis.pm/safe-service-client'
 import { toChecksumAddress } from '@rsksmart/rsk-utils'
 import { getContracts } from '../config'
@@ -49,7 +48,6 @@ const convertToBundle = (transactionResponse: SafeMultisigTransactionResponse, s
     hash: transactionResponse.safeTxHash,
     status,
     isReject,
-    isPublished: true,
     confirmations
   }
 
@@ -75,7 +73,6 @@ export const createOrUpdateTransaction = (
   bundle: TransactionBundle,
   safe: Safe
 ) => new Promise((resolve, reject) =>
-  // FIXME: AllSettled
   Promise.all([getSafeServiceUrl(safe), safe.getSigner()?.getAddress()]).then(([safeServiceUrl, signerAddress]) => {
     if (!signerAddress) {
       return reject(new Error('The current safe has no signed associated.'))
@@ -95,40 +92,8 @@ export const createOrUpdateTransaction = (
       headers: {
         'Content-Type': 'application/json'
       }
-    }).then(_ => resolve(true))
+    }).then(() => resolve(true))
       .catch((error) => {
         reject(error)
       })
   }))
-
-export const publishPendingTransaction = (
-  bundle: TransactionBundle,
-  safe: Safe
-) => new Promise((resolve, reject) =>
-  // get the signer to get the signature later
-  safe.getSigner()?.getAddress().then((signerAddress: string) => {
-    // get the signature on the transaction
-    const signature = bundle.transaction.signatures?.get(signerAddress.toLowerCase())
-    console.log('Signature is', signature)
-
-    // if (!signature) { reject(new Error('Current account is not a signer on the transaction. Sign the transaction off-chain to publish to the transaction service.')) }
-    const data = {
-      ...bundle.transaction.data,
-      to: toEthereumChecksum(bundle.transaction.data.to)
-    }
-    const safeAddress = toEthereumChecksum(safe.getAddress())
-    console.log('args', safeAddress, data, bundle.hash)
-    // signature && getSafeService(safe).then((safeService: SafeServiceClient) =>
-    getSafeService(safe).then((safeService: SafeServiceClient) =>
-      safeService.proposeTransaction(
-        safeAddress,
-        data,
-        bundle.hash,
-        signature as SafeSignature
-      )
-        .then((value: any) =>
-          value === '' ? resolve(true) : reject(new Error(JSON.stringify(value))))
-        .catch((err: Error) => reject(err))
-    )
-  })
-)
