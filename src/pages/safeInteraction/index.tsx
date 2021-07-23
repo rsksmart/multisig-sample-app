@@ -70,7 +70,7 @@ const SafeInteraction: React.FC<Interface> = ({ safe, walletAddress, handleError
     safe.getTransactionHash(transaction)
       .then((hash: string) => {
         const incomingTxBundle = { status: TransactionStatus.PENDING, transaction, hash, isReject: isReject || false }
-        // store the new transaction locally
+        // store the new transaction
         createOrUpdateTransaction(incomingTxBundle, safe).then(() => {
           // create new transaction list
           const newTransactionList = [...transactions, incomingTxBundle]
