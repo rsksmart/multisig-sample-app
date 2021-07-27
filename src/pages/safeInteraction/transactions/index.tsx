@@ -5,7 +5,7 @@ import React, { useEffect, useState } from 'react'
 import { TransactionBundle } from '..'
 import Modal from '../../../components/Modal'
 import { TransactionStatus } from '../../../constants'
-import { publishPendingTransaction } from '../../../helpers/safeServiceClient'
+import { createOrUpdateTransaction } from '../../../helpers/safeServiceClient'
 import { transactionListener } from '../../../helpers/transactionListener'
 import ApprovedModal from './ApprovedModal'
 import ExecutedModal from './ExecutedModal'
@@ -71,7 +71,9 @@ const TransactionsPanel: React.FC<Interface> = ({ safe, handleError, updateTrans
     safe.signTransaction(bundle.transaction)
       .then(() => {
         updateTransactionBundle(bundle)
-        setApprovedOffChainModal(true)
+        createOrUpdateTransaction(bundle, safe).then(() => {
+          setApprovedOffChainModal(true)
+        })
       })
       .catch(handleError)
 
@@ -91,15 +93,6 @@ const TransactionsPanel: React.FC<Interface> = ({ safe, handleError, updateTrans
         handleError(err)
       })
   }
-
-  // publish a transaction to the transaction service:
-  const publishTransaction = (bundle: TransactionBundle) =>
-    publishPendingTransaction(bundle, safe)
-      .then(() => {
-        setShowPublishedModal(true)
-        updateTransactionBundle({ ...bundle, isPublished: true })
-      })
-      .catch(handleError)
 
   return (
     <>
@@ -129,7 +122,6 @@ const TransactionsPanel: React.FC<Interface> = ({ safe, handleError, updateTrans
             approveTransaction={currentSubTab === TransactionStatus.PENDING ? approveTransaction : undefined}
             executeTransaction={(isPending && currentNonce) ? handleExecutionTransaction : undefined}
             rejectTransaction={(isPending && currentNonce && !hasDuplicate) ? createRejectionTransaction : undefined}
-            publishTransaction={publishTransaction}
           />
         })}
       </section>
