@@ -29,7 +29,7 @@ module.exports = {
     'jest/valid-expect': 'error',
     'react/prop-types': 'off',
     'indent': 'warn',
-    'no-unused-vars': 'warn',
+    '@typescript-eslint/no-unused-vars': 'warn',
     'no-trailing-spaces': 'warn',
     'no-multiple-empty-lines': 'warn',
     'no-unreachable': 'warn'

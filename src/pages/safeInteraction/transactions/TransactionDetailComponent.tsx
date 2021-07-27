@@ -9,6 +9,7 @@ import InputDataDecoder from 'ethereum-input-data-decoder'
 import { TransactionBundle } from '..'
 import CopyValueButton from '../../../components/CopyValueButton'
 import { TransactionStatus } from '../../../constants'
+import { EthSignSignature } from '@gnosis.pm/safe-core-sdk/dist/src/utils/signatures/SafeSignature'
 
 interface Interface {
   safe: Safe
@@ -17,7 +18,6 @@ interface Interface {
   approveTransaction?: (transaction: TransactionBundle, onChain: boolean) => Promise<any>
   executeTransaction?: (transactionBundle: TransactionBundle) => void
   rejectTransaction?: (transaction: SafeTransaction) => void
-  publishTransaction?: (transaction: TransactionBundle) => void
   handleError?: (error: Error) => void
 }
 
@@ -27,9 +27,9 @@ interface SignatureType {
 }
 
 const TransactionDetailComponent: React.FC<Interface> = ({
-  safe, transactionBundle, walletAddress, handleError, approveTransaction, executeTransaction, rejectTransaction, publishTransaction
+  safe, transactionBundle, walletAddress, handleError, approveTransaction, executeTransaction, rejectTransaction
 }) => {
-  const { transaction, hash } = transactionBundle
+  const { transaction, hash, confirmations } = transactionBundle
 
   const [showDetails, setShowDetails] = useState<boolean>(false)
   const [signatures, setSignatures] = useState<SignatureType[]>([])
@@ -55,12 +55,17 @@ const TransactionDetailComponent: React.FC<Interface> = ({
   const getApprovals = () => {
     setIsRefreshing(true)
 
-    const offChain = Array.from(transaction.signatures.keys()).map((signature: string) => ({ signature, isOnChain: false }))
+    if (confirmations) {
+      confirmations.forEach((confirmation) => {
+        transaction.addSignature(new EthSignSignature(confirmation.owner, confirmation.signature))
+      })
+    }
+    const offChainSigners = Array.from(transaction.signatures.keys()).map((signature: string) => ({ signature, isOnChain: false }))
 
     safe.getOwnersWhoApprovedTx(hash)
       .then((signers: string[]) => {
         const onChainSigners = signers.map((signature: string) => ({ signature, isOnChain: true }))
-        setSignatures([...offChain, ...onChainSigners])
+        setSignatures([...offChainSigners, ...onChainSigners])
       })
       .catch(handleError)
       .finally(() => setIsRefreshing(false))
@@ -138,9 +143,6 @@ const TransactionDetailComponent: React.FC<Interface> = ({
             <button
               disabled={walletHasSigned}
               onClick={() => handleApprove(false)}>approve off-chain</button>
-            <button
-              disabled={transactionBundle.isPublished}
-              onClick={() => publishTransaction && publishTransaction(transactionBundle)}>Publish</button>
           </>
         )}
         {!transactionBundle.isReject && rejectTransaction && <button
