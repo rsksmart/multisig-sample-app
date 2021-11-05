@@ -10,7 +10,10 @@ import ChooseSafe from './pages/connectToSafe'
 import FooterComponent from './components/FooterComponent'
 import { saveSafeAddressToLocalStorage } from './helpers/localStorage'
 
-const rLogin = createRLogin(rskTestnetRpcUrl)
+const rLogin = createRLogin(Object.assign({}, rskTestnetRpcUrl, {
+  31: 'https://public-node.testnet.rsk.co',
+  1337: 'http://localhost:9545'
+}))
 
 function App () {
   const [error, setError] = useState<null | string>('')

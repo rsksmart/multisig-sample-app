@@ -1,5 +1,5 @@
 import React from 'react'
-import { RLoginButton } from '@rsksmart/rlogin'
+// import { RLoginButton } from '@rsksmart/rlogin'
 import rifSafeLogo from '../../images/rifWhite.svg'
 import poweredByLogo from '../../images/powered-by-iov.svg'
 
@@ -29,7 +29,7 @@ const Web3Provider: React.FC<Interface> = ({ rLogin, setRLoginResponse, handleEr
         Safe and Vault Sample App
       </div>
       <h2>Login with your wallet</h2>
-      <p><RLoginButton onClick={handleLogin}>Connect with rLogin!</RLoginButton></p>
+      <p><button onClick={handleLogin}>Connect with rLogin!</button></p>
       <img src={poweredByLogo} alt="Powered by IOV Labs" />
       <p className="legal">Copyright © 2021 IOV Labs. All rights reserved.</p>
     </section>
