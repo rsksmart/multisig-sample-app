@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import RLogin from '@rsksmart/rlogin'
+import { createRLogin, rskTestnetRpcUrl } from '@rsksmart/rlogin-essentials'
 import { Safe } from '@gnosis.pm/safe-core-sdk'
 
 import './styles/App.scss'
@@ -10,10 +10,7 @@ import ChooseSafe from './pages/connectToSafe'
 import FooterComponent from './components/FooterComponent'
 import { saveSafeAddressToLocalStorage } from './helpers/localStorage'
 
-const rLogin = new RLogin({
-  cacheProvider: false,
-  supportedChains: [4, 31, 1337]
-})
+const rLogin = createRLogin(rskTestnetRpcUrl)
 
 function App () {
   const [error, setError] = useState<null | string>('')
