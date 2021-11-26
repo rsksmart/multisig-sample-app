@@ -5,7 +5,7 @@
   "homepage": ".",
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "react-scripts build --max_old_space_size=4096",
     "test": "react-scripts test --verbose --watchAll=false",
     "test:watch": "react-scripts test",
     "test:coverage": "react-scripts test --verbose --coverage --watchAll=false",
