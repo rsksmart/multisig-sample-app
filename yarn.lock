@@ -2484,10 +2484,10 @@
     ethjs-provider-http "^0.1.6"
     ethjs-query "^0.3.8"
 
-"@rsksmart/rlogin-essentials@^1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@rsksmart/rlogin-essentials/-/rlogin-essentials-1.0.0.tgz#6d4564a736dd89c921fceac6d7f877f5b08bd519"
-  integrity sha512-1KqNGns0OH/OEWmxpVPGsOR6n6QWGvAlF1aTdS6oc+T7nVqtX0xqhnETmL6oLbuu2HvvcNLejQyvUaBnjgtatw==
+"@rsksmart/rlogin-essentials@^1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@rsksmart/rlogin-essentials/-/rlogin-essentials-1.0.1.tgz#4a3c23c607329171212c8c6c57ea7f03eb8dc30e"
+  integrity sha512-jB0nm3OpzW8vRbehU36Fm7zUHySWj8FEbCsTO+w+opO5iOUmA5nZux/1sKBKjJOQVUfcYQG0FydaNdy5cnaJ5w==
   dependencies:
     "@portis/web3" "^4.0.6"
     "@rsksmart/rlogin" "1.2.0"
@@ -13409,11 +13409,6 @@ ripemd160@^2.0.0, ripemd160@^2.0.1:
   dependencies:
     hash-base "^3.0.0"
     inherits "^2.0.1"
-
-rlogin@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/rlogin/-/rlogin-1.0.0.tgz#db07322b31219126625d9d0aa9872d7ebe8ac403"
-  integrity sha1-2wcyKzEhkSZiXZ0KqYctfr6KxAM=
 
 rlp@^2.0.0:
   version "2.2.7"
