@@ -15,7 +15,7 @@
   },
   "dependencies": {
     "@gnosis.pm/safe-service-client": "^0.1.0-alpha.0",
-    "jesse-essentials": "^1.0.3",
+    "jesse-essentials": "1.0.2",
     "@rsksmart/rsk-utils": "1.1.0",
     "@rsksmart/safe-factory-sdk": "^0.0.1-beta.1",
     "@rsksmart/safe-transactions-sdk": "^0.0.1-beta.2",
